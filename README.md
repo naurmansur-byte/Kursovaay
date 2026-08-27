@@ -10,6 +10,9 @@
 - `.claude/skills/metodichka/` — скил-источник правил из методички вуза.
   Кладёт оригинал файла (`source.*`) и извлечённые правила (`rules.md`),
   на которые опирается `kursovaya-writing`.
+- `.claude/skills/kursovaya-presentation/` — собирает минималистичную
+  презентацию (.pptx, 10–20 слайдов) для защиты по присланному готовому
+  файлу курсовой. Результат — `presentation/kursovaya-presentation.pptx`.
 - `docs/obsidian-setup.md` — как открыть репозиторий в Obsidian и работать
   со скилами и главами через vault.
 

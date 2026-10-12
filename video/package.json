@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "tts": "node scripts/tts.mjs",
+    "sfx": "node scripts/sfx.mjs",
     "studio": "remotion studio src/index.js",
     "render": "remotion render src/index.js",
     "still": "remotion still src/index.js"

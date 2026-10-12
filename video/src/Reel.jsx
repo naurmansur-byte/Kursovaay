@@ -23,26 +23,26 @@ const useFonts = () => {
   }, [handle]);
 };
 
-// Метка бренда и прогресс по сценам.
-const TopBar = ({ plan }) => {
+// Метка бренда.
+const BrandLabel = () => (
+  <div style={{ position: 'absolute', top: 120, left: SAFE.x, display: 'flex', alignItems: 'center', gap: 14, fontFamily: F.body, fontWeight: 800, fontSize: 30, letterSpacing: '0.14em', color: C.fg, mixBlendMode: 'difference' }}>
+    <span style={{ width: 16, height: 16, borderRadius: '50%', background: C.fg }} />
+    ХИМИЯ ПРОСТО · ЕНТ
+  </div>
+);
+
+// Камера: сцена въезжает с чередующейся стороны и медленно приближается.
+const Camera = ({ index, dur, children }) => {
   const frame = useCurrentFrame();
+  const dir = index % 2 ? -1 : 1;
+  const k = index === 0 ? 1 : interpolate(frame, [0, 7], [0, 1], { extrapolateRight: 'clamp' });
+  const ease = 1 - (1 - k) ** 3;
+  const zoom = interpolate(frame, [0, dur], index % 2 ? [1.07, 1] : [1, 1.07]);
+  const blur = (1 - ease) * 14;
   return (
-    <>
-      <div style={{ position: 'absolute', top: 92, left: SAFE.x, right: SAFE.x, display: 'flex', gap: 10 }}>
-        {plan.scenes.map((s) => {
-          const fill = interpolate(frame, [s.from, s.from + s.dur], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-          return (
-            <div key={s.id} style={{ flex: 1, height: 8, background: C.faint }}>
-              <div style={{ width: `${fill * 100}%`, height: '100%', background: C.accent }} />
-            </div>
-          );
-        })}
-      </div>
-      <div style={{ position: 'absolute', top: 132, left: SAFE.x, display: 'flex', alignItems: 'center', gap: 14, fontFamily: F.body, fontWeight: 800, fontSize: 30, letterSpacing: '0.14em', color: C.fg }}>
-        <span style={{ width: 16, height: 16, borderRadius: '50%', background: C.accent }} />
-        ХИМИЯ ПРОСТО · ЕНТ
-      </div>
-    </>
+    <AbsoluteFill style={{ transform: `translateX(${dir * 460 * (1 - ease)}px) scale(${zoom})`, filter: blur > 0.3 ? `blur(${blur}px)` : undefined }}>
+      {children}
+    </AbsoluteFill>
   );
 };
 
@@ -88,7 +88,9 @@ export const Reel = ({ plan, reel }) => {
         const Scene = scenes[s.id];
         return (
           <Sequence key={s.id} from={s.from} durationInFrames={s.dur} name={s.id}>
-            <Scene scene={s} />
+            <Camera index={s.index} dur={s.dur}>
+              <Scene scene={s} />
+            </Camera>
             {!plan.silent && (
               <Sequence from={s.lead}>
                 <Audio src={staticFile(s.audio)} />
@@ -97,7 +99,7 @@ export const Reel = ({ plan, reel }) => {
           </Sequence>
         );
       })}
-      <TopBar plan={plan} />
+      <BrandLabel />
       <Subtitles plan={plan} />
       <Cuts plan={plan} />
     </AbsoluteFill>

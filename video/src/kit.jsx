@@ -1,7 +1,7 @@
 // Общие элементы стиля 2: фон, кинетический текст, плашки, формулы, атом, варианты ответа.
 import React from 'react';
 import katex from 'katex';
-import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { AbsoluteFill, Audio, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { C, F, SAFE } from './theme.js';
 
 export const enter = (frame, at, fps, config = { damping: 14, stiffness: 170, mass: 0.7 }) =>
@@ -13,6 +13,14 @@ export const punch = (frame, at, amount = 0.22, len = 9) =>
 
 export const shake = (frame, at, len = 12, px = 14) =>
   frame < at || frame > at + len ? 0 : Math.sin((frame - at) * 2.4) * px * (1 - (frame - at) / len);
+
+// Звуковой эффект из public/sfx (генерируется `npm run sfx`).
+export const Sfx = ({ at, name, volume = 0.35 }) =>
+  at == null || at < 0 ? null : (
+    <Sequence from={at} durationInFrames={30} layout="none">
+      <Audio src={staticFile(`sfx/${name}.wav`)} volume={volume} />
+    </Sequence>
+  );
 
 export const Row = ({ y, children, style }) => (
   <div style={{ position: 'absolute', top: y, left: SAFE.x, right: SAFE.x, display: 'flex', justifyContent: 'center', ...style }}>

@@ -1,9 +1,9 @@
-// R001 «49 г H2SO4 — сколько моль?»: сцены. Сценарий — content/reels/R001-moles-h2so4/reel-max.md
+// R001 «49 г H2SO4 — сколько моль?», короткая версия (~27 с). Сценарий — content/reels/R001-moles-h2so4/reel-max.md
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
 import { C, F, ACCENT_HEX } from '../theme.js';
 import { wordFrame } from '../plan.js';
-import { Appear, Atom, Card, Kinetic, Label, Option, OPTIONS, Row, TeX, enter, punch, shake } from '../kit.jsx';
+import { Appear, Atom, Card, Kinetic, Label, Option, OPTIONS, Row, Sfx, TeX, enter, punch, shake } from '../kit.jsx';
 
 const A = (s) => `\\textcolor{${ACCENT_HEX}}{${s}}`;
 const useW = (scene) => {
@@ -11,35 +11,53 @@ const useW = (scene) => {
   return (stem, fallback = 0, nth = 0) => wordFrame(scene, fps, stem, fallback, nth);
 };
 
+// Крупное число-удар поверх сцены.
+const Slam = ({ at, y, children, size = 260 }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (frame < at) return null;
+  const p = enter(frame, at, fps, { damping: 10, stiffness: 220, mass: 0.6 });
+  return (
+    <Row y={y}>
+      <div style={{ transform: `scale(${interpolate(p, [0, 1], [2.4, 1])}) rotate(-4deg)`, opacity: Math.min(1, p * 3), background: C.accent, color: C.fg, fontFamily: F.display, fontWeight: 800, fontSize: size, lineHeight: 1, padding: `${size * 0.08}px ${size * 0.16}px ${size * 0.12}px`, whiteSpace: 'nowrap' }}>
+        {children}
+      </div>
+    </Row>
+  );
+};
+
 const Hook = ({ scene }) => {
   const W = useW(scene);
+  const t1 = W('сорок', 2);
+  const t2 = W('сколько', 22);
   return (
     <AbsoluteFill>
-      <Kinetic at={W('сорок', 2)} y={280} size={230} rotate={-5}>49 г</Kinetic>
-      <Appear at={W('серной', 10)} y={560}>
+      <Kinetic at={t1} y={280} size={230} rotate={-5}>49 г</Kinetic>
+      <Appear at={W('серной', 8)} y={560}>
         <TeX tex="\mathrm{H_2SO_4}" size={150} />
       </Appear>
-      <Kinetic at={W('сколько', 26)} y={790} size={100} rotate={-4} from="right" plaque punchAt={W('моль', 34)}>
+      <Kinetic at={t2} y={790} size={100} rotate={-4} from="right" plaque punchAt={W('моль', t2 + 8)}>
         Сколько моль?
       </Kinetic>
       <Row y={1010}>
-        <Atom size={340} at={W('сколько', 26)} />
+        <Atom size={340} at={t2} speed={1.6} />
       </Row>
+      <Sfx at={t1} name="whoosh" />
+      <Sfx at={t2} name="whoosh" />
+      <Sfx at={W('моль', t2 + 8)} name="pop" volume={0.45} />
     </AbsoluteFill>
   );
 };
 
 const Engage = ({ scene }) => {
   const frame = useCurrentFrame();
-  const W = useW(scene);
-  const t0 = W('выбери', 6);
-  const tEnd = scene.dur - 4;
-  const left = interpolate(frame, [t0, tEnd], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const t0 = 2;
+  const left = interpolate(frame, [t0, scene.dur - 2], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const R = 34;
   return (
     <AbsoluteFill>
       <Kinetic at={0} y={250} size={92} rotate={-3} plaque>Твой ответ?</Kinetic>
-      <Appear at={2} y={450}>
+      <Appear at={1} y={450}>
         <Card>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Label>ЕНТ · выбери один ответ</Label>
@@ -53,34 +71,14 @@ const Engage = ({ scene }) => {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 22, marginTop: 34 }}>
             {OPTIONS.map(([l, v], i) => (
-              <Option key={l} letter={l} value={v} at={W('ответ', 8) + i * 4} />
+              <Option key={l} letter={l} value={v} at={4 + i * 3} />
             ))}
           </div>
         </Card>
       </Appear>
-      <Appear at={W('напиши', 30)} y={1130}>
-        <div style={{ fontFamily: F.body, fontWeight: 700, fontSize: 46, color: C.muted }}>Напиши вариант в комментариях</div>
-      </Appear>
-    </AbsoluteFill>
-  );
-};
-
-const Method = ({ scene }) => {
-  const frame = useCurrentFrame();
-  const W = useW(scene);
-  const cut = frame >= W('сокращаются', 120);
-  const g = cut ? A('\\cancel{\\text{г}}') : '\\text{г}';
-  return (
-    <AbsoluteFill>
-      <Kinetic at={0} y={250} size={70} rotate={-3}>Количество вещества</Kinetic>
-      <Appear at={W('масса', 10)} y={420}>
-        <TeX tex={`n = \\dfrac{m}{M}`} size={190} />
-      </Appear>
-      <Appear at={W('граммы', 90)} y={880}>
-        <Card width={880} style={{ display: 'flex', justifyContent: 'center' }}>
-          <TeX tex={`\\dfrac{${g}}{${g}/\\text{моль}} = ${cut ? A('\\text{моль}') : '\\text{моль}'}`} size={96} />
-        </Card>
-      </Appear>
+      {[4, 7, 10, 13].map((t) => (
+        <Sfx key={t} at={t} name="tick" volume={0.5} />
+      ))}
     </AbsoluteFill>
   );
 };
@@ -89,18 +87,18 @@ const Molar = ({ scene }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const W = useW(scene);
-  const tH = W('водород', 20);
-  const t32 = W('тридцать', 60);
-  const t64 = W('шестьдесят', 90);
-  const t98 = W('девяносто', 130);
+  const t2 = W('два', 30);
+  const t32 = W('тридцать', 55);
+  const t64 = W('шестьдесят', 80);
+  const t98 = W('девяносто', 110);
   let expr = '';
-  if (frame >= tH) expr += '2\\cdot1';
+  if (frame >= t2) expr += '2\\cdot1';
   if (frame >= t32) expr += ' + 32';
   if (frame >= t64) expr += ` + ${A('4')}\\cdot16`;
   const chips = [
-    ['2', 'H', W('водород', 20)],
-    ['1', 'S', W('сера', 45)],
-    ['4', 'O', W('кислород', 75)],
+    ['2', 'H', t2],
+    ['1', 'S', t32],
+    ['4', 'O', t64],
   ];
   return (
     <AbsoluteFill>
@@ -118,19 +116,19 @@ const Molar = ({ scene }) => {
           );
         })}
       </Row>
-      <Appear at={tH} y={840}>
-        <Card width={936} style={{ minHeight: 300 }}>
+      <Appear at={t2} y={840}>
+        <Card width={936}>
           <TeX tex="M(\mathrm{H_2SO_4}) =" size={66} />
           <div style={{ marginTop: 10, minHeight: 80 }}>
             <TeX tex={expr || '\\;'} size={72} />
           </div>
-          {frame >= t98 && (
-            <div style={{ marginTop: 22, transform: `scale(${punch(frame, t98, 0.18)})`, transformOrigin: 'left center' }}>
-              <TeX tex={`= ${A('98\\,\\text{г/моль}')}`} size={92} />
-            </div>
-          )}
         </Card>
       </Appear>
+      <Slam at={t98} y={1170} size={140}>98 г/моль</Slam>
+      <Sfx at={t2} name="pop" />
+      <Sfx at={t32} name="pop" />
+      <Sfx at={t64} name="pop" />
+      <Sfx at={t98} name="boom" volume={0.6} />
     </AbsoluteFill>
   );
 };
@@ -138,27 +136,34 @@ const Molar = ({ scene }) => {
 const Trap = ({ scene }) => {
   const frame = useCurrentFrame();
   const W = useW(scene);
-  const t50 = W('пятьдесят', 70);
-  const dx = shake(frame, t50);
+  const t50 = W('пятьдесят', 50);
+  const tTrap = W('ловушка', t50 + 15);
+  const dx = shake(frame, t50, 14, 18) + shake(frame, tTrap, 10, 10);
+  const flash = interpolate(frame, [0, 6], [1, 0], { extrapolateRight: 'clamp' });
   return (
-    <AbsoluteFill>
-      <Kinetic at={0} y={240} size={120} rotate={-6} plaque punchAt={1}>Ловушка</Kinetic>
-      <Appear at={W('забудешь', 16)} y={500}>
-        <Card width={936} style={{ transform: `translateX(${dx}px)` }}>
-          <Label>Забыли индекс 4 у кислорода</Label>
+    <AbsoluteFill style={{ background: C.accent, transform: `translateX(${dx}px)` }}>
+      <AbsoluteFill style={{ background: C.fg, opacity: flash }} />
+      <Kinetic at={0} y={240} size={130} rotate={-6} color={C.bg} punchAt={tTrap}>Ловушка</Kinetic>
+      <Appear at={W('забыл', 4)} y={500}>
+        <Card width={936}>
+          <Label color={C.fg}>Забыли индекс 4 у кислорода</Label>
           <div style={{ marginTop: 20 }}>
             <TeX tex={`M = 2\\cdot1 + 32 + 16 = ${frame >= t50 ? A('50') : '\\;?'}`} size={66} />
           </div>
-          {frame >= W('неверный', t50 + 10) && (
+          {frame >= t50 + 6 && (
             <div style={{ marginTop: 16 }}>
               <TeX tex={`n = \\dfrac{49}{50} = ${A('0{,}98')}`} size={66} />
             </div>
           )}
         </Card>
       </Appear>
-      <Row y={1060}>
-        <Option letter="Б" value="0{,}98" state="wrong" at={W('неверный', t50 + 10)} compact />
+      <Row y={1080}>
+        <div style={{ background: C.bg, padding: 6 }}>
+          <Option letter="Б" value="0{,}98" state="wrong" at={t50 + 10} compact />
+        </div>
       </Row>
+      <Sfx at={1} name="whoosh" />
+      <Sfx at={t50} name="buzz" volume={0.5} />
     </AbsoluteFill>
   );
 };
@@ -166,43 +171,29 @@ const Trap = ({ scene }) => {
 const Answer = ({ scene }) => {
   const frame = useCurrentFrame();
   const W = useW(scene);
-  const tHalf = W('половин', 50);
+  const tNum = W('сорок', 30);
+  const tHalf = W('половин', 70);
+  const tAns = W('ответ', tHalf + 30);
+  const tex = frame < tNum ? 'n = \\dfrac{m}{M}' : 'n = \\dfrac{49\\,\\text{г}}{98\\,\\text{г/моль}}';
   return (
     <AbsoluteFill>
-      <Kinetic at={0} y={250} size={76} rotate={-3}>Решаем</Kinetic>
-      <Appear at={W('делим', 4)} y={400}>
-        <TeX tex={`n = \\dfrac{49\\,\\text{г}}{98\\,\\text{г/моль}}`} size={130} />
+      <Appear at={2} y={300}>
+        <div style={{ transform: `scale(${punch(frame, tNum, 0.12)})` }}>
+          <TeX tex={tex} size={108} />
+        </div>
       </Appear>
-      <Kinetic at={tHalf} y={760} size={140} rotate={-4} plaque punchAt={tHalf + 2} from="right">0,5 моль</Kinetic>
-      <Row y={1060}>
-        <Option letter="А" value="0{,}5" state="right" at={W('правильн', tHalf + 30)} compact />
+      <Slam at={tHalf} y={700} size={150}>0,5 моль</Slam>
+      <Row y={1000}>
+        <Option letter="А" value="0{,}5" state="right" at={tAns} compact />
       </Row>
-    </AbsoluteFill>
-  );
-};
-
-const Check = ({ scene }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const W = useW(scene);
-  const tOk = W('сходится', 90);
-  const draw = enter(frame, tOk, fps, { damping: 200, stiffness: 90 });
-  return (
-    <AbsoluteFill>
-      <Kinetic at={0} y={250} size={76} rotate={-3}>Проверка</Kinetic>
-      <Appear at={W('половин', 10)} y={470}>
-        <Card width={880} style={{ display: 'flex', justifyContent: 'center' }}>
-          <TeX tex={`m = 0{,}5 \\cdot 98 = ${A('49\\,\\text{г}')}`} size={86} />
-        </Card>
+      <Appear at={tAns + 10} y={1160}>
+        <div style={{ fontFamily: F.body, fontWeight: 700, fontSize: 40, color: C.muted }}>
+          проверка: 0,5 · 98 = 49 г ✓
+        </div>
       </Appear>
-      {frame >= tOk && (
-        <Row y={800}>
-          <svg width="260" height="260" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="44" fill="none" stroke={C.accent} strokeWidth="7" />
-            <path d="M28 52 L44 67 L73 35" fill="none" stroke={C.fg} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="70" strokeDashoffset={70 * (1 - draw)} />
-          </svg>
-        </Row>
-      )}
+      <Sfx at={tNum} name="pop" />
+      <Sfx at={tHalf} name="boom" volume={0.5} />
+      <Sfx at={tAns} name="ding" volume={0.5} />
     </AbsoluteFill>
   );
 };
@@ -211,14 +202,14 @@ const Outro = ({ scene }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const W = useW(scene);
-  const tWrite = W('напиши', 40);
-  const tWord = W('моль', tWrite + 30, 1);
+  const tWrite = W('пиши', 20);
+  const tWord = W('моль', tWrite + 6);
   const letters = 'МОЛЬ'.split('');
   return (
     <AbsoluteFill>
       <Kinetic at={0} y={240} size={78} rotate={-3}>Хочешь памятку?</Kinetic>
-      <Kinetic at={tWrite} y={370} size={96} rotate={-3} from="right">Напиши</Kinetic>
-      <Kinetic at={tWrite + 4} y={480} size={80} rotate={-3}>в комментариях</Kinetic>
+      <Kinetic at={tWrite} y={370} size={96} rotate={-3} from="right">Пиши</Kinetic>
+      <Kinetic at={tWrite + 3} y={480} size={80} rotate={-3}>в комментариях</Kinetic>
       <Row y={630} style={{ gap: 6 }}>
         {frame >= tWord &&
           letters.map((ch, i) => {
@@ -230,10 +221,10 @@ const Outro = ({ scene }) => {
             );
           })}
       </Row>
-      <Appear at={W('пришлю', tWord + 20)} y={930}>
+      <Appear at={tWord + 16} y={930}>
         <div style={{ fontFamily: F.body, fontWeight: 800, fontSize: 54, color: C.fg, textTransform: 'uppercase', letterSpacing: '0.04em' }}>→ пришлю памятку</div>
       </Appear>
-      <Appear at={W('пришлю', tWord + 20) + 6} y={1060}>
+      <Appear at={tWord + 22} y={1060}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
           <Atom size={150} at={0} />
           <div>
@@ -242,8 +233,12 @@ const Outro = ({ scene }) => {
           </div>
         </div>
       </Appear>
+      <Sfx at={tWrite} name="whoosh" />
+      {letters.map((_, i) => (
+        <Sfx key={i} at={tWord + i * 3} name="pop" volume={0.3} />
+      ))}
     </AbsoluteFill>
   );
 };
 
-export const SCENES = { hook: Hook, engage: Engage, method: Method, molar: Molar, trap: Trap, answer: Answer, check: Check, outro: Outro };
+export const SCENES = { hook: Hook, engage: Engage, molar: Molar, trap: Trap, answer: Answer, outro: Outro };

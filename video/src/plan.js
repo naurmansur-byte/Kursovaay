@@ -1,12 +1,12 @@
 // Раскладка сцен по кадрам из таймингов озвучки.
-const LEAD = 6;
-const TAIL = 12;
-const EXTRA_TAIL = { engage: 30, outro: 45 };
+const LEAD = 4;
+const TAIL = 8;
+const EXTRA_TAIL = { engage: 24, answer: 16, outro: 36 };
 
 export function buildPlan(timing, fps) {
   let from = 0;
   const scenes = timing.scenes.map((s, index) => {
-    const lead = index === 0 ? 14 : LEAD;
+    const lead = index === 0 ? 10 : LEAD;
     const tail = EXTRA_TAIL[s.id] ?? TAIL;
     const voice = Math.ceil((s.speechEndMs / 1000) * fps);
     const dur = lead + voice + tail;

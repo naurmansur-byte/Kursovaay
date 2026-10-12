@@ -14,6 +14,7 @@
 | [T04 Instagram и предложение курса](prompts/T04-instagram-offer.md) | ждёт проверки Claude | [content/instagram/PROFILE.md](content/instagram/PROFILE.md) и OFFER/FAQ/DM_SCRIPT/APPLICATION_FORM | Био 137/127/124 знака; 9 слайдов, 14 FAQ, 6 полей анкеты. Публичный HTML профиля прочитан без входа; ничего не опубликовано. Google Form не создана, текст для переноса готов; цену/условия и обработку данных утверждает Мансур |
 | [T05 Пилотный Reels: сценарий](prompts/T05-reel-pilot-script.md) | ждёт проверки Claude | [content/reels/R001-moles-h2so4/brief.md](content/reels/R001-moles-h2so4/brief.md) и 6 связанных файлов | M=98, n=0,5; обратная проверка 49 г. 106/109/113 слов, оценка 42,4/43,6/45,2 с; тексты сцен совпадают с tts. Голос, визуальный рендер и проверка преподавателем — впереди |
 | [T06 Видеоконвейер и рендер пилота](prompts/T06-video-pipeline.md) | не начато | | после T05 |
+| [T12 Оформление Instagram](prompts/T12-instagram-visual.md) | не начато | | после T04 |
 
 ## Решения Мансура (нужны на неделе 1)
 

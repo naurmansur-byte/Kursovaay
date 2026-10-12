@@ -23,3 +23,4 @@
 | T04 | [Instagram и предложение курса](T04-instagram-offer.md) | — |
 | T05 | [Пилотный Reels: сценарий](T05-reel-pilot-script.md) | — |
 | T06 | [Видеоконвейер и рендер пилота](T06-video-pipeline.md) | T05 |
+| T12 | [Оформление Instagram: аватар, имя, обложки](T12-instagram-visual.md) | T04 |

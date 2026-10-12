@@ -170,7 +170,7 @@ function statusClass(s) {
   if (s.includes("утвержд") || s.includes("принято")) return ["s-ok", "готово"];
   if (s.includes("правки")) return ["s-accent", "правки"];
   if (s.includes("решение")) return ["s-violet", "нужно ваше решение"];
-  if (s.includes("проверки claude")) return ["s-warn", "ждёт проверки Claude"];
+  if (s.includes("проверки claude") || s.includes("проверки макса")) return ["s-warn", "ждёт проверки Макса"];
   if (s.includes("преподават")) return ["s-info", "у преподавателя"];
   if (s.includes("в работе")) return ["s-info", "в работе"];
   return ["s-idle", "не начато"];

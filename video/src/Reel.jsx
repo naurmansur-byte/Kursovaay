@@ -12,7 +12,7 @@ import { SCENES as R002 } from './reels/r002.jsx';
 // Props ролика сериализуются в JSON, поэтому сцены подключаются здесь, по id ролика.
 const REELS = { R001, R002 };
 
-const useFonts = () => {
+export const useFonts = () => {
   const [handle] = useState(() => delayRender('fonts'));
   useEffect(() => {
     Promise.all([

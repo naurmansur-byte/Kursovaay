@@ -12,7 +12,7 @@
 | [T02 Входная диагностика](prompts/T02-diagnostic.md) | не начато | | |
 | [T03 Образец комплекта, неделя 1](prompts/T03-week01-kit.md) | не начато | | после T01 |
 | [T04 Instagram и предложение курса](prompts/T04-instagram-offer.md) | не начато | | |
-| [T05 Пилотный Reels: сценарий](prompts/T05-reel-pilot-script.md) | не начато | | |
+| [T05 Пилотный Reels: сценарий](prompts/T05-reel-pilot-script.md) | ждёт проверки Claude | [content/reels/R001-moles-h2so4/brief.md](content/reels/R001-moles-h2so4/brief.md) и 6 связанных файлов | M=98, n=0,5; обратная проверка 49 г. 106/109/113 слов, оценка 42,4/43,6/45,2 с; тексты сцен совпадают с tts. Голос, визуальный рендер и проверка преподавателем — впереди |
 | [T06 Видеоконвейер и рендер пилота](prompts/T06-video-pipeline.md) | не начато | | после T05 |
 
 ## Решения Мансура (нужны на неделе 1)

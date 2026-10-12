@@ -4,6 +4,7 @@ import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from 'remo
 import { C, F, ACCENT_HEX } from '../theme.js';
 import { wordFrame } from '../plan.js';
 import { Appear, Atom, Card, Kinetic, Label, Option, OPTIONS, Row, Sfx, TeX, enter, punch, shake } from '../kit.jsx';
+import { CourseOutro } from '../scenes.jsx';
 
 const A = (s) => `\\textcolor{${ACCENT_HEX}}{${s}}`;
 const useW = (scene) => {
@@ -198,47 +199,6 @@ const Answer = ({ scene }) => {
   );
 };
 
-const Outro = ({ scene }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const W = useW(scene);
-  const tWrite = W('пиши', 20);
-  const tWord = W('моль', tWrite + 6);
-  const letters = 'МОЛЬ'.split('');
-  return (
-    <AbsoluteFill>
-      <Kinetic at={0} y={240} size={78} rotate={-3}>Хочешь памятку?</Kinetic>
-      <Kinetic at={tWrite} y={370} size={96} rotate={-3} from="right">Пиши</Kinetic>
-      <Kinetic at={tWrite + 3} y={480} size={80} rotate={-3}>в комментариях</Kinetic>
-      <Row y={630} style={{ gap: 6 }}>
-        {frame >= tWord &&
-          letters.map((ch, i) => {
-            const p = enter(frame, tWord + i * 3, fps, { damping: 11, stiffness: 200 });
-            return (
-              <div key={i} style={{ transform: `translateY(${(1 - p) * -160}px) rotate(${(1 - p) * (i % 2 ? 18 : -18) - 4}deg)`, opacity: Math.min(1, p * 2), background: C.accent, fontFamily: F.display, fontWeight: 800, fontSize: 210, lineHeight: 1, padding: '14px 18px 22px', color: C.fg }}>
-                {ch}
-              </div>
-            );
-          })}
-      </Row>
-      <Appear at={tWord + 16} y={930}>
-        <div style={{ fontFamily: F.body, fontWeight: 800, fontSize: 54, color: C.fg, textTransform: 'uppercase', letterSpacing: '0.04em' }}>→ пришлю памятку</div>
-      </Appear>
-      <Appear at={tWord + 22} y={1060}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-          <Atom size={150} at={0} />
-          <div>
-            <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: 64, color: C.fg }}>ХИМИЯ ПРОСТО</div>
-            <div style={{ fontFamily: F.body, fontWeight: 700, fontSize: 40, color: C.muted }}>подготовка к ЕНТ по химии</div>
-          </div>
-        </div>
-      </Appear>
-      <Sfx at={tWrite} name="whoosh" />
-      {letters.map((_, i) => (
-        <Sfx key={i} at={tWord + i * 3} name="pop" volume={0.3} />
-      ))}
-    </AbsoluteFill>
-  );
-};
+const Outro = ({ scene }) => <CourseOutro scene={scene} />;
 
 export const SCENES = { hook: Hook, engage: Engage, molar: Molar, trap: Trap, answer: Answer, outro: Outro };

@@ -8,9 +8,10 @@ import { subtitleChunks } from './plan.js';
 import { Background, enter } from './kit.jsx';
 import { SCENES as R001 } from './reels/r001.jsx';
 import { SCENES as R002 } from './reels/r002.jsx';
+import { SCENES as R003 } from './reels/r003.jsx';
 
 // Props ролика сериализуются в JSON, поэтому сцены подключаются здесь, по id ролика.
-const REELS = { R001, R002 };
+const REELS = { R001, R002, R003 };
 
 export const useFonts = () => {
   const [handle] = useState(() => delayRender('fonts'));

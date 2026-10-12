@@ -1,4 +1,6 @@
-# Оформление профиля @chemistry.easy01 — к утверждению Мансуром
+# Оформление профиля @himiya.prosto (бывший @chemistry.easy01)
+
+13.10.2026 Макс установил: ник `himiya.prosto`, имя «Химия просто | ЕНТ по химии», аватар, описание. Профиль: https://www.instagram.com/himiya.prosto/
 
 Подготовил Макс 13.10.2026 на основе `PROFILE.md` (Мартин, T04). Стиль 2. Файлы — `deliverables/instagram/`.
 

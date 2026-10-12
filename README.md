@@ -5,6 +5,7 @@
 
 ## Начни здесь
 
+0. **Актуальный план — [дорожная карта запуска к 1 ноября](docs/ROADMAP.md).** Задания — в [prompts/](prompts/README.md), состояние — в [STATUS.md](STATUS.md).
 1. Прочитай [актуальную передачу работы](docs/NEXT_AGENT.md).
 2. Прочитай [контекст и ответы на 40 вопросов](docs/PROJECT_HANDOFF.md).
 3. Для видео используй [техническое задание](docs/VIDEO_PRODUCTION.md), [шаблон ролика](templates/REEL_BRIEF.md) и [проверку качества](docs/QUALITY_CHECKLIST.md).

@@ -93,8 +93,8 @@ const SLIDES = [
         <Card width={920}>
           <Big size={60}>Запись:</Big>
           <Text size={50} style={{ marginTop: 12 }}>
-            <span style={{ color: C.accent }}>WhatsApp</span> — ссылка в профиле
-            <br />или напиши в директ
+            напиши нам <span style={{ color: C.accent }}>в директ</span>
+            <br />— расскажем о курсе
           </Text>
         </Card>
       </Row>

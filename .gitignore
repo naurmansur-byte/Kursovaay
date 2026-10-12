@@ -11,3 +11,5 @@ exports/
 .DS_Store
 tools/dashboard/out/
 !deliverables/**/*.mp4
+video/build/
+video/out/

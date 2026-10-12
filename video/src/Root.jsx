@@ -3,20 +3,24 @@ import { Composition } from 'remotion';
 import { Reel } from './Reel.jsx';
 import { buildPlan } from './plan.js';
 import r001Timing from './reels/r001.timing.json';
+import r002Timing from './reels/r002.timing.json';
+import { TAILS as r002Tails } from './reels/r002.jsx';
 
 const FPS = 30;
 
-export const Root = () => {
-  const r001 = { ...buildPlan(r001Timing, FPS), silent: Boolean(r001Timing.placeholder) };
-  return (
-    <Composition
-      id="R001"
-      component={Reel}
-      durationInFrames={r001.total}
-      fps={FPS}
-      width={1080}
-      height={1920}
-      defaultProps={{ plan: r001, reel: 'R001' }}
-    />
-  );
-};
+// Ролики: id → тайминги озвучки и свои паузы.
+const REELS = [
+  { id: 'R001', timing: r001Timing },
+  { id: 'R002', timing: r002Timing, tails: r002Tails },
+];
+
+export const Root = () => (
+  <>
+    {REELS.map(({ id, timing, tails }) => {
+      const plan = { ...buildPlan(timing, FPS, tails), silent: Boolean(timing.placeholder) };
+      return (
+        <Composition key={id} id={id} component={Reel} durationInFrames={plan.total} fps={FPS} width={1080} height={1920} defaultProps={{ plan, reel: id }} />
+      );
+    })}
+  </>
+);

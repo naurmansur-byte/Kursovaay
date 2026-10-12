@@ -3,11 +3,12 @@ const LEAD = 4;
 const TAIL = 8;
 const EXTRA_TAIL = { engage: 24, answer: 16, outro: 36 };
 
-export function buildPlan(timing, fps) {
+// tails: свои паузы после реплики для отдельных сцен, в кадрах ({ engage: 60 }).
+export function buildPlan(timing, fps, tails = {}) {
   let from = 0;
   const scenes = timing.scenes.map((s, index) => {
     const lead = index === 0 ? 10 : LEAD;
-    const tail = EXTRA_TAIL[s.id] ?? TAIL;
+    const tail = tails[s.id] ?? EXTRA_TAIL[s.id] ?? TAIL;
     const voice = Math.ceil((s.speechEndMs / 1000) * fps);
     const dur = lead + voice + tail;
     const scene = { ...s, index, from, lead, dur };

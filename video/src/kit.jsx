@@ -158,6 +158,28 @@ export const Atom = ({ size = 320, at = 0, speed = 1 }) => {
   );
 };
 
+// Пламя: два языка огня с мерцанием.
+export const Flame = ({ size = 300, at = 0 }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (frame < at) return null;
+  const p = enter(frame, at, fps, { damping: 12, stiffness: 120 });
+  const t = (frame - at) / fps;
+  const fl = 1 + 0.06 * Math.sin(t * 17) + 0.04 * Math.sin(t * 29);
+  const sway = 4 * Math.sin(t * 9);
+  // Пламя с тремя языками: центральный высокий, боковые ниже.
+  const flame =
+    'M0 -190 C 22 -140, 62 -118, 58 -62 C 82 -92, 106 -70, 106 -8 C 110 88, 60 150, 0 150 C -60 150, -110 88, -106 -8 C -102 -66, -76 -84, -62 -118 C -46 -78, -30 -86, -24 -128 C -16 -158, -6 -172, 0 -190 Z';
+  return (
+    <svg width={size} height={size} viewBox="-200 -200 400 400" style={{ transform: `scale(${p})`, transformOrigin: '50% 90%' }}>
+      <g transform={`translate(0 140) rotate(${sway}) scale(1 ${fl}) translate(0 -140)`}>
+        <path d={flame} fill={C.accent} />
+        <path d={flame} fill={C.fg} transform="translate(0 78) scale(0.5 0.48)" />
+      </g>
+    </svg>
+  );
+};
+
 // Варианты ответа как в бланке ЕНТ. state: { [letter]: 'right' | 'wrong' | 'dim' }
 export const OPTIONS = [
   ['А', '0{,}5'],
@@ -166,7 +188,7 @@ export const OPTIONS = [
   ['Г', '2'],
 ];
 
-export const Option = ({ letter, value, state, at = 0, compact = false }) => {
+export const Option = ({ letter, value, state, at = 0, compact = false, unit = 'моль' }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   if (frame < at) return null;
@@ -207,7 +229,7 @@ export const Option = ({ letter, value, state, at = 0, compact = false }) => {
       >
         {letter}
       </div>
-      <TeX tex={`${value}\\ \\text{моль}`} size={compact ? 54 : 46} />
+      <TeX tex={unit ? `${value}\\ \\text{${unit}}` : value} size={compact ? 54 : 46} />
       {wrong && <div style={{ position: 'absolute', left: -8, right: -8, top: '50%', height: 8, background: C.accent, transform: 'rotate(-6deg)' }} />}
     </div>
   );

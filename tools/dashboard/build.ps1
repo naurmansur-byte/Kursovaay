@@ -47,7 +47,15 @@ foreach ($d in $notes.deliverables) {
 }
 
 $mediaExt = '\.(png|jpe?g|webp|gif|svg|mp4|webm)$'
-$media = @($files | Where-Object { $_ -match $mediaExt })
+# One copy per identical file (same git blob); prefer the deliverables/ copy.
+$seen = @{}
+$media = @(git -C $repo -c core.quotepath=false ls-files -s | ForEach-Object {
+    $parts = $_ -split "`t", 2
+    [pscustomobject]@{ hash = ($parts[0] -split ' ')[1]; path = $parts[1] }
+} | Where-Object { $_.path -match $mediaExt } |
+    Sort-Object @{ Expression = { -not $_.path.StartsWith('deliverables/') } }, path |
+    Where-Object { if ($seen.ContainsKey($_.hash)) { $false } else { $seen[$_.hash] = $true; $true } } |
+    ForEach-Object { $_.path })
 
 $commits = @(git -C $repo log -12 --date=short "--format=%h%x1f%ad%x1f%s" | ForEach-Object {
     $p = $_ -split [char]0x1f

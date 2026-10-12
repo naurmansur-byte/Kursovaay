@@ -1,0 +1,35 @@
+{
+  "start": "2026-11-01",
+  "deliverables": [
+    { "task": "T01", "label": "Программа курса и календарь", "path": "course/PROGRAM.md" },
+    { "task": "T01", "label": "Google Doc программы на Диске", "external": "нет", "note": "у агента нет доступа к Диску" },
+    { "task": "T02", "label": "Диагностика: версия ученика", "path": "course/diagnostic/student.md" },
+    { "task": "T02", "label": "Диагностика: ключи и распределение", "path": "course/diagnostic/teacher.md" },
+    { "task": "T02", "label": "Google Form диагностики", "external": "нет", "note": "есть текст для ручного переноса" },
+    { "task": "T03", "label": "Комплект недели 1 (тексты)", "prefix": "course/week-01/" },
+    { "task": "T03", "label": "Шаблон комплекта урока", "path": "course/LESSON_KIT_TEMPLATE.md" },
+    { "task": "T03", "label": "Word, PDF и PowerPoint недели 1", "prefix": "deliverables/T03/", "note": "агент сделал их у себя, но не загрузил" },
+    { "task": "T04", "label": "Шапка, оффер, FAQ, переписка, анкета", "prefix": "content/instagram/" },
+    { "task": "T04", "label": "Google Form анкеты записи", "external": "нет", "note": "есть текст для ручного переноса" },
+    { "task": "T05", "label": "Сценарии пилотного Reels A/B/C", "prefix": "content/reels/R001-moles-h2so4/" },
+    { "task": "T12", "label": "3 стиля: аватарка, кадры Reels, обложки", "prefix": "content/brand/" },
+    { "task": "T06", "label": "Проект видео (Remotion)", "prefix": "video/" },
+    { "task": "T06", "label": "MP4 пилота, 3 варианта", "prefix": "deliverables/T06/" }
+  ],
+  "gaps": [
+    "Копий на Google Диске нет: у агента нет доступа к Диску, всё лежит только на GitHub.",
+    "Word, PDF и PowerPoint первой недели агент сделал у себя и никуда не загрузил, поэтому открыть их сейчас нельзя.",
+    "Google Forms для диагностики и анкеты записи не созданы, есть только тексты для переноса.",
+    "Преподаватель ещё ничего не проверял.",
+    "Фирменного стиля, аватарки и обложек пока нет (T12).",
+    "Видео пока нет: проект и рендер начнутся после выбора стиля (T06).",
+    "Сроки ЕНТ-2027 в официальных источниках пока не найдены."
+  ],
+  "connections": [
+    { "name": "GitHub, репозиторий Kursovaay", "state": "ok" },
+    { "name": "Metricool → YouTube", "state": "ok" },
+    { "name": "Metricool → Instagram", "state": "no", "note": "подключить Instagram внутри Metricool" },
+    { "name": "Google Диск у агента", "state": "no", "note": "готовые файлы пока кладём в репозиторий" },
+    { "name": "Instagram в Chrome для оформления профиля", "state": "unknown", "note": "войти самому, включить Claude in Chrome" }
+  ]
+}

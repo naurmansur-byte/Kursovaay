@@ -9,3 +9,5 @@ exports/
 *.wav
 *.mp3
 .DS_Store
+tools/dashboard/out/
+!deliverables/**/*.mp4

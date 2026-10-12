@@ -1,0 +1,259 @@
+<title>Пульт «Химия просто»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: журнал запуска — отсчёт до старта, затем «нужно от вас», задания с проверкой есть/нет, файлы, медиа, история. */
+:root {
+  --bg: #F4F6F4; --surface: #FFFFFF; --ink: #15181A; --muted: #5C646A; --line: #DADFDC;
+  --accent: #D2232A; --ok: #1E7A4C; --warn: #A76200; --info: #2455C3; --idle: #848B91; --violet: #6A3E9E;
+  --tint-ok: #E3F2EA; --tint-warn: #FBEFD9; --tint-info: #E3EBFB; --tint-idle: #ECEEEF; --tint-violet: #EFE7F8; --tint-accent: #FBE4E4;
+  --display: "Unbounded", "Arial Black", system-ui, sans-serif;
+  --body: "Onest", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #101214; --surface: #191C1F; --ink: #ECEEF0; --muted: #9AA2A8; --line: #2B3034;
+  --accent: #FF5257; --ok: #4CC38A; --warn: #F0A63A; --info: #7FA3FF; --idle: #7F868C; --violet: #B88EF2;
+  --tint-ok: #15301F; --tint-warn: #33260F; --tint-info: #17233F; --tint-idle: #23272A; --tint-violet: #2A1D3A; --tint-accent: #3A1618;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #101214; --surface: #191C1F; --ink: #ECEEF0; --muted: #9AA2A8; --line: #2B3034;
+  --accent: #FF5257; --ok: #4CC38A; --warn: #F0A63A; --info: #7FA3FF; --idle: #7F868C; --violet: #B88EF2;
+  --tint-ok: #15301F; --tint-warn: #33260F; --tint-info: #17233F; --tint-idle: #23272A; --tint-violet: #2A1D3A; --tint-accent: #3A1618;
+  color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); padding-inline: 16px; padding-block: 24px 48px; }
+.wrap { max-width: 960px; margin: 0 auto; display: grid; gap: 40px; }
+a { color: var(--info); text-underline-offset: 2px; }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+h1, h2 { font-family: var(--display); text-wrap: balance; margin: 0; }
+h2 { font-size: 1.05rem; font-weight: 500; letter-spacing: 0.01em; display: flex; align-items: baseline; gap: 10px; }
+h2 .count { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+section { display: grid; gap: 14px; min-width: 0; }
+.eyebrow { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+/* Шапка */
+header { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: end; border-bottom: 2px solid var(--ink); padding-bottom: 20px; }
+header h1 { font-size: clamp(1.5rem, 4.5vw, 2.4rem); font-weight: 700; line-height: 1.1; }
+header h1 em { font-style: normal; color: var(--accent); }
+.sub { color: var(--muted); margin: 8px 0 0; max-width: 60ch; }
+.countdown { text-align: right; }
+.countdown b { display: block; font-family: var(--display); font-size: clamp(2.6rem, 9vw, 4rem); line-height: 0.95; color: var(--accent); font-variant-numeric: tabular-nums; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; grid-column: 1 / -1; }
+
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 500; white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.s-ok { color: var(--ok); background: var(--tint-ok); }
+.s-warn { color: var(--warn); background: var(--tint-warn); }
+.s-info { color: var(--info); background: var(--tint-info); }
+.s-idle { color: var(--idle); background: var(--tint-idle); }
+.s-violet { color: var(--violet); background: var(--tint-violet); }
+.s-accent { color: var(--accent); background: var(--tint-accent); }
+
+/* Нужно от вас */
+.need { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 6px; padding: 18px 20px; display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.need h3 { margin: 0 0 8px; font-size: 0.92rem; }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.list li { display: grid; grid-template-columns: 20px 1fr; gap: 8px; align-items: start; min-width: 0; }
+.mark { font-weight: 700; text-align: center; line-height: 1.55; }
+.mark.yes { color: var(--ok); } .mark.no { color: var(--accent); } .mark.unknown { color: var(--warn); }
+.note { color: var(--muted); font-size: 0.86rem; }
+
+/* Задания */
+.tasks { display: grid; gap: 12px; }
+.task { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px; display: grid; gap: 12px; min-width: 0; }
+.task-head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.task-id { font-family: var(--mono); font-weight: 500; color: var(--muted); }
+.task-title { font-weight: 600; flex: 1 1 220px; }
+.task details { border-top: 1px dashed var(--line); padding-top: 10px; }
+.task summary { cursor: pointer; color: var(--muted); font-size: 0.86rem; }
+.task .report { margin: 8px 0 0; font-size: 0.88rem; overflow-wrap: anywhere; }
+.open-link { font-size: 0.86rem; white-space: nowrap; }
+
+/* Чего нет */
+.gaps { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 70ch; }
+.gaps li::marker { color: var(--accent); }
+
+/* Файлы */
+.groups { display: grid; gap: 8px; }
+.group { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.group summary { cursor: pointer; padding: 10px 14px; display: flex; justify-content: space-between; gap: 12px; font-weight: 500; }
+.group summary span { font-family: var(--mono); color: var(--muted); font-weight: 400; }
+.group ul { list-style: none; margin: 0; padding: 0 14px 12px; display: grid; gap: 4px; }
+.group li { overflow-wrap: anywhere; }
+
+/* Медиа */
+.media { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.media figure { margin: 0; display: grid; gap: 6px; }
+.media img, .media video { width: 100%; max-width: 100%; aspect-ratio: 9 / 16; object-fit: cover; background: var(--tint-idle); border-radius: 6px; border: 1px solid var(--line); }
+.media figcaption { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); overflow-wrap: anywhere; }
+.empty { background: var(--surface); border: 1px dashed var(--line); border-radius: 6px; padding: 22px; color: var(--muted); }
+
+/* История */
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.log li { display: grid; grid-template-columns: 92px 1fr auto; gap: 12px; font-size: 0.9rem; min-width: 0; }
+.log time, .log .mono { color: var(--muted); font-variant-numeric: tabular-nums; }
+.log .subj { overflow-wrap: anywhere; }
+footer { color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--line); padding-top: 14px; }
+
+@media (max-width: 560px) {
+  header { grid-template-columns: 1fr; }
+  .countdown { text-align: left; }
+  .log li { grid-template-columns: 1fr; gap: 0; }
+}
+@media (prefers-reduced-motion: no-preference) { .task, .group { transition: border-color .15s; } .task:hover { border-color: var(--muted); } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Курс подготовки к ЕНТ · химия</div>
+      <h1>Химия <em>просто</em>: что готово к старту</h1>
+      <p class="sub">Всё, что сделал ИИ-агент, и чего ещё нет. Данные взяты из репозитория на момент сборки.</p>
+    </div>
+    <div class="countdown"><b id="days">—</b><span class="eyebrow" id="days-label">дней до старта 1 ноября</span></div>
+    <div class="chips" id="chips"></div>
+  </header>
+
+  <section aria-labelledby="need-h">
+    <h2 id="need-h">Нужно от вас</h2>
+    <div class="need">
+      <div><h3>Решения</h3><ul class="list" id="decisions"></ul></div>
+      <div><h3>Подключения</h3><ul class="list" id="connections"></ul></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="tasks-h">
+    <h2 id="tasks-h">Задания агента <span class="count" id="tasks-count"></span></h2>
+    <div class="tasks" id="tasks"></div>
+  </section>
+
+  <section aria-labelledby="gaps-h">
+    <h2 id="gaps-h">Чего пока нет</h2>
+    <ul class="gaps" id="gaps"></ul>
+  </section>
+
+  <section aria-labelledby="media-h">
+    <h2 id="media-h">Фото и видео <span class="count" id="media-count"></span></h2>
+    <div id="media"></div>
+  </section>
+
+  <section aria-labelledby="files-h">
+    <h2 id="files-h">Все файлы в репозитории <span class="count" id="files-count"></span></h2>
+    <div class="groups" id="files"></div>
+  </section>
+
+  <section aria-labelledby="log-h">
+    <h2 id="log-h">Последние изменения</h2>
+    <ul class="log" id="log"></ul>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<script>
+const DATA = /*DATA*/null;
+const BLOB = "https://github.com/naurmansur-byte/Kursovaay/blob/main/";
+const TREE = "https://github.com/naurmansur-byte/Kursovaay/tree/main/";
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const ghUrl = (p) => (p.endsWith("/") ? TREE : BLOB) + p.split("/").map(encodeURIComponent).join("/");
+const rich = (s) => esc(s)
+  .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, t, href) => `<a href="${/^https?:/.test(href) ? href : ghUrl(href)}" target="_blank" rel="noopener">${t}</a>`)
+  .replace(/`([^`]+)`/g, "<code>$1</code>");
+
+function statusClass(s) {
+  s = (s || "").toLowerCase();
+  if (s.includes("утвержд") || s.includes("принято")) return ["s-ok", "готово"];
+  if (s.includes("правки")) return ["s-accent", "правки"];
+  if (s.includes("решение")) return ["s-violet", "нужно ваше решение"];
+  if (s.includes("проверки claude")) return ["s-warn", "ждёт проверки Claude"];
+  if (s.includes("преподават")) return ["s-info", "у преподавателя"];
+  if (s.includes("в работе")) return ["s-info", "в работе"];
+  return ["s-idle", "не начато"];
+}
+function plural(n, one, few, many) {
+  const m10 = n % 10, m100 = n % 100;
+  return m10 === 1 && m100 !== 11 ? one : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? few : many;
+}
+
+function render(d) {
+  // Отсчёт
+  const [y, m, day] = d.start.split("-").map(Number);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const days = Math.round((new Date(y, m - 1, day) - today) / 86400000);
+  $("days").textContent = days > 0 ? days : "старт";
+  $("days-label").textContent = days > 0 ? `${plural(days, "день", "дня", "дней")} до старта 1 ноября` : "курс идёт";
+
+  // Сводка по статусам
+  const counts = {};
+  d.tasks.forEach((t) => { const [c, l] = statusClass(t.status); const k = c + "|" + l; counts[k] = (counts[k] || 0) + 1; });
+  $("chips").innerHTML = Object.entries(counts).map(([k, n]) => { const [c, l] = k.split("|"); return `<span class="pill ${c}">${esc(l)}: ${n}</span>`; }).join("");
+
+  // Нужно от вас
+  const open = d.decisions.filter((x) => !x.done);
+  $("decisions").innerHTML = open.length
+    ? open.map((x) => `<li><span class="mark no">○</span><span>${rich(x.text)}</span></li>`).join("")
+    : `<li><span class="mark yes">✓</span><span>Все решения приняты</span></li>`;
+  const sym = { ok: "✓", no: "✗", unknown: "?" }, cls = { ok: "yes", no: "no", unknown: "unknown" };
+  $("connections").innerHTML = d.connections.map((c) =>
+    `<li><span class="mark ${cls[c.state]}">${sym[c.state]}</span><span>${esc(c.name)}${c.note ? `<br><span class="note">${esc(c.note)}</span>` : ""}</span></li>`).join("");
+
+  // Задания
+  $("tasks-count").textContent = d.tasks.length;
+  $("tasks").innerHTML = d.tasks.map((t) => {
+    const [c, l] = statusClass(t.status);
+    const items = d.deliverables.filter((x) => x.task === t.id).map((x) => {
+      const what = x.count ? `${esc(x.label)} <span class="note">· ${x.count} ${plural(x.count, "файл", "файла", "файлов")}</span>` : esc(x.label);
+      const link = x.state === "yes" && x.link ? ` <a class="open-link" href="${ghUrl(x.link)}" target="_blank" rel="noopener">открыть ↗</a>` : "";
+      const note = x.note ? `<br><span class="note">${esc(x.note)}</span>` : "";
+      return `<li><span class="mark ${x.state}">${x.state === "yes" ? "✓" : "✗"}</span><span>${what}${link}${note}</span></li>`;
+    }).join("");
+    const report = [t.result, t.notes].filter(Boolean).map(rich).join("<br>");
+    return `<article class="task">
+      <div class="task-head"><span class="task-id">${esc(t.id)}</span><span class="task-title">${esc(t.title)}</span><span class="pill ${c}">${esc(l)}</span></div>
+      ${items ? `<ul class="list">${items}</ul>` : ""}
+      ${report ? `<details><summary>Отчёт агента</summary><p class="report">${report}</p></details>` : ""}
+    </article>`;
+  }).join("");
+
+  // Чего нет
+  $("gaps").innerHTML = d.gaps.map((g) => `<li>${rich(g)}</li>`).join("");
+
+  // Медиа
+  $("media-count").textContent = d.media.length || "";
+  $("media").innerHTML = d.media.length
+    ? `<div class="media">${d.media.map((p) => `<figure>${/\.(mp4|webm)$/i.test(p)
+        ? `<video src="${esc(p)}" controls muted playsinline preload="metadata"></video>`
+        : `<img src="${esc(p)}" alt="${esc(p.split("/").pop())}" loading="lazy">`}<figcaption>${esc(p)}</figcaption></figure>`).join("")}</div>`
+    : `<p class="empty">Фото и видео пока нет. Аватарка и кадры появятся после T12 (фирменный стиль), ролики — после T06.</p>`;
+
+  // Файлы по разделам
+  const area = (p) => p.startsWith("course/") ? "Курс: программа, диагностика, уроки"
+    : p.startsWith("content/instagram/") ? "Instagram: тексты и анкета"
+    : p.startsWith("content/reels/") ? "Reels: сценарии"
+    : p.startsWith("content/brand/") ? "Фирменный стиль"
+    : p.startsWith("content/youtube/") ? "YouTube"
+    : p.startsWith("video/") ? "Видео: код"
+    : p.startsWith("deliverables/") ? "Готовые файлы: Word, PDF, слайды, видео"
+    : p.startsWith("prompts/") ? "Задания агенту"
+    : /^(docs|templates|archive)\//.test(p) ? "Документы проекта"
+    : p.startsWith("tools/") ? "Инструменты"
+    : "Корень репозитория";
+  const groups = {};
+  d.files.forEach((p) => (groups[area(p)] ||= []).push(p));
+  $("files-count").textContent = d.files.length;
+  $("files").innerHTML = Object.entries(groups).map(([g, list]) => `<details class="group">
+      <summary>${esc(g)} <span>${list.length}</span></summary>
+      <ul>${list.map((p) => `<li><a class="mono" href="${ghUrl(p)}" target="_blank" rel="noopener">${esc(p)}</a></li>`).join("")}</ul>
+    </details>`).join("");
+
+  // История
+  $("log").innerHTML = d.commits.map((c) => `<li><time>${esc(c.date)}</time><span class="subj">${esc(c.subject)}</span><span class="mono">${esc(c.hash)}</span></li>`).join("");
+  $("footer").innerHTML = `Собрано ${esc(d.generated)} · коммит <span class="mono">${esc(d.head)}</span> · <a href="${TREE}" target="_blank" rel="noopener">репозиторий на GitHub ↗</a>`;
+}
+if (DATA) render(DATA);
+</script>

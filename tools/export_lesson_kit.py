@@ -99,7 +99,7 @@ def export_docx(text, output):
                             run.font.size = DocxPt(9.5)
         else:
             doc.add_paragraph(value)
-    section.footer.paragraphs[0].text = 'Химия просто • Черновик для проверки преподавателем'
+    section.footer.paragraphs[0].text = 'ХимБио просто • Черновик для проверки преподавателем'
     output.parent.mkdir(parents=True, exist_ok=True)
     doc.save(output)
     Document(output)  # Verify the written Office container opens.
@@ -138,12 +138,12 @@ def export_notes_pdf(text, output):
             story.append(Paragraph(escape(value).replace('\n','<br/>'), body))
     def footer(canvas, doc):
         canvas.setFont('DejaVu',8)
-        canvas.drawString(45,24,'Химия просто • Черновик, ждёт проверки преподавателем')
+        canvas.drawString(45,24,'ХимБио просто • Черновик, ждёт проверки преподавателем')
         canvas.drawRightString(A4[0]-45,24,str(doc.page))
     output.parent.mkdir(parents=True, exist_ok=True)
     SimpleDocTemplate(str(output),pagesize=A4,leftMargin=45,rightMargin=45,topMargin=35,bottomMargin=38).build(story,onFirstPage=footer,onLaterPages=footer)
 
-# --- Презентация в стиле 2 «Химия просто» (Макс, 13.10.2026) -----------------------------
+# --- Презентация в стиле 2 «ХимБио просто» (Макс, 13.10.2026) -----------------------------
 # Обложка тёмная; слайды объяснения светлые (читаемость в Google Meet); ответ — отдельный тёмный слайд
 # сразу после задания. Шрифты Unbounded и Manrope есть в Google Slides; в PowerPoint без них — замена.
 INK, PAPER, ACCENT, MUTED, TINT, LIGHT = '151515', 'FFFFFF', 'F13A43', '6B6760', 'F5F2EB', 'F3F0E8'
@@ -278,14 +278,14 @@ def export_slides(source, output):
     readme = output.parent.parent.parent / 'course' / output.parent.name / 'README.md'
     topic_match = re.search(r'^# Неделя\s*0?(\d+)[.:]\s*(.+)$', readme.read_text(encoding='utf-8'), re.M) if readme.exists() else None
     week_no, topic = (topic_match.group(1), topic_match.group(2).strip()) if topic_match else (output.parent.name[-2:].lstrip('0'), '')
-    label = f'ХИМИЯ ПРОСТО · НЕДЕЛЯ {week_no}'
+    label = f'ХИМБИО ПРОСТО · НЕДЕЛЯ {week_no}'
     deck = Presentation()
     deck.slide_width, deck.slide_height = Inches(13.333), Inches(7.5)
     blank = deck.slide_layouts[6]
 
     cover = deck.slides.add_slide(blank)
     cover.background.fill.solid(); cover.background.fill.fore_color.rgb = _rgb(INK)
-    _chrome(cover, 'ХИМИЯ ПРОСТО · ПОДГОТОВКА К ЕНТ', '', dark=True)
+    _chrome(cover, 'ХИМБИО ПРОСТО · ПОДГОТОВКА К ЕНТ', '', dark=True)
     plaque = _box(cover, .8, 2.0, 3.1, .85, ACCENT, rotation=-3)
     p = _para(plaque.text_frame); _runs(p, f'НЕДЕЛЯ {week_no}', 24, 'FFFFFF', font='Unbounded', bold=True)
     tf = _text(cover, .8, 3.2, 11.8, 2.4)

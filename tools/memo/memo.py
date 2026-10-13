@@ -1,4 +1,4 @@
-"""Памятка недели «Химия просто»: course/week-NN/memo.md -> карточки 1080×1920 (PNG) + PDF.
+"""Памятка недели «ХимБио просто»: course/week-NN/memo.md -> карточки 1080×1920 (PNG) + PDF.
 
 Разметка: `# Заголовок карточки`; строки `= крупно`, `- пункт`, `! ловушка`, `> примечание`, `**жирное**`.
 Запуск: .venv/Scripts/python tools/memo/memo.py week-01   (результат: exports/week-01/memo/*.png и memo.pdf)
@@ -45,10 +45,10 @@ def card_html(css: str, meta: dict, k: int, total: int, title: str, lines: list[
             items.append(f'<p>{inline(ln)}</p>')
     counter = f'{k}/{total}' if total > 1 else ''
     return (f'<!doctype html><html lang="ru"><head><meta charset="utf-8"><style>{css}</style></head><body>'
-            f'<div class="top"><span><i></i>ХИМИЯ ПРОСТО · ЕНТ</span><span>{counter}</span></div>'
+            f'<div class="top"><span><i></i>ХИМБИО ПРОСТО · ЕНТ</span><span>{counter}</span></div>'
             f'<div class="plaque">Памятка · неделя {meta.get("week", "")}</div>'
             f'<h1>{inline(title)}</h1><div class="list">{"".join(items)}</div>'
-            f'<div class="foot">{ATOM}<span>@himiya.prosto<br><small>сохрани, чтобы повторить перед пробником</small></span></div>'
+            f'<div class="foot">{ATOM}<span>@himbio.prosto<br><small>сохрани, чтобы повторить перед пробником</small></span></div>'
             f'</body></html>')
 
 

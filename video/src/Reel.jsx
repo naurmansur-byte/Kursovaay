@@ -31,7 +31,7 @@ export const useFonts = () => {
 const BrandLabel = () => (
   <div style={{ position: 'absolute', top: 120, left: SAFE.x, display: 'flex', alignItems: 'center', gap: 14, fontFamily: F.body, fontWeight: 800, fontSize: 30, letterSpacing: '0.14em', color: C.fg }}>
     <span style={{ width: 16, height: 16, borderRadius: '50%', background: C.fg }} />
-    ХИМИЯ ПРОСТО · ЕНТ
+    ХИМБИО ПРОСТО · ЕНТ
   </div>
 );
 

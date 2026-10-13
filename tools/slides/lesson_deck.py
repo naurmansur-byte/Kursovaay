@@ -1,4 +1,4 @@
-"""Презентация урока «Химия просто» (новый формат): course/week-NN/lesson-K-slides.md -> PPTX + PDF.
+"""Презентация урока «ХимБио просто» (новый формат): course/week-NN/lesson-K-slides.md -> PPTX + PDF.
 
 Урок = части (`# Название`), у каждой части вопрос (`? …`) и связка с прошлой частью (`↳ …`).
 Слайды части: `## Тип: Заголовок` — Понятие, Схема, Пример (раскрывается по шагам), Ловушка,
@@ -94,7 +94,7 @@ def build(src: Path, out_pptx: Path, label: str, plaque: str, keep: Path | None,
     def content(i, tag, title, inner, cls='light', extra=''):
         return page(css, top(i) + f'<div class="tag {tag[1]}">{tag[0]}</div><h2><span>{inline(title)}</span></h2>{extra}{inner}', cls)
 
-    add(page(css, '<div class="top"><span><i></i>ХИМИЯ ПРОСТО · ПОДГОТОВКА К ЕНТ</span><span></span></div>'
+    add(page(css, '<div class="top"><span><i></i>ХИМБИО ПРОСТО · ПОДГОТОВКА К ЕНТ</span><span></span></div>'
              f'<div class="plaque">{html.escape(plaque)}</div><h1 class="cover-title">{inline(meta.get("title", ""))}</h1>'
              f'<p class="cover-goal">{inline(meta.get("goal", ""))}</p>{ATOM}', 'dark cover'), 'Обложка.', meta.get('intro', ''))
     agenda = ''.join(f'<li><span>{k + 1}</span>{inline(p["title"])}</li>' for k, p in enumerate(parts))
@@ -152,14 +152,14 @@ def main(argv: list[str]) -> None:
         src = ROOT / argv[argv.index('--src') + 1]
         out = ROOT / argv[argv.index('--out') + 1]
         out.mkdir(parents=True, exist_ok=True)
-        build(src, out / 'deck.pptx', 'ХИМИЯ ПРОСТО', 'Химия для ЕНТ', out / 'png' if keep_png else None,
+        build(src, out / 'deck.pptx', 'ХИМБИО ПРОСТО', 'Химия для ЕНТ', out / 'png' if keep_png else None,
               out / 'manifest.json' if '--manifest' in argv else None)
         return
     week, lesson = argv[0], argv[1]
     meta_week = week[-2:].lstrip('0')
     out = ROOT / 'exports' / week
     build(ROOT / 'course' / week / f'lesson-{lesson}-slides.md', out / f'lesson-{lesson}-slides.pptx',
-          f'ХИМИЯ ПРОСТО · НЕДЕЛЯ {meta_week} · УРОК {lesson}', f'Неделя {meta_week} · урок {lesson}',
+          f'ХИМБИО ПРОСТО · НЕДЕЛЯ {meta_week} · УРОК {lesson}', f'Неделя {meta_week} · урок {lesson}',
           out / f'lesson-{lesson}-png' if keep_png else None, None)
 
 

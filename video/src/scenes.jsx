@@ -64,7 +64,7 @@ export const EngageScene = ({ scene, questionTex, options, unit }) => {
 };
 
 // Аутро-приглашение на курс: логотип, факты о курсе (только утверждённые), слово для комментариев.
-// Голос: «Хочешь решать такие задачи? Курс «Химия просто», старт первого ноября. Пиши «курс» в комментариях!»
+// Голос: «Хочешь решать такие задачи? Курс «ХимБио просто», старт первого ноября. Пиши «курс» в комментариях!»
 export const CourseOutro = ({ scene, word = 'курс' }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -88,7 +88,7 @@ export const CourseOutro = ({ scene, word = 'курс' }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
           <Atom size={110} at={tCourse} speed={1.4} />
           <div>
-            <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: 62, lineHeight: 1, color: C.fg, whiteSpace: 'nowrap' }}>ХИМИЯ ПРОСТО</div>
+            <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: 62, lineHeight: 1, color: C.fg, whiteSpace: 'nowrap' }}>ХИМБИО ПРОСТО</div>
             <div style={{ fontFamily: F.body, fontWeight: 700, fontSize: 40, color: C.muted, marginTop: 8 }}>курс подготовки к ЕНТ</div>
           </div>
         </div>
@@ -158,7 +158,7 @@ export const OutroScene = ({ scene, word, writeStem = 'пиши', wordStem }) =>
         <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
           <Atom size={150} at={0} />
           <div>
-            <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: 64, color: C.fg }}>ХИМИЯ ПРОСТО</div>
+            <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: 64, color: C.fg }}>ХИМБИО ПРОСТО</div>
             <div style={{ fontFamily: F.body, fontWeight: 700, fontSize: 40, color: C.muted }}>подготовка к ЕНТ по химии</div>
           </div>
         </div>

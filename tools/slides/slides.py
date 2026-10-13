@@ -1,4 +1,4 @@
-"""Презентация недели «Химия просто»: slides-outline.md -> слайды-картинки 1920×1080 (Chrome) -> PPTX с заметками + PDF.
+"""Презентация недели «ХимБио просто»: slides-outline.md -> слайды-картинки 1920×1080 (Chrome) -> PPTX с заметками + PDF.
 
 Выглядит одинаково в PowerPoint любой версии, Google Slides и Meet: шрифты и индексы уже «впечатаны» в картинку.
 Правки — в slides-outline.md, затем повторный запуск.
@@ -116,10 +116,10 @@ def build(week: str) -> None:
     tm = re.search(r'^# Неделя\s*0?(\d+)[.:]\s*(.+)$', readme, re.M)
     week_no, topic = (tm.group(1), tm.group(2).strip()) if tm else (week[-2:].lstrip('0'), '')
     css = (HERE / 'slides.css').read_text(encoding='utf-8').replace('{{FONTS}}', (ROOT / 'content/brand/fonts').as_uri())
-    label = f'<div class="top"><span><i></i>ХИМИЯ ПРОСТО · НЕДЕЛЯ {week_no}</span><span>{{counter}}</span></div>'
+    label = f'<div class="top"><span><i></i>ХИМБИО ПРОСТО · НЕДЕЛЯ {week_no}</span><span>{{counter}}</span></div>'
 
     pages: list[tuple[str, str]] = []  # (html, notes)
-    pages.append((page(css, f'<div class="top"><span><i></i>ХИМИЯ ПРОСТО · ПОДГОТОВКА К ЕНТ</span><span></span></div>'
+    pages.append((page(css, f'<div class="top"><span><i></i>ХИМБИО ПРОСТО · ПОДГОТОВКА К ЕНТ</span><span></span></div>'
                        f'<div class="plaque">Неделя {week_no}</div><h1 class="cover-title">{html.escape(topic)}</h1>{ATOM}', 'dark cover'),
                   'Обложка недели.'))
     sections = list(re.finditer(r'^## Слайд (\d+)\.?\s*([^\n]*)', text, re.M))

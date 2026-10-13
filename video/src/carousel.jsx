@@ -101,7 +101,7 @@ const SLIDES = [
       <Row y={1080}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
           <Atom size={120} at={-60} speed={0} />
-          <Big size={60}>ХИМИЯ ПРОСТО</Big>
+          <Big size={60}>ХИМБИО ПРОСТО</Big>
         </div>
       </Row>
     </>
@@ -119,7 +119,7 @@ export const CarouselSlide = ({ n }) => {
       <div style={{ position: 'absolute', top: 70, left: SAFE.x, right: SAFE.x, display: 'flex', justifyContent: 'space-between', fontFamily: F.body, fontWeight: 800, fontSize: 30, letterSpacing: '0.14em', color: C.fg }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <span style={{ width: 16, height: 16, borderRadius: '50%', background: C.accent }} />
-          ХИМИЯ ПРОСТО · ЕНТ
+          ХИМБИО ПРОСТО · ЕНТ
         </span>
         <span style={{ color: C.muted }}>{n}/{SLIDES.length}</span>
       </div>

@@ -49,12 +49,12 @@ def doc(w: int, h: int, css: str, body: str) -> str:
 
 # ── Шаблоны сторис 1080×1920 ───────────────────────────────
 
-def story(head: str, inner: str = '', css: str = '', foot: str = '@himiya.prosto') -> str:
+def story(head: str, inner: str = '', css: str = '', foot: str = '@himbio.prosto') -> str:
     return doc(1080, 1920, """
 .head { position: absolute; left: 0; right: 0; top: 290px; text-align: center; }
 .head .plaque { font-size: 92px; }
 .foot { position: absolute; left: 0; right: 0; top: 1500px; text-align: center; font: 800 34px 'Manrope'; letter-spacing: .1em; text-transform: uppercase; }
-""" + css, f'<div class="tag" style="top:250px"><i></i>ХИМИЯ ПРОСТО</div>' * 0
+""" + css, f'<div class="tag" style="top:250px"><i></i>ХИМБИО ПРОСТО</div>' * 0
         + f'<div class="head">{head}</div>{inner}<div class="foot">{foot}</div>')
 
 
@@ -80,7 +80,7 @@ STORIES = {
     'story-task': story('<div class="plaque">Задача дня</div>', '<div class="space card"></div>', BLANK_CARD, 'ответ — в следующей сторис'),
     'story-answer': story('<div class="plaque" style="background:#F3F0E8;color:#151515">Ответ ✓</div>', '<div class="space card"></div>', BLANK_CARD),
     # Чистый фон с подписью: для любых сторис.
-    'story-blank': story('<div style="font:800 40px Manrope;letter-spacing:.14em;display:inline-flex;align-items:center;gap:16px"><i style="width:18px;height:18px;border-radius:50%;background:#F13A43"></i>ХИМИЯ ПРОСТО</div>'),
+    'story-blank': story('<div style="font:800 40px Manrope;letter-spacing:.14em;display:inline-flex;align-items:center;gap:16px"><i style="width:18px;height:18px;border-radius:50%;background:#F13A43"></i>ХИМБИО ПРОСТО</div>'),
 }
 
 
@@ -97,7 +97,7 @@ def ad(w: int, h: int, y: dict, size: int = 230) -> str:
     """y: вертикальные позиции блоков (tag, h1, para, chips, cta) — свои для 4:5 и 9:16."""
     return doc(w, h, AD_CSS + f'.icons .atom {{ width: {size}px; height: {size}px; }} .dna {{ width: {int(size * .55)}px; height: {int(size * 1.2)}px; }}', f"""
 <div class="slash" style="top:-60px;height:{y['h1'] + 60}px;right:70px;width:60px"></div>
-<div class="tag" style="top:{y['tag']}px"><i></i>ХИМИЯ ПРОСТО · ЕНТ</div>
+<div class="tag" style="top:{y['tag']}px"><i></i>ХИМБИО ПРОСТО · ЕНТ</div>
 <div style="position:absolute;left:80px;top:{y['h1']}px">
   <h1 class="big" style="font-size:104px">Химия<br>и биология</h1>
   <div class="plaque" style="font-size:58px;margin-top:34px">подготовка к ЕНТ</div>
@@ -105,7 +105,7 @@ def ad(w: int, h: int, y: dict, size: int = 230) -> str:
 <p style="position:absolute;left:80px;top:{y['para']}px;width:540px;font:700 44px/1.3 Manrope;margin:0">Объясняем, почему работает способ решения. Решаем задачи в формате теста.</p>
 <div class="icons" style="right:90px;top:{y['para'] - 10}px">{ATOM}{dna()}</div>
 <div class="chips" style="position:absolute;left:80px;right:60px;top:{y['chips']}px"><span class="chip">онлайн</span><span class="chip">группы по 5</span><span class="chip red">старт 1 ноября</span></div>
-<div class="cta" style="top:{y['cta']}px;bottom:auto;padding:34px 0">Запись — в директ @himiya.prosto</div>
+<div class="cta" style="top:{y['cta']}px;bottom:auto;padding:34px 0">Запись — в директ @himbio.prosto</div>
 """)
 
 
@@ -128,7 +128,7 @@ T1 = doc(1080, 1350, """
 """)
 
 T2 = doc(1080, 1350, AD_CSS + '.icons .atom { width: 230px; height: 230px; } .dna { width: 130px; height: 270px; }', f"""
-<div class="tag" style="top:110px"><i></i>ХИМИЯ ПРОСТО · ЕНТ</div>
+<div class="tag" style="top:110px"><i></i>ХИМБИО ПРОСТО · ЕНТ</div>
 <div style="position:absolute;left:80px;right:80px;top:200px">
   <p style="font:800 50px/1.25 Manrope;margin:0" class="muted">Чтобы не спрашивать, куда поступать с 9 баллами,</p>
   <h1 class="big" style="font-size:100px;margin-top:30px">готовься<br>к ЕНТ</h1>
@@ -136,22 +136,22 @@ T2 = doc(1080, 1350, AD_CSS + '.icons .atom { width: 230px; height: 230px; } .dn
   <div class="chips" style="margin-top:56px"><span class="chip">онлайн</span><span class="chip">группы по 5</span><span class="chip red">старт 1 ноября</span></div>
 </div>
 <div class="icons" style="right:110px;top:820px">{ATOM}{dna()}</div>
-<div class="cta" style="padding:36px 0">Запись — в директ @himiya.prosto</div>
+<div class="cta" style="padding:36px 0">Запись — в директ @himbio.prosto</div>
 """)
 
 
 # Биология: тот же дизайн в зелёной гамме — два варианта на выбор Мансуру.
 BIO = doc(1080, 1350, AD_CSS + '.dna { width: 200px; height: 440px; }', f"""
 <div class="slash" style="top:-60px;height:250px;right:70px;width:60px"></div>
-<div class="tag" style="top:100px"><i></i>ХИМИЯ ПРОСТО · БИОЛОГИЯ</div>
+<div class="tag" style="top:100px"><i></i>ХИМБИО ПРОСТО · БИОЛОГИЯ</div>
 <div style="position:absolute;left:80px;top:190px">
   <h1 class="big" style="font-size:112px">Биология<br>к ЕНТ</h1>
   <div class="plaque" style="font-size:58px;margin-top:34px">разберёмся вместе</div>
 </div>
 <p style="position:absolute;left:80px;top:640px;width:560px;font:700 44px/1.3 Manrope;margin:0">Клетка, генетика, эволюция — по шагам и с задачами в формате теста.</p>
 <div class="icons" style="right:120px;top:560px">{dna()}</div>
-<div class="chips" style="position:absolute;left:80px;right:60px;top:1010px"><span class="chip">онлайн</span><span class="chip">группы по 5</span><span class="chip red">запись открыта</span></div>
-<div class="cta" style="top:1240px;bottom:auto;padding:34px 0">Запись — в директ @himiya.prosto</div>
+<div class="chips" style="position:absolute;left:80px;right:60px;top:1010px"><span class="chip">онлайн</span><span class="chip">группы по 5</span><span class="chip red">старт 1 ноября</span></div>
+<div class="cta" style="top:1240px;bottom:auto;padding:34px 0">Запись — в директ @himbio.prosto</div>
 """)
 BIO_VARIANTS = {
     'bio-a-black-green': {'#F13A43': '#1F7A4A'},                                     # фон чёрный, акцент тёмно-зелёный

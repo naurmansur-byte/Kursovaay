@@ -1,4 +1,4 @@
-"""Раздатка «Химия просто»: Markdown урока -> оформленный PDF (стиль 2, светлая печатная версия).
+"""Раздатка «ХимБио просто»: Markdown урока -> оформленный PDF (стиль 2, светлая печатная версия).
 
 Разметка (см. docs/STYLE.md, раздел «Разметка для раздаток»):
   front matter:  ---\\nweek: 1\\ntitle: ...\\nsubtitle: ...\\n---
@@ -64,9 +64,9 @@ def build_html(src: Path) -> str:
              '.cover { padding-bottom: 4mm; } .plaque { margin-top: 4mm; font-size: 9pt; } table { font-size: 9pt; }'
              '.callout { padding: 3.5mm 4mm 2mm; }</style>') if meta.get('format') == 'phone' else ''
     return f'''<!doctype html><html lang="ru"><head><meta charset="utf-8">
-<style>{css}</style><style>@page {{ @bottom-left {{ content: "Химия просто · {label.lower()}"; }} }}</style>{phone}</head><body>
+<style>{css}</style><style>@page {{ @bottom-left {{ content: "ХимБио просто · {label.lower()}"; }} }}</style>{phone}</head><body>
 <header class="cover">
-  <div class="brand"><span class="dot"></span>ХИМИЯ ПРОСТО · ЕНТ</div>
+  <div class="brand"><span class="dot"></span>ХИМБИО ПРОСТО · ЕНТ</div>
   <div class="plaque">{label}</div>
   <h1>{meta.get("title", "")}</h1>
   <p class="subtitle">{meta.get("subtitle", "")}</p>

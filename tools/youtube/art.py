@@ -1,4 +1,4 @@
-"""YouTube «Химия просто»: шапка канала 2560×1440 и обложка видео 1280×720 (Chrome-скриншоты HTML, стиль 2).
+"""YouTube «ХимБио просто»: шапка канала 2560×1440 и обложка видео 1280×720 (Chrome-скриншоты HTML, стиль 2).
 
 Запуск: .venv/Scripts/python tools/youtube/art.py   (результат: deliverables/youtube/banner.png, thumb-y001.png)
 """
@@ -38,7 +38,7 @@ p {{ margin: 26px 0 0; font: 700 38px/1.3 'Manrope'; color: #B9B3A8; }}
 .slash {{ position: absolute; top: -200px; bottom: -200px; width: 220px; background: #F13A43; transform: skewX(-14deg); opacity: .9; }}
 </style></head><body>
 <div class="slash" style="left:180px"></div><div class="slash" style="right:120px; width:90px"></div>
-<div class="safe">{ATOM}<div><h1>Химия просто</h1><div class="plaque">подготовка к ЕНТ</div><p>Разборы тем и задач по химии · 11 класс</p></div></div>
+<div class="safe">{ATOM}<div><h1>ХимБио просто</h1><div class="plaque">подготовка к ЕНТ</div><p>Химия и биология · разборы тем и задач · 11 класс</p></div></div>
 </body></html>"""
 
 THUMB = f"""<!doctype html><html><head><meta charset="utf-8"><style>{BASE}
@@ -56,7 +56,7 @@ h1 {{ margin: 40px 0 0; font: 800 132px/1 'Unbounded'; text-transform: uppercase
 
 
 THUMB2 = THUMB.replace('<h1>Моль</h1><div class="plaque">за 4 минуты</div>', '<h1>Химия<br>на ЕНТ</h1><div class="plaque">не страшно</div>') \
-    .replace(inline('n = m / M'), inline('C₂H₆O ✓')).replace('ХИМИЯ ДЛЯ ЕНТ', 'КУРС «ХИМИЯ ПРОСТО»') \
+    .replace(inline('n = m / M'), inline('C₂H₆O ✓')).replace('ХИМИЯ ДЛЯ ЕНТ', 'КУРС «ХИМБИО ПРОСТО»') \
     .replace("font: 800 132px/1 'Unbounded'", "font: 800 112px/1.02 'Unbounded'")
 
 

@@ -70,6 +70,28 @@ h1 { margin: 6px 0 0; font: 800 clamp(28px, 5vw, 46px)/1.05 var(--display); text
 .only-chem .row, .only-bio .row, .only-chem .head, .only-bio .head { grid-template-columns: 130px 1fr; }
 .only-chem .row.pause .cell, .only-bio .row.pause .cell { grid-column: 2; display: grid; }
 .foot { color: var(--faint); font-size: 12px; }
+.jump { display: flex; gap: 8px; flex-wrap: wrap; }
+.jump a { color: var(--fg); text-decoration: none; border: 1px solid var(--line); padding: 8px 14px; font: 800 13px var(--body); }
+.jump a:hover, .jump a:focus-visible { background: var(--fg); color: var(--bg); outline: none; }
+.sec { margin: 8px 0 0; font: 800 clamp(20px, 3vw, 26px) var(--display); text-transform: uppercase; scroll-margin-top: 16px; }
+.topics { display: grid; gap: 14px; scroll-margin-top: 16px; }
+.exam { display: flex; flex-wrap: wrap; gap: 8px; }
+.exam span { border: 1px solid var(--line); padding: 6px 12px; font-size: 13px; color: var(--muted); }
+.exam b { color: var(--fg); font-variant-numeric: tabular-nums; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; align-items: start; }
+.subj { background: var(--surface); border: 1px solid var(--line); min-width: 0; }
+.subj > h3 { margin: 0; padding: 14px 18px; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font: 800 18px var(--display); text-transform: uppercase; border-bottom: 1px solid var(--line); }
+.subj > h3 small { font: 700 13px var(--body); text-transform: none; color: var(--muted); }
+.part { padding: 12px 18px 4px; font: 800 11px var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.topic { display: grid; grid-template-columns: 34px 1fr; gap: 4px 12px; padding: 10px 18px; border-top: 1px dashed var(--line); }
+.topic .num { font: 800 15px var(--display); font-variant-numeric: tabular-nums; color: var(--accent); }
+.topic .tt { font-weight: 700; min-width: 0; }
+.topic .tm { grid-column: 2; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; color: var(--faint); font-size: 12px; }
+.topic .tm b { color: var(--muted); }
+.prog { font: 800 11px var(--body); letter-spacing: .05em; text-transform: uppercase; padding: 2px 8px; border: 1px solid var(--line); color: var(--faint); }
+.prog.some { border-color: var(--fg); color: var(--fg); }
+.subj.chem { --accent: var(--chem); } .subj.bio { --accent: var(--bio-text); }
+.subj.chem > h3 { color: var(--chem); } .subj.bio > h3 { color: var(--bio-text); }
 @media (max-width: 720px) {
   .head { display: none; }
   .row, .row.start, .only-chem .row, .only-bio .row { grid-template-columns: 1fr; }
@@ -89,6 +111,13 @@ h1 { margin: 6px 0 0; font: 800 clamp(28px, 5vw, 46px)/1.05 var(--display); text
     <div class="sub" id="sub"></div>
   </header>
   <section class="cards" id="cards"></section>
+  <nav class="jump"><a href="#topics">Темы ЕНТ</a><a href="#weeks">По неделям</a></nav>
+  <section id="topics" class="topics">
+    <h2 class="sec">Темы ЕНТ по спецификации НЦТ</h2>
+    <div class="exam" id="exam"></div>
+    <div class="cols" id="spec"></div>
+  </section>
+  <h2 class="sec" id="weeks">Уроки по неделям</h2>
   <div class="tools">
     <div class="legend" id="legend"></div>
     <div class="seg" role="group" aria-label="Предмет">
@@ -146,6 +175,22 @@ function render() {
   document.getElementById('cards').innerHTML =
     card('chem', 'Химия', 'var(--chem)', '<span>программа <b>✓</b></span><span>диагностика <b>✓</b></span><span>уроки <b>пн · чт</b></span>') +
     card('bio', 'Биология', 'var(--bio)', '<span>программа <b>✓</b></span><span>диагностика <b>✓</b></span><span>уроки <b>вт · пт</b></span>');
+  document.getElementById('exam').innerHTML = [
+    '<b>40</b> заданий по каждому предмету', '<b>80</b> минут · 2 минуты на задание', 'максимум <b>50</b> баллов',
+    '<b>25</b> — один ответ', '<b>5</b> — по одному контексту', '<b>5</b> — один или несколько ответов', '<b>5</b> — соответствие',
+    'уровни: <b>A 50%</b> · <b>B 30%</b> · <b>C 20%</b>',
+  ].map((t) => `<span>${t}</span>`).join('');
+  const specCol = (subj, name) => {
+    const secs = DATA.spec[subj];
+    const count = secs.reduce((s, x) => s + x.topics.length, 0);
+    return `<article class="subj ${subj}"><h3>${name}<small>${count} тем · ${secs.length} разделов</small></h3>` + secs.map((s, i) =>
+      `<div class="part">Раздел ${String(i + 1).padStart(2, '0')} · ${esc(s.name)}</div>` + s.topics.map((t) => {
+        const vids = t.videos.length ? `<span>видео: <b>${t.videos.map(([v, p]) => esc(p + ' «' + v + '»')).join(', ')}</b></span>` : '';
+        return `<div class="topic"><span class="num">${String(t.n).padStart(2, '0')}</span><span class="tt">${esc(t.title)}</span>
+          <div class="tm"><span>недели курса: <b>${t.weeks.join(', ')}</b></span><span class="prog${t.done ? ' some' : ''}">готово ${t.done} из ${t.weeks.length}</span>${vids}</div></div>`;
+      }).join('')).join('') + '</article>';
+  };
+  document.getElementById('spec').innerHTML = specCol('chem', 'Химия') + specCol('bio', 'Биология');
   document.getElementById('legend').innerHTML = ORDER.map((k) => `<span class="pill ${k}">${L[k]}</span>`).join('');
   const rows = [`<div class="head"><span>Неделя</span><span class="c">Химия · пн и чт</span><span class="b">Биология · вт и пт</span></div>`];
   rows.push(`<div class="row start"><span></span><div class="flag">Старт курса — 2 ноября<span>${days > 0 ? `осталось ${days} дн.` : 'курс идёт'}</span></div></div>`);

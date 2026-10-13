@@ -7,12 +7,20 @@ import r002Timing from './reels/r002.timing.json';
 import { TAILS as r002Tails } from './reels/r002.jsx';
 import r003Timing from './reels/r003.timing.json';
 import { TAILS as r003Tails } from './reels/r003.jsx';
+import b001Timing from './reels/b001.timing.json';
+import { TAILS as b001Tails } from './reels/b001.jsx';
+import b002Timing from './reels/b002.timing.json';
+import { TAILS as b002Tails } from './reels/b002.jsx';
+import b003Timing from './reels/b003.timing.json';
+import { TAILS as b003Tails } from './reels/b003.jsx';
 import { Avatar, HighlightCover, HIGHLIGHTS } from './brand.jsx';
 import { CarouselSlide, CAROUSEL_HB_SIZE, CAROUSEL_SIZE } from './carousel.jsx';
 import y001Timing from './reels/y001.timing.json';
 import { TAILS as y001Tails } from './reels/y001.jsx';
 import y002Timing from './reels/y002.timing.json';
 import { TAILS as y002Tails } from './reels/y002.jsx';
+import y003Timing from './reels/y003.timing.json';
+import { TAILS as y003Tails } from './reels/y003.jsx';
 
 const FPS = 30;
 
@@ -21,14 +29,17 @@ const REELS = [
   { id: 'R001', timing: r001Timing },
   { id: 'R002', timing: r002Timing, tails: r002Tails },
   { id: 'R003', timing: r003Timing, tails: r003Tails },
+  { id: 'B001', timing: b001Timing, tails: b001Tails, subject: 'bio' },
+  { id: 'B002', timing: b002Timing, tails: b002Tails, subject: 'bio' },
+  { id: 'B003', timing: b003Timing, tails: b003Tails, subject: 'bio' },
 ];
 
 export const Root = () => (
   <>
-    {REELS.map(({ id, timing, tails }) => {
+    {REELS.map(({ id, timing, tails, subject = 'chem' }) => {
       const plan = { ...buildPlan(timing, FPS, tails), silent: Boolean(timing.placeholder) };
       return (
-        <Composition key={id} id={id} component={Reel} durationInFrames={plan.total} fps={FPS} width={1080} height={1920} defaultProps={{ plan, reel: id }} />
+        <Composition key={id} id={id} component={Reel} durationInFrames={plan.total} fps={FPS} width={1080} height={1920} defaultProps={{ plan, reel: id, subject }} />
       );
     })}
     {Array.from({ length: CAROUSEL_SIZE }, (_, i) => (
@@ -44,6 +55,10 @@ export const Root = () => (
     {(() => {
       const plan = buildPlan(y002Timing, FPS, y002Tails);
       return <Composition id="Y002" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y002' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y003Timing, FPS, y003Tails);
+      return <Composition id="Y003" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y003', subject: 'bio' }} />;
     })()}
     <Composition id="Avatar" component={Avatar} durationInFrames={1} fps={FPS} width={1080} height={1080} />
     {HIGHLIGHTS.map((h) => (

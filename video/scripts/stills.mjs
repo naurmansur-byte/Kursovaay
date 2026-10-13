@@ -6,7 +6,7 @@ import path from 'node:path';
 
 const id = process.argv[2] || 'Y001';
 const at = Number(process.argv[3] || 0.92);
-const serveUrl = path.resolve('build');
+const serveUrl = path.resolve(process.env.BUILD || 'build');  // BUILD=build-alt, если build занят рендером
 const outDir = path.resolve('out/stills', id.toLowerCase());
 await mkdir(outDir, { recursive: true });
 

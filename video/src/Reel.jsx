@@ -3,7 +3,7 @@ import { AbsoluteFill, Audio, Sequence, continueRender, delayRender, interpolate
 import '@fontsource-variable/unbounded';
 import '@fontsource-variable/manrope';
 import 'katex/dist/katex.min.css';
-import { C, F, SAFE } from './theme.js';
+import { C, F, SAFE, setSubject } from './theme.js';
 import { subtitleChunks } from './plan.js';
 import { Background, enter } from './kit.jsx';
 import { SCENES as R001 } from './reels/r001.jsx';
@@ -11,9 +11,13 @@ import { SCENES as R002 } from './reels/r002.jsx';
 import { SCENES as R003 } from './reels/r003.jsx';
 import { SCENES as Y001 } from './reels/y001.jsx';
 import { SCENES as Y002 } from './reels/y002.jsx';
+import { SCENES as B001 } from './reels/b001.jsx';
+import { SCENES as B002 } from './reels/b002.jsx';
+import { SCENES as B003 } from './reels/b003.jsx';
+import { SCENES as Y003 } from './reels/y003.jsx';
 
 // Props ролика сериализуются в JSON, поэтому сцены подключаются здесь, по id ролика.
-const REELS = { R001, R002, R003, Y001, Y002 };
+const REELS = { R001, R002, R003, Y001, Y002, B001, B002, B003, Y003 };
 
 export const useFonts = () => {
   const [handle] = useState(() => delayRender('fonts'));
@@ -83,7 +87,9 @@ const Cuts = ({ plan }) => {
   return <div style={{ position: 'absolute', top: -300, bottom: -300, left: x, width: s.index === 0 ? 900 : 260, background: C.accent, transform: 'skewX(-14deg)', opacity: 0.95 }} />;
 };
 
-export const Reel = ({ plan, reel }) => {
+// subject: 'chem' (красный) или 'bio' (зелёный) — цвет акцента всего ролика.
+export const Reel = ({ plan, reel, subject = 'chem' }) => {
+  setSubject(subject);
   useFonts();
   const scenes = REELS[reel];
   return (

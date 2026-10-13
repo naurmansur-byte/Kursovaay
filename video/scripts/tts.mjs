@@ -20,6 +20,23 @@ const only = onlyArg > 0 ? new Set(process.argv[onlyArg + 1].split(',')) : null;
 const timingPath = path.join(root, 'src/reels', `${reel}.timing.json`);
 const previous = only ? JSON.parse(await readFile(timingPath, 'utf8')).scenes : [];
 
+// Аббревиатуры — по буквам (просьба Мансура: «ЕНТ» — чётко «Е-Эн-Тэ», а не слово). В тайминге буквы снова склеиваются в аббревиатуру.
+const SPELL = { ЕНТ: ['Е', 'Эн', 'Тэ'], НЦТ: ['Эн', 'Цэ', 'Тэ'] };
+const speak = (text) => Object.entries(SPELL).reduce(
+  (s, [abbr, letters]) => s.replace(new RegExp(`(?<![А-Яа-яЁё])${abbr}(?![А-Яа-яЁё])`, 'g'), letters.join(' ')), text);
+const unspell = (words) => {
+  const out = [];
+  for (let i = 0; i < words.length; i++) {
+    const hit = Object.entries(SPELL).find(([, ls]) => ls.every((l, k) => words[i + k] && words[i + k].t.trim().replace(/[.,!?:;—«»]+$/, '') === l));
+    if (!hit) { out.push(words[i]); continue; }
+    const [abbr, ls] = hit;
+    const last = words[i + ls.length - 1];
+    out.push({ t: abbr + last.t.trim().slice(ls[ls.length - 1].length) + ' ', start: words[i].start, end: last.end });
+    i += ls.length - 1;
+  }
+  return out;
+};
+
 const timing = { id: script.id, scenes: [] };
 for (const scene of script.scenes) {
   const old = previous.find((s) => s.id === scene.id);
@@ -43,7 +60,7 @@ for (const scene of script.scenes) {
   // Edge TTS иногда отвечает 429 — повторить с нарастающей паузой.
   for (let attempt = 1; ; attempt++) {
     try {
-      await tts.ttsPromise(scene.text, file);
+      await tts.ttsPromise(speak(scene.text), file);
       break;
     } catch (e) {
       if (attempt >= 6) throw e;
@@ -51,7 +68,7 @@ for (const scene of script.scenes) {
       await new Promise((r) => setTimeout(r, 5000 * attempt));
     }
   }
-  const words = JSON.parse(await readFile(`${file}.json`, 'utf8')).map((w) => ({ t: w.part, start: w.start, end: w.end }));
+  const words = unspell(JSON.parse(await readFile(`${file}.json`, 'utf8')).map((w) => ({ t: w.part, start: w.start, end: w.end })));
   await rm(`${file}.json`);
   const speechEnd = words.length ? words[words.length - 1].end : 1000;
   timing.scenes.push({ id: scene.id, audio: `audio/${reel}/${scene.id}.mp3`, speechEndMs: speechEnd, words });

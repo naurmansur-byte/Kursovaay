@@ -1,0 +1,90 @@
+"""Раздатка «Химия просто»: Markdown урока -> оформленный PDF (стиль 2, светлая печатная версия).
+
+Разметка (см. docs/STYLE.md, раздел «Разметка для раздаток»):
+  front matter:  ---\\nweek: 1\\ntitle: ...\\nsubtitle: ...\\n---
+  блоки:         > [!rule] Запомни / > [!trap] Ловушка / > [!example] Разберём / > [!try] Попробуй
+Запуск: .venv/Scripts/python tools/handout/handout.py course/week-01/notes-student.md exports/week-01/student/notes-student.pdf
+"""
+from __future__ import annotations
+
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+import markdown
+
+ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
+LABELS = {'rule': 'Запомни', 'trap': 'Ловушка', 'example': 'Разберём', 'try': 'Попробуй'}
+
+
+def front_matter(text: str) -> tuple[dict, str]:
+    meta = {}
+    if text.startswith('---'):
+        head, _, text = text[3:].partition('\n---')
+        for line in head.strip().splitlines():
+            key, _, value = line.partition(':')
+            meta[key.strip()] = value.strip()
+        text = text.lstrip('\n')
+    return meta, text
+
+
+def callouts(text: str) -> str:
+    """> [!type] Заголовок + строки '>' -> <div class="callout type"> с Markdown внутри."""
+    out, lines, i = [], text.splitlines(), 0
+    while i < len(lines):
+        m = re.match(r'^>\s*\[!(\w+)\]\s*(.*)$', lines[i])
+        if not m:
+            out.append(lines[i])
+            i += 1
+            continue
+        kind, title = m.group(1), m.group(2) or LABELS.get(m.group(1), '')
+        body = []
+        i += 1
+        while i < len(lines) and lines[i].startswith('>'):
+            body.append(re.sub(r'^>\s?', '', lines[i]))
+            i += 1
+        inner = '\n'.join(body)
+        out += [f'<div class="callout {kind}" markdown="1">', f'<div class="callout-title">{title}</div>', '', inner, '', '</div>', '']
+    return '\n'.join(out)
+
+
+def build_html(src: Path) -> str:
+    meta, body = front_matter(src.read_text(encoding='utf-8'))
+    body = re.sub(r'^# .*\n', '', body, count=1)  # заголовок рисует шапка
+    html = markdown.markdown(callouts(body), extensions=['tables', 'md_in_html', 'sane_lists', 'nl2br'])
+    css = (HERE / 'handout.css').read_text(encoding='utf-8').replace('{{FONTS}}', (ROOT / 'content/brand/fonts').as_uri())
+    week = meta.get('week', '')
+    return f'''<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<style>{css}</style><style>@page {{ @bottom-left {{ content: "Химия просто · неделя {week}"; }} }}</style></head><body>
+<header class="cover">
+  <div class="brand"><span class="dot"></span>ХИМИЯ ПРОСТО · ЕНТ</div>
+  <div class="plaque">Неделя {week}</div>
+  <h1>{meta.get("title", "")}</h1>
+  <p class="subtitle">{meta.get("subtitle", "")}</p>
+</header>
+<main>{html}</main></body></html>'''
+
+
+def chrome() -> str:
+    for p in [r'C:\Program Files\Google\Chrome\Application\chrome.exe', r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
+              r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe', shutil.which('chromium') or '', shutil.which('google-chrome') or '']:
+        if p and Path(p).exists():
+            return p
+    raise RuntimeError('Chrome/Edge not found for PDF printing')
+
+
+def main(src: str, pdf: str) -> None:
+    src_path, pdf_path = (ROOT / src).resolve(), (ROOT / pdf).resolve()
+    pdf_path.parent.mkdir(parents=True, exist_ok=True)
+    html_path = pdf_path.with_suffix('.html')
+    html_path.write_text(build_html(src_path), encoding='utf-8')
+    subprocess.run([chrome(), '--headless=new', '--disable-gpu', '--no-pdf-header-footer', f'--print-to-pdf={pdf_path}', html_path.as_uri()],
+                   check=True, capture_output=True, timeout=120)
+    print(f'PDF: {pdf_path} ({pdf_path.stat().st_size // 1024} KB), HTML: {html_path.name}')
+
+
+if __name__ == '__main__':
+    main(*sys.argv[1:3])

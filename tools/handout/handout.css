@@ -1,0 +1,62 @@
+/* Раздатка «Химия просто»: стиль 2 для печати — чёрный текст, красный акцент, Unbounded + Manrope. */
+@font-face { font-family: 'Unbounded'; font-weight: 200 900; src: url('{{FONTS}}/unbounded-cyrillic-wght-normal.woff2') format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Unbounded'; font-weight: 200 900; src: url('{{FONTS}}/unbounded-latin-wght-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Manrope'; font-weight: 200 800; src: url('{{FONTS}}/manrope-cyrillic-wght-normal.woff2') format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Manrope'; font-weight: 200 800; src: url('{{FONTS}}/manrope-latin-wght-normal.woff2') format('woff2'); }
+
+:root { --ink: #151515; --paper: #ffffff; --accent: #F13A43; --muted: #5d5a54; --tint: #F5F2EB; --line: #DEDAD1; --trap: #FDEDEE; }
+
+@page { size: A4; margin: 15mm 16mm 17mm;
+  @bottom-left { font: 600 7.5pt 'Manrope', sans-serif; color: #8a867e; letter-spacing: .08em; text-transform: uppercase; }
+  @bottom-right { content: counter(page) " / " counter(pages); font: 700 8pt 'Manrope', sans-serif; color: #8a867e; } }
+
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { margin: 0; color: var(--ink); background: var(--paper); font: 400 10.4pt/1.55 'Manrope', 'Segoe UI', sans-serif; }
+
+/* Шапка первой страницы */
+.cover { position: relative; padding: 0 0 7mm; margin-bottom: 5mm; border-bottom: 2.5px solid var(--ink); }
+.brand { display: flex; align-items: center; gap: 6px; font: 800 7.5pt 'Manrope', sans-serif; letter-spacing: .16em; color: var(--ink); }
+.brand .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.plaque { display: inline-block; margin-top: 7mm; padding: 2.2mm 4mm 2.8mm; background: var(--accent); color: #fff;
+  font: 800 11pt 'Unbounded', sans-serif; text-transform: uppercase; transform: rotate(-3deg); }
+h1 { margin: 4mm 0 2mm; font: 800 25pt/1.08 'Unbounded', sans-serif; letter-spacing: -.01em; text-transform: uppercase; max-width: 160mm; }
+.subtitle { margin: 0; color: var(--muted); font-weight: 600; }
+
+main > p:first-child { font-size: 11.6pt; line-height: 1.5; }
+h2 { margin: 8mm 0 3mm; font: 800 13.5pt/1.2 'Unbounded', sans-serif; text-transform: uppercase; break-after: avoid; display: flex; align-items: center; gap: 3mm; }
+h2::before { content: ''; flex: none; width: 3.2mm; height: 3.2mm; background: var(--accent); transform: rotate(-4deg); }
+p { margin: 0 0 2.6mm; }
+strong { font-weight: 800; }
+ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+li { margin-bottom: 1mm; }
+li::marker { color: var(--accent); font-weight: 800; }
+
+/* Таблицы */
+table { width: 100%; border-collapse: collapse; margin: 1mm 0 4mm; font-size: 9.6pt; break-inside: avoid; }
+th { text-align: left; font: 800 7.6pt 'Manrope', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+  padding: 1.8mm 2.4mm; border-bottom: 2px solid var(--ink); }
+td { padding: 1.8mm 2.4mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+tbody tr:nth-child(even) td { background: #FAF8F4; }
+
+/* Блоки */
+.callout { position: relative; margin: 4mm 0 5mm; padding: 4.5mm 5mm 2.5mm; break-inside: avoid; }
+.callout-title { display: inline-block; margin: 0 0 2.4mm; font: 800 7.6pt 'Unbounded', sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.callout p:last-child { margin-bottom: 1.5mm; }
+.rule { background: var(--tint); border-left: 5px solid var(--ink); }
+.trap { background: var(--trap); border-left: 5px solid var(--accent); }
+.trap .callout-title { background: var(--accent); color: #fff; padding: 1.2mm 2.6mm 1.4mm; transform: rotate(-2deg); }
+.example { border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); background: #fff; }
+.example .callout-title { color: var(--accent); }
+.try { border: 2px dashed var(--ink); }
+.try ol { padding-left: 5mm; }
+
+/* Схема «как читать запись» */
+.anatomy { display: flex; align-items: center; gap: 9mm; margin: 2mm 0 6mm; padding: 5mm 6mm; background: var(--ink); color: #fff; break-inside: avoid; }
+.anatomy-formula { font: 800 40pt/1 'Unbounded', sans-serif; white-space: nowrap; }
+.anatomy-formula sup { font-size: 20pt; vertical-align: 22pt; }
+.anatomy-labels { display: grid; gap: 2mm; font-size: 10.5pt; }
+.anatomy-labels b { font-family: 'Unbounded', sans-serif; display: inline-block; min-width: 13mm; }
+.a-coef { color: var(--accent); }
+.a-sym { color: #fff; }
+.a-charge { color: #FFB4B8; }

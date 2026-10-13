@@ -31,10 +31,10 @@ sub, sup {{ font-family: 'Manrope'; font-weight: 800; font-size: .6em; line-heig
 BANNER = f"""<!doctype html><html><head><meta charset="utf-8"><style>{BASE}
 body {{ width: 2560px; height: 1440px; background-size: 96px 96px; }}
 .safe {{ position: absolute; left: 507px; top: 508px; width: 1546px; height: 423px; display: flex; align-items: center; gap: 70px; }}
-.safe .atom {{ position: static; width: 330px; height: 330px; transform: rotate(-12deg); flex: none; }}
-h1 {{ margin: 0; font: 800 120px/1 'Unbounded'; text-transform: uppercase; letter-spacing: -.01em; }}
-.plaque {{ margin-top: 26px; padding: 12px 28px 16px; font-size: 40px; }}
-p {{ margin: 28px 0 0; font: 700 40px/1.3 'Manrope'; color: #B9B3A8; }}
+.safe .atom {{ position: static; width: 300px; height: 300px; transform: rotate(-12deg); flex: none; }}
+h1 {{ margin: 0; font: 800 96px/1 'Unbounded'; text-transform: uppercase; letter-spacing: -.01em; white-space: nowrap; }}
+.plaque {{ margin-top: 24px; padding: 12px 28px 16px; font-size: 38px; }}
+p {{ margin: 26px 0 0; font: 700 38px/1.3 'Manrope'; color: #B9B3A8; }}
 .slash {{ position: absolute; top: -200px; bottom: -200px; width: 220px; background: #F13A43; transform: skewX(-14deg); opacity: .9; }}
 </style></head><body>
 <div class="slash" style="left:180px"></div><div class="slash" style="right:120px; width:90px"></div>

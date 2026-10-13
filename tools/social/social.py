@@ -159,6 +159,27 @@ BIO_VARIANTS = {
 }
 
 
+# Обложки YouTube 1280×720 в стиле обложки «Моль за 4 минуты» (tools/youtube/art.py).
+def thumb(tag: str, h1: str, plaque: str, badge: str, icon: str, accent: str = '#F13A43') -> str:
+    return doc(1280, 720, f"""
+body {{ background-size: 64px 64px; padding: 60px 70px; }}
+.t {{ font: 800 28px 'Manrope'; letter-spacing: .14em; display: flex; align-items: center; gap: 12px; }}
+.t i {{ width: 14px; height: 14px; border-radius: 50%; background: {accent}; }}
+h1 {{ margin: 40px 0 0; font: 800 120px/1 'Unbounded'; text-transform: uppercase; letter-spacing: -.02em; }}
+.plaque {{ margin-top: 24px; font-size: 80px; background: {accent}; }}
+.badge {{ position: absolute; right: 70px; bottom: 70px; padding: 22px 34px; background: #F3F0E8; color: #151515; font: 800 56px 'Unbounded'; transform: rotate(3deg); }}
+.ic {{ position: absolute; right: 90px; top: 40px; }}
+.ic .atom {{ position: static; width: 280px; height: 280px; transform: rotate(-12deg); }}
+.ic .dna {{ width: 170px; height: 340px; }}
+""", f'<div class="t"><i></i>{tag}</div><h1>{h1}</h1><div class="plaque">{plaque}</div><div class="ic">{icon}</div><div class="badge">{badge}</div>')
+
+
+THUMBS = {
+    'thumb-y003': thumb('БИОЛОГИЯ ДЛЯ ЕНТ', 'Генетика', 'за 3 минуты', 'Aa × Aa', dna().replace('#F13A43', '#1F7A4A'), '#1F7A4A'),
+    'thumb-y004': thumb('О КАНАЛЕ', 'ХимБио<br>просто', 'ЕНТ без паники', 'химия + био', ATOM + dna().replace('#F13A43', '#1F7A4A')),
+}
+
+
 if __name__ == '__main__':
     if '--bio' in sys.argv:
         (ROOT / 'deliverables' / 'brand-bio').mkdir(parents=True, exist_ok=True)
@@ -167,6 +188,14 @@ if __name__ == '__main__':
             for a, b in swap.items():
                 html = html.replace(a, b)
             shot(html, 1080, 1350, ROOT / 'deliverables' / 'brand-bio' / f'{name}.png')
+        # Шаблоны сторис для биологии: тот же дизайн, акцент тёмно-зелёный.
+        (ROOT / 'deliverables' / 'stories-bio').mkdir(parents=True, exist_ok=True)
+        for name, html in STORIES.items():
+            shot(html.replace(ATOM, dna()).replace('#F13A43', '#1F7A4A'), 1080, 1920, ROOT / 'deliverables' / 'stories-bio' / f'{name}-bio.png')
+        sys.exit()
+    if '--yt' in sys.argv:
+        for name, html in THUMBS.items():
+            shot(html, 1280, 720, ROOT / 'deliverables' / 'youtube' / f'{name}.png')
         sys.exit()
     out = ROOT / 'deliverables'
     for name, html in STORIES.items():

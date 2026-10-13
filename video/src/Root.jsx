@@ -21,6 +21,8 @@ import y002Timing from './reels/y002.timing.json';
 import { TAILS as y002Tails } from './reels/y002.jsx';
 import y003Timing from './reels/y003.timing.json';
 import { TAILS as y003Tails } from './reels/y003.jsx';
+import y004Timing from './reels/y004.timing.json';
+import { TAILS as y004Tails } from './reels/y004.jsx';
 
 const FPS = 30;
 
@@ -59,6 +61,10 @@ export const Root = () => (
     {(() => {
       const plan = buildPlan(y003Timing, FPS, y003Tails);
       return <Composition id="Y003" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y003', subject: 'bio' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y004Timing, FPS, y004Tails);
+      return <Composition id="Y004" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y004' }} />;
     })()}
     <Composition id="Avatar" component={Avatar} durationInFrames={1} fps={FPS} width={1080} height={1080} />
     {HIGHLIGHTS.map((h) => (

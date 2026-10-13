@@ -1,0 +1,36 @@
+/* Памятка «Химия просто» 1080×1920: стиль 2, тёмная — как ролики. */
+@font-face { font-family: 'Unbounded'; font-weight: 200 900; src: url('{{FONTS}}/unbounded-cyrillic-wght-normal.woff2') format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Unbounded'; font-weight: 200 900; src: url('{{FONTS}}/unbounded-latin-wght-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Manrope'; font-weight: 200 800; src: url('{{FONTS}}/manrope-cyrillic-wght-normal.woff2') format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Manrope'; font-weight: 200 800; src: url('{{FONTS}}/manrope-latin-wght-normal.woff2') format('woff2'); }
+
+:root { --ink: #151515; --light: #F3F0E8; --accent: #F13A43; --muted: #A8A39A; --card: #1F1F1F; }
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; }
+body { position: relative; padding: 90px 80px; background: var(--ink); color: var(--light); font: 600 40px/1.38 'Manrope', sans-serif;
+  background-image: linear-gradient(rgba(243,240,232,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(243,240,232,.05) 1px, transparent 1px);
+  background-size: 72px 72px; }
+.top { display: flex; justify-content: space-between; font: 800 26px 'Manrope', sans-serif; letter-spacing: .16em; color: var(--muted); }
+.top span:first-child { display: flex; align-items: center; gap: 14px; color: var(--light); }
+.top i { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); }
+.plaque { display: inline-block; margin-top: 60px; padding: 14px 30px 18px; background: var(--accent); color: #fff; font: 800 32px 'Unbounded', sans-serif; text-transform: uppercase; transform: rotate(-3deg); }
+h1 { margin: 34px 0 44px; font: 800 74px/1.08 'Unbounded', sans-serif; text-transform: uppercase; }
+.list { display: grid; gap: 26px; }
+.big { padding: 26px 34px; background: var(--light); color: var(--ink); font: 800 56px/1.2 'Unbounded', sans-serif; letter-spacing: -.01em; }
+.big sub, .big sup { font-family: 'Manrope', sans-serif; font-weight: 800; }
+.big.s { font-size: 46px; }
+.big.xs { font-size: 38px; }
+.item { display: flex; gap: 26px; align-items: baseline; }
+.item i { flex: none; width: 20px; height: 20px; background: var(--accent); transform: rotate(-4deg) translateY(-4px); }
+strong { color: #FF7A80; font-weight: 800; }
+.big strong { color: var(--accent); }
+.trap { padding: 26px 34px; background: var(--accent); color: #fff; font-size: 38px; }
+.trap b { display: block; margin-bottom: 8px; font: 800 26px 'Unbounded', sans-serif; text-transform: uppercase; letter-spacing: .06em; }
+.trap strong { color: #fff; text-decoration: underline; }
+.note { font-size: 32px; color: var(--muted); border-left: 6px solid var(--accent); padding-left: 24px; }
+sub, sup { font-size: .62em; line-height: 0; }
+sub { vertical-align: -.25em; }
+sup { vertical-align: .62em; }
+.foot { position: absolute; left: 80px; right: 80px; bottom: 80px; display: flex; align-items: center; gap: 30px; font: 800 36px 'Unbounded', sans-serif; }
+.foot .atom { position: static; width: 120px; height: 120px; transform: none; }
+.foot small { font: 600 26px 'Manrope', sans-serif; color: var(--muted); }

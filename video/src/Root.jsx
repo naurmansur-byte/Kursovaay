@@ -12,6 +12,8 @@ import { CarouselSlide, CAROUSEL_SIZE } from './carousel.jsx';
 import { SlideVideo } from './SlideVideo.jsx';
 import y001Timing from './reels/y001.timing.json';
 import y001Tails from './reels/y001.tails.json';
+import y002Timing from './reels/y002.timing.json';
+import { TAILS as y002Tails } from './reels/y002.jsx';
 
 const FPS = 30;
 
@@ -36,6 +38,10 @@ export const Root = () => (
     {(() => {
       const plan = buildPlan(y001Timing, FPS, y001Tails);
       return <Composition id="YT001" component={SlideVideo} durationInFrames={plan.total + 10} fps={FPS} width={1920} height={1080} defaultProps={{ plan, dir: 'youtube/y001' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y002Timing, FPS, y002Tails);
+      return <Composition id="Y002" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y002' }} />;
     })()}
     <Composition id="Avatar" component={Avatar} durationInFrames={1} fps={FPS} width={1080} height={1080} />
     {HIGHLIGHTS.map((h) => (

@@ -57,7 +57,7 @@ export const Background = () => {
 // Кинетическая строка: влетает сбоку с наклоном и размытием; plaque — красная плашка.
 export const Kinetic = ({ children, at = 0, y, size = 110, rotate = -4, from = 'left', plaque = false, punchAt, color, weight = 800 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
   const p = enter(frame, at, fps);
   if (frame < at) return null;
   const x = interpolate(p, [0, 1], [from === 'left' ? -1300 : 1300, 0]);
@@ -65,7 +65,7 @@ export const Kinetic = ({ children, at = 0, y, size = 110, rotate = -4, from = '
   const s = punchAt != null ? punch(frame, punchAt) : 1;
   // Уменьшить шрифт, чтобы строка с плашкой и наклоном влезла в безопасную зону (Unbounded ≈ 0.86 em на букву).
   if (typeof children === 'string') {
-    const room = 1080 - 2 * SAFE.x - 40;
+    const room = Math.min(width, 1700) - 2 * SAFE.x - 40;
     size = Math.min(size, room / (children.length * 0.86 + (plaque ? 0.44 : 0)));
   }
   return (

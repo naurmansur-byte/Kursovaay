@@ -55,6 +55,11 @@ h1 {{ margin: 40px 0 0; font: 800 132px/1 'Unbounded'; text-transform: uppercase
 </body></html>"""
 
 
+THUMB2 = THUMB.replace('<h1>Моль</h1><div class="plaque">за 10 минут</div>', '<h1>Химия<br>на ЕНТ</h1><div class="plaque">не страшно</div>') \
+    .replace(inline('n = m / M'), inline('C₂H₆O ✓')).replace('ХИМИЯ ДЛЯ ЕНТ', 'КУРС «ХИМИЯ ПРОСТО»') \
+    .replace("font: 800 132px/1 'Unbounded'", "font: 800 112px/1.02 'Unbounded'")
+
+
 def shot(doc: str, w: int, h: int, out: Path) -> None:
     with tempfile.TemporaryDirectory() as tmp:
         page = Path(tmp) / 'p.html'
@@ -68,4 +73,5 @@ if __name__ == '__main__':
     out.mkdir(parents=True, exist_ok=True)
     shot(BANNER, 2560, 1440, out / 'banner.png')
     shot(THUMB, 1280, 720, out / 'thumb-y001.png')
+    shot(THUMB2, 1280, 720, out / 'thumb-y002.png')
     print(f'YouTube art -> {out}')

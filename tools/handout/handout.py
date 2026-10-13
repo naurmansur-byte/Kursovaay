@@ -57,8 +57,13 @@ def build_html(src: Path) -> str:
     html = markdown.markdown(callouts(body), extensions=['tables', 'md_in_html', 'sane_lists', 'nl2br'])
     css = (HERE / 'handout.css').read_text(encoding='utf-8').replace('{{FONTS}}', (ROOT / 'content/brand/fonts').as_uri())
     week = meta.get('week', '')
+    # format: phone — узкая страница под экран телефона, крупный текст (ДЗ, памятки).
+    phone = ('<style>@page { size: 90mm 160mm; margin: 6mm 5mm 9mm; @bottom-left { content: none; } }'
+             'body { font-size: 11pt; } h1 { font-size: 17pt; } h2 { font-size: 11.5pt; margin-top: 6mm; }'
+             '.cover { padding-bottom: 4mm; } .plaque { margin-top: 4mm; font-size: 9pt; } table { font-size: 9pt; }'
+             '.callout { padding: 3.5mm 4mm 2mm; }</style>') if meta.get('format') == 'phone' else ''
     return f'''<!doctype html><html lang="ru"><head><meta charset="utf-8">
-<style>{css}</style><style>@page {{ @bottom-left {{ content: "Химия просто · неделя {week}"; }} }}</style></head><body>
+<style>{css}</style><style>@page {{ @bottom-left {{ content: "Химия просто · неделя {week}"; }} }}</style>{phone}</head><body>
 <header class="cover">
   <div class="brand"><span class="dot"></span>ХИМИЯ ПРОСТО · ЕНТ</div>
   <div class="plaque">Неделя {week}</div>

@@ -9,9 +9,10 @@ import { Background, enter } from './kit.jsx';
 import { SCENES as R001 } from './reels/r001.jsx';
 import { SCENES as R002 } from './reels/r002.jsx';
 import { SCENES as R003 } from './reels/r003.jsx';
+import { SCENES as Y002 } from './reels/y002.jsx';
 
 // Props ролика сериализуются в JSON, поэтому сцены подключаются здесь, по id ролика.
-const REELS = { R001, R002, R003 };
+const REELS = { R001, R002, R003, Y002 };
 
 export const useFonts = () => {
   const [handle] = useState(() => delayRender('fonts'));
@@ -27,7 +28,7 @@ export const useFonts = () => {
 
 // Метка бренда.
 const BrandLabel = () => (
-  <div style={{ position: 'absolute', top: 120, left: SAFE.x, display: 'flex', alignItems: 'center', gap: 14, fontFamily: F.body, fontWeight: 800, fontSize: 30, letterSpacing: '0.14em', color: C.fg, mixBlendMode: 'difference' }}>
+  <div style={{ position: 'absolute', top: 120, left: SAFE.x, display: 'flex', alignItems: 'center', gap: 14, fontFamily: F.body, fontWeight: 800, fontSize: 30, letterSpacing: '0.14em', color: C.fg }}>
     <span style={{ width: 16, height: 16, borderRadius: '50%', background: C.fg }} />
     ХИМИЯ ПРОСТО · ЕНТ
   </div>
@@ -52,12 +53,13 @@ const NUMBER = /^(ноль|половин|два|две|двух|три|четы
 
 const Subtitles = ({ plan }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width, height } = useVideoConfig();
   const chunk = subtitleChunks(plan).find((c) => frame >= c.from && frame < c.to);
   if (!chunk) return null;
   const p = enter(frame, chunk.from, fps, { damping: 13, stiffness: 260, mass: 0.5 });
+  const top = height > width ? SAFE.subtitleY : height - 150;  // горизонтальный кадр — субтитры внизу
   return (
-    <div style={{ position: 'absolute', top: SAFE.subtitleY, left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
+    <div style={{ position: 'absolute', top, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 5 }}>
       <div style={{ transform: `scale(${0.8 + 0.2 * p})`, background: C.fg, padding: '12px 26px 16px', fontFamily: F.body, fontWeight: 800, fontSize: 60, textTransform: 'uppercase', color: C.bg, maxWidth: 820, textAlign: 'center' }}>
         {chunk.text.split(' ').map((w, i) => (
           <span key={i} style={{ color: NUMBER.test(w) ? C.accent : C.bg }}>

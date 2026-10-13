@@ -140,7 +140,34 @@ T2 = doc(1080, 1350, AD_CSS + '.icons .atom { width: 230px; height: 230px; } .dn
 """)
 
 
+# Биология: тот же дизайн в зелёной гамме — два варианта на выбор Мансуру.
+BIO = doc(1080, 1350, AD_CSS + '.dna { width: 200px; height: 440px; }', f"""
+<div class="slash" style="top:-60px;height:250px;right:70px;width:60px"></div>
+<div class="tag" style="top:100px"><i></i>ХИМИЯ ПРОСТО · БИОЛОГИЯ</div>
+<div style="position:absolute;left:80px;top:190px">
+  <h1 class="big" style="font-size:112px">Биология<br>к ЕНТ</h1>
+  <div class="plaque" style="font-size:58px;margin-top:34px">разберёмся вместе</div>
+</div>
+<p style="position:absolute;left:80px;top:640px;width:560px;font:700 44px/1.3 Manrope;margin:0">Клетка, генетика, эволюция — по шагам и с задачами в формате теста.</p>
+<div class="icons" style="right:120px;top:560px">{dna()}</div>
+<div class="chips" style="position:absolute;left:80px;right:60px;top:1010px"><span class="chip">онлайн</span><span class="chip">группы по 5</span><span class="chip red">запись открыта</span></div>
+<div class="cta" style="top:1240px;bottom:auto;padding:34px 0">Запись — в директ @himiya.prosto</div>
+""")
+BIO_VARIANTS = {
+    'bio-a-black-green': {'#F13A43': '#1F7A4A'},                                     # фон чёрный, акцент тёмно-зелёный
+    'bio-b-green-bg': {'#F13A43': '#2E9E5B', '#151515': '#0E2A1D', '#1D1D1D': '#143726'},  # фон тёмно-зелёный, акцент зелёный
+}
+
+
 if __name__ == '__main__':
+    if '--bio' in sys.argv:
+        (ROOT / 'deliverables' / 'brand-bio').mkdir(parents=True, exist_ok=True)
+        for name, swap in BIO_VARIANTS.items():
+            html = BIO
+            for a, b in swap.items():
+                html = html.replace(a, b)
+            shot(html, 1080, 1350, ROOT / 'deliverables' / 'brand-bio' / f'{name}.png')
+        sys.exit()
     out = ROOT / 'deliverables'
     for name, html in STORIES.items():
         (out / 'stories').mkdir(parents=True, exist_ok=True)

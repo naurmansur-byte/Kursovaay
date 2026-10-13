@@ -23,6 +23,12 @@ import y003Timing from './reels/y003.timing.json';
 import { TAILS as y003Tails } from './reels/y003.jsx';
 import y004Timing from './reels/y004.timing.json';
 import { TAILS as y004Tails } from './reels/y004.jsx';
+import a001Timing from './reels/a001.timing.json';
+import { TAILS as a001Tails } from './reels/a001.jsx';
+import a002Timing from './reels/a002.timing.json';
+import { TAILS as a002Tails } from './reels/a002.jsx';
+import a003Timing from './reels/a003.timing.json';
+import { TAILS as a003Tails } from './reels/a003.jsx';
 
 const FPS = 30;
 
@@ -34,6 +40,9 @@ const REELS = [
   { id: 'B001', timing: b001Timing, tails: b001Tails, subject: 'bio' },
   { id: 'B002', timing: b002Timing, tails: b002Tails, subject: 'bio' },
   { id: 'B003', timing: b003Timing, tails: b003Tails, subject: 'bio' },
+  { id: 'A001', timing: a001Timing, tails: a001Tails },  // реклама для учеников, хук «100 из 140»
+  { id: 'A002', timing: a002Timing, tails: a002Tails },  // хук «Стоп + ловушка»
+  { id: 'A003', timing: a003Timing, tails: a003Tails },  // хук «миф: не нужно зубрить все учебники»
 ];
 
 export const Root = () => (

@@ -1,0 +1,170 @@
+<title>Карта уроков ХимБио</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Unbounded:wght@600;800&display=swap">
+<style>
+/* Лента недель: слева неделя и даты, справа две колонки предметов — химия (красный) и биология (зелёный). Фирменный тёмный стиль «ХимБио просто», одна тема намеренно. */
+:root {
+  --bg: #151515; --surface: #1D1D1D; --line: rgba(243, 240, 232, .14); --fg: #F3F0E8; --muted: rgba(243, 240, 232, .62); --faint: rgba(243, 240, 232, .38);
+  --chem: #F13A43; --bio: #1F7A4A; --bio-text: #43B567; --work: #F2C94C;
+  --display: 'Unbounded', 'Arial Black', sans-serif; --body: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 500 15px/1.45 var(--body); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 60px; display: grid; gap: 26px; }
+.brand { display: flex; align-items: center; gap: 10px; font: 800 12px var(--body); letter-spacing: .16em; text-transform: uppercase; }
+.brand i { width: 10px; height: 10px; border-radius: 50%; background: var(--chem); }
+h1 { margin: 6px 0 0; font: 800 clamp(28px, 5vw, 46px)/1.05 var(--display); text-transform: uppercase; letter-spacing: -.01em; text-wrap: balance; }
+.sub { color: var(--muted); margin-top: 8px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); padding: 18px 20px; display: grid; gap: 12px; min-width: 0; }
+.card h2 { margin: 0; display: flex; align-items: center; gap: 10px; font: 800 18px var(--display); text-transform: uppercase; }
+.card h2 b { display: inline-block; padding: 2px 10px 4px; color: var(--fg); }
+.big { font: 800 34px/1 var(--display); font-variant-numeric: tabular-nums; }
+.big small { font: 700 15px var(--body); color: var(--muted); margin-left: 6px; }
+.bar { display: flex; height: 10px; background: rgba(243, 240, 232, .08); }
+.bar span { height: 100%; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 14px; color: var(--muted); font-size: 13px; }
+.facts b { color: var(--fg); }
+.tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg { display: inline-flex; border: 1px solid var(--line); }
+.seg button { background: transparent; color: var(--muted); border: 0; padding: 8px 14px; font: 800 13px var(--body); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.seg button:focus-visible { outline: 2px solid var(--work); outline-offset: 2px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; font: 800 11px var(--body); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; border: 1px solid transparent; }
+.pill.done { background: var(--fg); color: var(--bg); }
+.pill.work { background: var(--work); color: var(--bg); }
+.pill.next { border-color: var(--work); color: var(--work); }
+.pill.queue { border-color: var(--faint); color: var(--muted); }
+.pill.todo { color: var(--faint); border-color: var(--line); }
+.timeline { display: grid; gap: 8px; }
+.head, .row { display: grid; grid-template-columns: 130px 1fr 1fr; gap: 8px; }
+.head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; background: var(--bg); padding-block: 8px; font: 800 12px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.head .c { color: var(--chem); } .head .b { color: var(--bio-text); }
+.wk { padding: 12px 4px; font-variant-numeric: tabular-nums; }
+.wk b { display: block; font: 800 15px var(--display); }
+.wk span { color: var(--muted); font-size: 13px; }
+.cell { position: relative; background: var(--surface); border: 1px solid var(--line); padding: 12px 14px 12px 18px; display: grid; gap: 6px; min-width: 0; }
+.cell::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--stripe); opacity: var(--stripe-o, .3); }
+.cell.chem { --stripe: var(--chem); } .cell.bio { --stripe: var(--bio-text); }
+.cell.st-done { --stripe-o: 1; } .cell.st-work, .cell.st-next { --stripe-o: .7; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.u { font: 800 12px var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.t { font: 800 16px/1.3 var(--body); }
+.d { color: var(--muted); font-size: 13px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--faint); font-size: 12px; font-variant-numeric: tabular-nums; }
+.meta b { color: var(--muted); font-weight: 700; }
+.note { font-size: 13px; color: var(--fg); }
+.vids { display: flex; flex-wrap: wrap; gap: 6px; }
+.vid { font: 700 12px var(--body); padding: 3px 8px; border: 1px dashed var(--faint); color: var(--muted); }
+.vid em { font-style: normal; color: var(--fg); }
+.calm { background: transparent; border-style: dashed; }
+.calm .t { color: var(--muted); font-weight: 700; }
+.row.pause .cell { grid-column: 2 / span 2; }
+.row.start { grid-template-columns: 130px 1fr; }
+.flag { background: var(--chem); padding: 10px 16px; font: 800 14px var(--display); text-transform: uppercase; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.flag span { font: 700 13px var(--body); text-transform: none; }
+.only-chem .cell.bio, .only-chem .head .b, .only-bio .cell.chem, .only-bio .head .c { display: none; }
+.only-chem .row, .only-bio .row, .only-chem .head, .only-bio .head { grid-template-columns: 130px 1fr; }
+.only-chem .row.pause .cell, .only-bio .row.pause .cell { grid-column: 2; display: grid; }
+.foot { color: var(--faint); font-size: 12px; }
+@media (max-width: 720px) {
+  .head { display: none; }
+  .row, .row.start, .only-chem .row, .only-bio .row { grid-template-columns: 1fr; }
+  .row.start > span:first-child { display: none; }
+  .row.pause .cell, .only-chem .row.pause .cell, .only-bio .row.pause .cell { grid-column: auto; }
+  .wk { padding: 14px 0 2px; display: flex; gap: 10px; align-items: baseline; }
+  .cell.chem .u::before { content: 'Химия · '; color: var(--chem); }
+  .cell.bio .u::before { content: 'Биология · '; color: var(--bio-text); }
+}
+@media (prefers-reduced-motion: no-preference) { .seg button { transition: background .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand"><i></i>ХимБио просто · ЕНТ</div>
+    <h1>Карта уроков: химия и биология</h1>
+    <div class="sub" id="sub"></div>
+  </header>
+  <section class="cards" id="cards"></section>
+  <div class="tools">
+    <div class="legend" id="legend"></div>
+    <div class="seg" role="group" aria-label="Предмет">
+      <button id="f-all" aria-pressed="true" data-f="all">Оба</button>
+      <button id="f-chem" aria-pressed="false" data-f="chem">Химия</button>
+      <button id="f-bio" aria-pressed="false" data-f="bio">Биология</button>
+    </div>
+  </div>
+  <section class="timeline" id="tl"></section>
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+const DATA = /*DATA*/null;
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const L = DATA.labels;
+const ORDER = ['done', 'work', 'next', 'queue', 'todo'];
+const COLORS = { done: 'var(--fg)', work: 'var(--work)', next: 'rgba(242,201,76,.45)', queue: 'rgba(243,240,232,.28)' };
+
+function stats(subj) {
+  const cells = DATA.weeks.map((w) => w[subj]).filter((c) => c.kind === 'week' || c.kind === 'mock');
+  const by = Object.fromEntries(ORDER.map((s) => [s, cells.filter((c) => c.status === s).length]));
+  return { total: cells.length, by };
+}
+
+function card(subj, name, color, facts) {
+  const s = stats(subj);
+  const bar = ORDER.filter((k) => k !== 'todo').map((k) => s.by[k] ? `<span style="width:${(s.by[k] / s.total) * 100}%;background:${COLORS[k]}"></span>` : '').join('');
+  const parts = ORDER.filter((k) => s.by[k]).map((k) => `<span><b>${s.by[k]}</b> ${L[k].toLowerCase()}</span>`).join('');
+  return `<article class="card"><h2><b style="background:${color}">${name}</b></h2>
+    <div class="big">${s.by.done}<small>из ${s.total} учебных недель готово</small></div>
+    <div class="bar" aria-hidden="true">${bar}</div>
+    <div class="facts">${parts}</div>
+    <div class="facts">${facts}</div></article>`;
+}
+
+function cellHtml(c) {
+  if (c.kind === 'pause' || c.kind === 'reserve') {
+    return `<div class="cell calm ${c.subj}"><div class="t">${esc(c.title)}</div></div>`;
+  }
+  const vids = c.videos.length ? `<div class="vids">${c.videos.map(([t, p]) => `<span class="vid"><em>${esc(p)}</em> · ${esc(t)}</span>`).join('')}</div>` : '';
+  return `<div class="cell ${c.subj} st-${c.status}">
+    <div class="top"><span class="u">Неделя ${c.n} · уроки ${esc(c.lessons)}</span><span class="pill ${c.status}">${L[c.status]}</span></div>
+    <div class="t">${esc(c.title)}</div>
+    ${c.details ? `<div class="d">${esc(c.details)}</div>` : ''}
+    ${c.note ? `<div class="note">${esc(c.note)}</div>` : ''}
+    <div class="meta"><span>уроки <b>${esc(c.when)}</b></span>${c.status === 'done' ? '' : `<span>преподавателю до <b>${esc(c.due)}</b></span>`}</div>
+    ${vids}</div>`;
+}
+
+function render() {
+  const start = new Date(2026, 10, 2);
+  const days = Math.ceil((start - new Date()) / 86400000);
+  document.getElementById('sub').textContent = `Ноябрь 2026 — май 2027 · 25 учебных недель по каждому предмету · обновлено ${DATA.updated}`;
+  document.getElementById('cards').innerHTML =
+    card('chem', 'Химия', 'var(--chem)', '<span>программа <b>✓</b></span><span>диагностика <b>✓</b></span><span>уроки <b>пн · чт</b></span>') +
+    card('bio', 'Биология', 'var(--bio)', '<span>программа <b>✓</b></span><span>диагностика <b>✓</b></span><span>уроки <b>вт · пт</b></span>');
+  document.getElementById('legend').innerHTML = ORDER.map((k) => `<span class="pill ${k}">${L[k]}</span>`).join('');
+  const rows = [`<div class="head"><span>Неделя</span><span class="c">Химия · пн и чт</span><span class="b">Биология · вт и пт</span></div>`];
+  rows.push(`<div class="row start"><span></span><div class="flag">Старт курса — 2 ноября<span>${days > 0 ? `осталось ${days} дн.` : 'курс идёт'}</span></div></div>`);
+  for (const w of DATA.weeks) {
+    const pause = w.chem.kind === 'pause';
+    rows.push(`<div class="row${pause ? ' pause' : ''}"><div class="wk"><b>${w.k}</b><span>${esc(w.dates)}</span></div>${pause ? cellHtml(w.chem) : cellHtml(w.chem) + cellHtml(w.bio)}</div>`);
+  }
+  document.getElementById('tl').innerHTML = rows.join('');
+  document.getElementById('foot').textContent = 'Готово — комплект недели собран и принят: планы двух уроков, презентации, конспект, закрепление, ДЗ с решениями, контроль, памятка. «Преподавателю до» — за неделю до первого урока недели.';
+}
+
+function setFilter(f) {
+  document.body.classList.toggle('only-chem', f === 'chem');
+  document.body.classList.toggle('only-bio', f === 'bio');
+  document.querySelectorAll('.seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.f === f)));
+  try { localStorage.setItem('lesson-map-filter', f); } catch (e) { /* без сохранения */ }
+}
+
+render();
+document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => setFilter(b.dataset.f)));
+try { const f = localStorage.getItem('lesson-map-filter'); if (f) setFilter(f); } catch (e) { /* по умолчанию — оба */ }
+</script>

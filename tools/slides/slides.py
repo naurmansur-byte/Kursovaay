@@ -125,7 +125,7 @@ def build(week: str) -> None:
         size = sum(len(ln) for ln in lines) + 45 * len(lines)
         density = 'dense' if size > 900 else 'medium' if size > 560 else ''
         main, calls = body_html(lines, dark=False)
-        pages.append((page(css, label.replace('{counter}', f'{number} / {total}') + f'<h2><i></i>{inline(name)}</h2>'
+        pages.append((page(css, label.replace('{counter}', f'{number} / {total}') + f'<h2><i></i><span>{inline(name)}</span></h2>'
                            f'<div class="body {density}">{main}</div><div class="callouts">{calls}</div>', 'light'),
                       (notes or body) + (f'\n\nОтвет (следующий слайд):\n{answer}' if answer else '')))
         if answer:
@@ -137,6 +137,12 @@ def build(week: str) -> None:
                                f'<div class="answer-of">{inline(name)}</div><div class="body answer {adensity}">{amain}</div>', 'dark'),
                           'Показать после попытки учеников.\n\n' + answer))
 
+    render(pages, out_dir / 'slides.pptx', out_dir / 'slides.pdf', keep=out_dir / 'slides-png' if '--keep-png' in sys.argv else None)
+    print(f'Slides: {len(pages)} ({total} content + answers + cover) -> {out_dir / "slides.pptx"}, slides.pdf')
+
+
+def render(pages: list[tuple[str, str]], pptx_path: Path, pdf_path: Path, keep: Path | None = None) -> None:
+    """HTML-страницы 1920×1080 -> скриншоты Chrome -> PPTX (картинка + заметки) и PDF."""
     browser = chrome()
     deck = Presentation()
     deck.slide_width, deck.slide_height = Inches(13.333), Inches(7.5)
@@ -153,20 +159,19 @@ def build(week: str) -> None:
             slide = deck.slides.add_slide(deck.slide_layouts[6])
             slide.shapes.add_picture(str(png), 0, 0, deck.slide_width, deck.slide_height)
             slide.notes_slide.notes_text_frame.text = notes
-        deck.save(out_dir / 'slides.pptx')
+        pptx_path.parent.mkdir(parents=True, exist_ok=True)
+        deck.save(pptx_path)
         # PDF-версия: те же страницы подряд.
         all_html = Path(tmp) / 'all.html'
         all_html.write_text('<!doctype html><html><head><meta charset="utf-8"><style>@page{size:1920px 1080px;margin:0}'
                             'body{margin:0}img{display:block;width:1920px;height:1080px;break-after:page}</style></head><body>'
                             + ''.join(f'<img src="{p.as_uri()}">' for p in shots) + '</body></html>', encoding='utf-8')
-        subprocess.run([browser, '--headless=new', '--disable-gpu', '--no-pdf-header-footer', f'--print-to-pdf={out_dir / "slides.pdf"}',
+        subprocess.run([browser, '--headless=new', '--disable-gpu', '--no-pdf-header-footer', f'--print-to-pdf={pdf_path}',
                         all_html.as_uri()], check=True, capture_output=True, timeout=180)
-        if '--keep-png' in sys.argv:
-            keep = out_dir / 'slides-png'
-            keep.mkdir(exist_ok=True)
+        if keep:
+            keep.mkdir(parents=True, exist_ok=True)
             for p in shots:
                 (keep / p.name).write_bytes(p.read_bytes())
-    print(f'Slides: {len(pages)} ({total} content + answers + cover) -> {out_dir / "slides.pptx"}, slides.pdf')
 
 
 if __name__ == '__main__':

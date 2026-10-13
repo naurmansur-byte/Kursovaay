@@ -1,11 +1,11 @@
 // Шаблонные сцены Reels: выбор ответа (ЕНТ), крупная плашка-удар, аутро с призывом в комментарии.
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
-import { C, F, ACCENT_HEX } from './theme.js';
+import { C, F } from './theme.js';
 import { wordFrame } from './plan.js';
-import { Appear, Atom, Card, Kinetic, Label, Option, Row, Sfx, TeX, enter } from './kit.jsx';
+import { Appear, Atom, Card, Dna, Kinetic, Label, Option, Row, Sfx, TeX, enter } from './kit.jsx';
 
-export const A = (s) => `\\textcolor{${ACCENT_HEX}}{${s}}`;
+export const A = (s) => `\\textcolor{${C.accent}}{${s}}`;
 
 export const useW = (scene) => {
   const { fps } = useVideoConfig();
@@ -28,7 +28,8 @@ export const Slam = ({ at, y, children, size = 260 }) => {
 };
 
 // Карточка «выбери ответ» с таймером. options: [['А', '0{,}5'], ...]
-export const EngageScene = ({ scene, questionTex, options, unit }) => {
+// cols={1} — для длинных текстовых вариантов (по одному в строке).
+export const EngageScene = ({ scene, questionTex, options, unit, cols = 2, questionSize = 56 }) => {
   const frame = useCurrentFrame();
   const left = interpolate(frame, [2, scene.dur - 2], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const R = 34;
@@ -46,10 +47,10 @@ export const EngageScene = ({ scene, questionTex, options, unit }) => {
           </div>
           <div style={{ marginTop: 26, display: 'grid', gap: 10 }}>
             {(Array.isArray(questionTex) ? questionTex : [questionTex]).map((t) => (
-              <TeX key={t} tex={t} size={56} />
+              <TeX key={t} tex={t} size={questionSize} />
             ))}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 22, marginTop: 34 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: cols === 1 ? '1fr' : '1fr 1fr', gap: cols === 1 ? 14 : 22, marginTop: 34 }}>
             {options.map(([l, v], i) => (
               <Option key={l} letter={l} value={v} unit={unit} at={4 + i * 3} />
             ))}
@@ -63,9 +64,51 @@ export const EngageScene = ({ scene, questionTex, options, unit }) => {
   );
 };
 
+// Титул YouTube-ролика (16:9): сразу видно, о чём видео. Слева тема, справа «В этом видео» — пункты появляются под голос.
+// items: [['текст пункта', 'стем слова из озвучки'], ...]
+export const TopicIntro = ({ scene, tag, title, plaque, items, icon = 'atom' }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const W = useW(scene);
+  const pt = enter(frame, 2, fps);
+  const pp = enter(frame, 10, fps, { damping: 10, stiffness: 200, mass: 0.6 });
+  const times = items.map(([, stem], i) => W(stem, 30 + i * 20));
+  return (
+    <AbsoluteFill>
+      <div style={{ position: 'absolute', left: 120, top: 200, width: 860 }}>
+        <div style={{ opacity: pt }}><Label size={36}>{tag}</Label></div>
+        <div style={{ marginTop: 24, transform: `translateX(${(1 - pt) * -400}px)`, opacity: pt, fontFamily: F.display, fontWeight: 800, fontSize: 112, lineHeight: 1.02, textTransform: 'uppercase', color: C.fg }}>{title}</div>
+        {frame >= 10 && (
+          <div style={{ display: 'inline-block', marginTop: 30, transform: `scale(${interpolate(pp, [0, 1], [1.8, 1])}) rotate(-3deg)`, transformOrigin: 'left center', background: C.accent, padding: '10px 26px 16px', fontFamily: F.display, fontWeight: 800, fontSize: 64, textTransform: 'uppercase', color: C.fg }}>{plaque}</div>
+        )}
+        <div style={{ marginTop: 50 }}>{icon === 'dna' ? <Dna size={260} at={6} /> : <Atom size={230} at={6} speed={1.3} />}</div>
+      </div>
+      <div style={{ position: 'absolute', left: 1060, top: 220, width: 760 }}>
+        <div style={{ opacity: pt }}><Label size={34} color={C.accent}>В этом видео</Label></div>
+        <div style={{ marginTop: 26, display: 'grid', gap: 22 }}>
+          {items.map(([text], i) => {
+            const at = times[i];
+            if (frame < at) return null;
+            const p = enter(frame, at, fps);
+            return (
+              <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 22, opacity: p, transform: `translateX(${(1 - p) * 120}px)` }}>
+                <div style={{ width: 64, height: 64, flex: 'none', background: C.accent, display: 'grid', placeItems: 'center', fontFamily: F.display, fontWeight: 800, fontSize: 34, color: C.fg }}>{i + 1}</div>
+                <div style={{ fontFamily: F.body, fontWeight: 800, fontSize: 46, lineHeight: 1.15, color: C.fg }}>{text}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <Sfx at={2} name="whoosh" />
+      <Sfx at={10} name="boom" volume={0.45} />
+      {times.map((t, i) => <Sfx key={i} at={t} name="pop" volume={0.3} />)}
+    </AbsoluteFill>
+  );
+};
+
 // Аутро-приглашение на курс: логотип, факты о курсе (только утверждённые), слово для комментариев.
 // Голос: «Хочешь решать такие задачи? Курс «ХимБио просто», старт первого ноября. Пиши «курс» в комментариях!»
-export const CourseOutro = ({ scene, word = 'курс' }) => {
+export const CourseOutro = ({ scene, word = 'курс', icon = 'atom' }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const W = useW(scene);
@@ -86,7 +129,7 @@ export const CourseOutro = ({ scene, word = 'курс' }) => {
       <Kinetic at={3} y={295} size={80} rotate={-3} from="right">такие задачи?</Kinetic>
       <Appear at={tCourse} y={410}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <Atom size={110} at={tCourse} speed={1.4} />
+          {icon === 'dna' ? <Dna size={120} at={tCourse} /> : <Atom size={110} at={tCourse} speed={1.4} />}
           <div>
             <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: 62, lineHeight: 1, color: C.fg, whiteSpace: 'nowrap' }}>ХИМБИО ПРОСТО</div>
             <div style={{ fontFamily: F.body, fontWeight: 700, fontSize: 40, color: C.muted, marginTop: 8 }}>курс подготовки к ЕНТ</div>

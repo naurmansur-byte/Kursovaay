@@ -3,7 +3,7 @@ import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
 import { C, F } from '../theme.js';
 import { Appear, Atom, Card, Kinetic, Label, Option, Row, Sfx, TeX, enter, punch, shake } from '../kit.jsx';
-import { A, Slam, useW } from '../scenes.jsx';
+import { A, Slam, TopicIntro, useW } from '../scenes.jsx';
 
 const Abs = ({ x, y, children, style }) => <div style={{ position: 'absolute', left: x, top: y, ...style }}>{children}</div>;
 
@@ -621,7 +621,7 @@ const Cta = ({ scene }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
           <Atom size={150} at={tC} speed={1.4} />
           <div>
-            <div style={{ font: `800 84px ${F.display}`, color: C.fg, lineHeight: 1 }}>ХИМИЯ ПРОСТО</div>
+            <div style={{ font: `800 84px ${F.display}`, color: C.fg, lineHeight: 1 }}>ХИМБИО ПРОСТО</div>
             <div style={{ font: `700 42px ${F.body}`, color: C.muted, marginTop: 8 }}>курс подготовки к ЕНТ по химии</div>
           </div>
         </div>
@@ -633,7 +633,7 @@ const Cta = ({ scene }) => {
         })}
       </Row>
       <Appear at={tD - 20} y={650}><div style={{ font: `700 44px ${F.body}`, color: C.muted }}>Запись — в директ Instagram</div></Appear>
-      <Kinetic at={tD} y={720} size={96} rotate={-2}>@himiya.prosto</Kinetic>
+      <Kinetic at={tD} y={720} size={96} rotate={-2}>@himbio.prosto</Kinetic>
       {frame >= tSub && (
         <Abs x={1390} y={850}>
           <div style={{ transform: `scale(${punch(frame, tSub, 0.25)}) rotate(4deg)`, padding: '22px 44px', background: C.accent, borderRadius: 60, font: `800 40px ${F.display}`, color: '#fff', whiteSpace: 'nowrap' }}>ПОДПИСАТЬСЯ</div>
@@ -645,9 +645,15 @@ const Cta = ({ scene }) => {
   );
 };
 
+// Титул: о чём видео — в первые секунды.
+const Title = ({ scene }) => (
+  <TopicIntro scene={scene} tag="ЕНТ · химия" title="Моль" plaque="за 4 минуты"
+    items={[['Молярная масса', 'молярную'], ['Главная формула n = m/M', 'главную'], ['Число частиц', 'частиц'], ['Газы и 22,4 л/моль', 'газы'], ['Задача ЕНТ — реши сам', 'задача']]} />
+);
+
 export const SCENES = {
-  hook: Hook, intro: Intro, pack: Pack, avogadro: Avogadro, amount: Amount, weigh: Weigh, molar: Molar, h2so4: H2SO4, trap1: Trap1,
+  title: Title, hook: Hook, intro: Intro, pack: Pack, avogadro: Avogadro, amount: Amount, weigh: Weigh, molar: Molar, h2so4: H2SO4, trap1: Trap1,
   formula: Formula, ex49: Ex49, ex88: Ex88, particles: Particles, water: WaterScene, trap2: Trap2, gas: Gas, o2: O2, trap3: Trap3,
   map: HubMap, task: Task, answer: Answer, cta: Cta,
 };
-export const TAILS = { hook: 16, intro: 10, pack: 24, h2so4: 24, trap1: 30, ex49: 24, ex88: 24, water: 24, o2: 24, trap3: 14, map: 40, task: 150, answer: 36, cta: 60 };
+export const TAILS = { title: 24, hook: 16, intro: 10, pack: 24, h2so4: 24, trap1: 30, ex49: 24, ex88: 24, water: 24, o2: 24, trap3: 14, map: 40, task: 150, answer: 36, cta: 60 };

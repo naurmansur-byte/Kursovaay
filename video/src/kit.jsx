@@ -55,7 +55,7 @@ export const Background = () => {
 };
 
 // Кинетическая строка: влетает сбоку с наклоном и размытием; plaque — красная плашка.
-export const Kinetic = ({ children, at = 0, y, size = 110, rotate = -4, from = 'left', plaque = false, punchAt, color, weight = 800 }) => {
+export const Kinetic = ({ children, at = 0, y, size = 110, rotate = -4, from = 'left', plaque = false, punchAt, color, weight = 800, bg }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
   const p = enter(frame, at, fps);
@@ -81,7 +81,7 @@ export const Kinetic = ({ children, at = 0, y, size = 110, rotate = -4, from = '
           letterSpacing: '-0.02em',
           textTransform: 'uppercase',
           color: color ?? C.fg,
-          background: plaque ? C.accent : 'transparent',
+          background: plaque ? bg ?? C.accent : 'transparent',
           padding: plaque ? `${size * 0.1}px ${size * 0.22}px ${size * 0.14}px` : 0,
           whiteSpace: 'nowrap',
         }}
@@ -158,6 +158,49 @@ export const Atom = ({ size = 320, at = 0, speed = 1 }) => {
   );
 };
 
+// Спираль ДНК (биология): нити бегут по фазе — спираль «крутится».
+export const Dna = ({ size = 200, at = 0, speed = 1, color }) => {
+  const ac = color ?? C.accent;
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (frame < at) return null;
+  const p = enter(frame, at, fps, { damping: 12, stiffness: 120 });
+  const t = (frame - at) / fps;
+  const h = 400;
+  const w = 180;
+  const x = (y, s) => w / 2 + s * w * 0.4 * Math.sin((2 * Math.PI * 1.5 * y) / h + t * 2.4 * speed);
+  const ys = Array.from({ length: 61 }, (_, k) => (k * h) / 60);
+  const strand = (s) => 'M' + ys.map((y) => `${x(y, s).toFixed(1)} ${y.toFixed(1)}`).join(' L');
+  return (
+    <svg width={size * 0.5} height={size} viewBox={`-10 -10 ${w + 20} ${h + 20}`} style={{ transform: `scale(${p})` }}>
+      {ys.filter((_, k) => k % 5 === 2).map((y, k) => (
+        <line key={y} x1={x(y, 1)} y1={y} x2={x(y, -1)} y2={y} stroke={k % 2 ? ac : C.fg} strokeWidth="9" opacity="0.85" />
+      ))}
+      <path d={strand(1)} fill="none" stroke={C.fg} strokeWidth="13" strokeLinecap="round" />
+      <path d={strand(-1)} fill="none" stroke={ac} strokeWidth="13" strokeLinecap="round" />
+    </svg>
+  );
+};
+
+// Горошина для задач Менделя: жёлтая или зелёная, с бликом.
+export const PEA = { yellow: '#F2C94C', green: '#3FA65F' };
+export const Pea = ({ color = 'yellow', size = 120, at = 0, label }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (frame < at) return null;
+  const p = enter(frame, at, fps, { damping: 10, stiffness: 200, mass: 0.6 });
+  const fill = PEA[color] ?? color;
+  return (
+    <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8, transform: `scale(${p})` }}>
+      <svg width={size} height={size} viewBox="-50 -50 100 100">
+        <circle r="46" fill={fill} stroke={C.bg} strokeWidth="3" />
+        <ellipse cx="-16" cy="-18" rx="14" ry="9" fill="#fff" opacity="0.45" transform="rotate(-30 -16 -18)" />
+      </svg>
+      {label && <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: size * 0.32, color: C.fg }}>{label}</div>}
+    </div>
+  );
+};
+
 // Пламя: два языка огня с мерцанием.
 export const Flame = ({ size = 300, at = 0 }) => {
   const frame = useCurrentFrame();
@@ -204,7 +247,7 @@ export const Option = ({ letter, value, state, at = 0, compact = false, unit = '
         gap: 16,
         padding: compact ? '14px 22px' : '14px 18px',
         border: `3px solid ${right ? C.accent : C.faint}`,
-        background: right ? 'rgba(241, 58, 67, 0.16)' : 'transparent',
+        background: right ? C.accentSoft : 'transparent',
         opacity: state === 'dim' ? 0.35 : p,
         transform: `scale(${0.85 + 0.15 * p})`,
         position: 'relative',

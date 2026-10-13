@@ -1,12 +1,12 @@
 // R001 «49 г H2SO4 — сколько моль?», короткая версия (~27 с). Сценарий — content/reels/R001-moles-h2so4/reel-max.md
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
-import { C, F, ACCENT_HEX } from '../theme.js';
+import { C, F } from '../theme.js';
 import { wordFrame } from '../plan.js';
 import { Appear, Atom, Card, Kinetic, Label, Option, OPTIONS, Row, Sfx, TeX, enter, punch, shake } from '../kit.jsx';
 import { CourseOutro } from '../scenes.jsx';
 
-const A = (s) => `\\textcolor{${ACCENT_HEX}}{${s}}`;
+const A = (s) => `\\textcolor{${C.accent}}{${s}}`;
 const useW = (scene) => {
   const { fps } = useVideoConfig();
   return (stem, fallback = 0, nth = 0) => wordFrame(scene, fps, stem, fallback, nth);

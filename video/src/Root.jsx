@@ -8,7 +8,7 @@ import { TAILS as r002Tails } from './reels/r002.jsx';
 import r003Timing from './reels/r003.timing.json';
 import { TAILS as r003Tails } from './reels/r003.jsx';
 import { Avatar, HighlightCover, HIGHLIGHTS } from './brand.jsx';
-import { CarouselSlide, CAROUSEL_SIZE } from './carousel.jsx';
+import { CarouselSlide, CAROUSEL_HB_SIZE, CAROUSEL_SIZE } from './carousel.jsx';
 import y001Timing from './reels/y001.timing.json';
 import { TAILS as y001Tails } from './reels/y001.jsx';
 import y002Timing from './reels/y002.timing.json';
@@ -33,6 +33,9 @@ export const Root = () => (
     })}
     {Array.from({ length: CAROUSEL_SIZE }, (_, i) => (
       <Composition key={i} id={`About-${i + 1}`} component={CarouselSlide} durationInFrames={60} fps={FPS} width={1080} height={1350} defaultProps={{ n: i + 1 }} />
+    ))}
+    {Array.from({ length: CAROUSEL_HB_SIZE }, (_, i) => (
+      <Composition key={`hb${i}`} id={`AboutHB-${i + 1}`} component={CarouselSlide} durationInFrames={60} fps={FPS} width={1080} height={1350} defaultProps={{ n: i + 1, set: 'hb' }} />
     ))}
     {(() => {
       const plan = buildPlan(y001Timing, FPS, y001Tails);

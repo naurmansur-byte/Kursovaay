@@ -12,7 +12,8 @@ await mkdir(outDir, { recursive: true });
 
 const browser = await openBrowser('chrome');
 const composition = await selectComposition({ serveUrl, id, puppeteerInstance: browser });
-for (const s of composition.props.plan.scenes) {
+const onlyScenes = process.argv[4] ? new Set(process.argv[4].split(',')) : null;  // 3-й аргумент: только эти сцены
+for (const s of composition.props.plan.scenes.filter((x) => !onlyScenes || onlyScenes.has(x.id))) {
   const frame = s.from + Math.floor(s.dur * at);
   await renderStill({ composition, serveUrl, frame, output: path.join(outDir, `${String(s.index).padStart(2, '0')}-${s.id}.png`), puppeteerInstance: browser, scale: 0.5 });
   console.log(s.id, frame);

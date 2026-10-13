@@ -3,7 +3,7 @@ import React from 'react';
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { C, F } from '../theme.js';
 import { Appear, Atom, Card, Flame, Kinetic, Label, Row, Sfx, TeX, enter, punch, shake } from '../kit.jsx';
-import { A, Slam, useW } from '../scenes.jsx';
+import { A, Slam, TopicIntro, useW } from '../scenes.jsx';
 
 const Abs = ({ x, y, children, style }) => <div style={{ position: 'absolute', left: x, top: y, ...style }}>{children}</div>;
 
@@ -116,7 +116,7 @@ const Method = ({ scene }) => {
   const steps = [['1', 'Почему', W('почему', 90)], ['2', 'Алгоритм', W('алгоритм', 160)], ['3', 'Ловушки', W('ловушк', 230)]];
   return (
     <AbsoluteFill>
-      <Kinetic at={2} y={160} size={86} rotate={-3}>«Химия просто» учит иначе</Kinetic>
+      <Kinetic at={2} y={160} size={86} rotate={-3}>«ХимБио просто» учит иначе</Kinetic>
       {steps.map(([n, t, at], i) => (
         <Fly key={n} at={at} x={150 + i * 560} y={470} from={[-200, 0]}>
           <div style={{ width: 480, padding: '36px 40px', background: i === 2 ? C.accent : C.fg, color: i === 2 ? '#fff' : C.bg, transform: 'rotate(-3deg)' }}>
@@ -305,7 +305,7 @@ const Cta = ({ scene }) => {
       <Kinetic at={tS} y={120} size={130} rotate={-4}>Старт</Kinetic>
       <Kinetic at={tS + 6} y={300} size={130} rotate={-3} plaque from="right" punchAt={tS + 10}>1 ноября</Kinetic>
       <Appear at={tD} y={560}><div style={{ font: `700 48px ${F.body}`, color: C.muted }}>Хочешь в группу — напиши в директ Instagram</div></Appear>
-      <Kinetic at={tD + 6} y={640} size={110} rotate={-2}>@himiya.prosto</Kinetic>
+      <Kinetic at={tD + 6} y={640} size={110} rotate={-2}>@himbio.prosto</Kinetic>
       {frame >= tSub && (
         <Abs x={1380} y={860}>
           <div style={{ transform: `scale(${punch(frame, tSub, 0.25)})`, padding: '22px 44px', background: C.accent, borderRadius: 60, font: `800 40px ${F.display}`, color: '#fff', whiteSpace: 'nowrap' }}>ПОДПИСАТЬСЯ</div>
@@ -317,5 +317,11 @@ const Cta = ({ scene }) => {
   );
 };
 
-export const SCENES = { hook: Hook, pain: Pain, r1: R1, r2: R2, r3: R3, method: Method, task: Task, s1: S1, s2: S2, s3: S3, pivot: Pivot, plan: Plan, format: Format, cta: Cta };
-export const TAILS = { hook: 14, task: 40, s3: 24, pivot: 16, format: 20, cta: 60 };
+// Титул: о чём видео — в первые секунды.
+const Title = ({ scene }) => (
+  <TopicIntro scene={scene} tag="ЕНТ · химия" title="Химия на ЕНТ" plaque="не страшно"
+    items={[['3 причины, почему теряют баллы', 'причины'], ['Разбор сложной задачи ЕНТ', 'разбор'], ['Как устроен курс «ХимБио просто»', 'курс']]} />
+);
+
+export const SCENES = { title: Title, hook: Hook, pain: Pain, r1: R1, r2: R2, r3: R3, method: Method, task: Task, s1: S1, s2: S2, s3: S3, pivot: Pivot, plan: Plan, format: Format, cta: Cta };
+export const TAILS = { title: 24, hook: 14, task: 40, s3: 24, pivot: 16, format: 20, cta: 60 };

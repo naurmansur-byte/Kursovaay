@@ -14,8 +14,19 @@ const script = JSON.parse(await readFile(path.join(root, 'src/reels', `${reel}.s
 const outDir = path.join(root, 'public/audio', reel);
 await mkdir(outDir, { recursive: true });
 
+// --only id1,id2 — переозвучить только эти сцены; остальные берутся из прежнего timing.json, если текст не менялся.
+const onlyArg = process.argv.indexOf('--only');
+const only = onlyArg > 0 ? new Set(process.argv[onlyArg + 1].split(',')) : null;
+const timingPath = path.join(root, 'src/reels', `${reel}.timing.json`);
+const previous = only ? JSON.parse(await readFile(timingPath, 'utf8')).scenes : [];
+
 const timing = { id: script.id, scenes: [] };
 for (const scene of script.scenes) {
+  const old = previous.find((s) => s.id === scene.id);
+  if (only && !only.has(scene.id) && old) {
+    timing.scenes.push(old);
+    continue;
+  }
   if (!scene.text) {  // слайд без озвучки — короткая пауза
     timing.scenes.push({ id: scene.id, audio: null, speechEndMs: 1800, words: [] });
     continue;

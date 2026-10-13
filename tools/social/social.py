@@ -191,6 +191,51 @@ def ad2(w: int, h: int, y: dict, icon: int = 165) -> str:
 """)
 
 
+# Таргет v3 (14.10): две аудитории — ученики и родители. Цена — только в директ.
+AUDIENCES = {
+    'students': {
+        'tag': 'ХИМБИО ПРОСТО · ЕНТ',
+        'plaques': [('11 класс?', '#F13A43', -4), ('сдаёшь хим-био?', '#1F7A4A', -3)],
+        'lead': 'Готовим к ЕНТ по химии и биологии: по учебникам из перечня НЦТ и в формате теста.',
+        'facts': [('90', 'минут живого урока вечером, онлайн'), ('5', 'человек в группе — тебя слышат'),
+                  ('ДЗ', 'с проверкой и пробный ЕНТ раз в месяц')],
+        'cta': 'Напиши «ТЕСТ» в директ — бесплатный входной тест',
+    },
+    'parents': {
+        'tag': 'ХИМБИО ПРОСТО · ДЛЯ РОДИТЕЛЕЙ',
+        'plaques': [('Ребёнок сдаёт', '#F3F0E8', -3), ('химию и биологию?', '#F13A43', -4)],
+        'lead': 'Профиль ЕНТ для медицинских вузов. Готовим с ноября по май — оба предмета в одном курсе.',
+        'facts': [('2 + 2', 'урока в неделю по 90 минут: химия и биология'), ('5', 'учеников в группе, живой преподаватель'),
+                  ('ДЗ', 'проверяем каждую неделю, пробный ЕНТ раз в месяц'), ('Kaspi', 'оплата помесячно')],
+        'cta': 'Напишите «ПРОГРАММА» в директ — пришлём программу и стоимость',
+    },
+}
+
+
+def ad3(kind: str, w: int, h: int, y: dict, icon: int = 150) -> str:
+    a = AUDIENCES[kind]
+    pls = ''.join(f'<div class="pl" style="background:{bg};color:{"#151515" if bg == "#F3F0E8" else "#F3F0E8"};transform:rotate({r}deg);margin-top:{0 if i == 0 else 16}px">{t}</div><br>'
+                  for i, (t, bg, r) in enumerate(a['plaques']))
+    rows = ''.join(f'<div class="fact"><div class="num" style="background:{"#F13A43" if i % 2 == 0 else "#1F7A4A"};{"font-size:30px" if len(n) > 3 else ""}">{n}</div><div class="ft">{t}</div></div>'
+                   for i, (n, t) in enumerate(a['facts']))
+    return doc(w, h, AD_CSS + f"""
+.pl {{ display: inline-block; white-space: nowrap; font: 800 {y.get('pl', 64)}px/1.05 'Unbounded'; text-transform: uppercase; padding: 10px 24px 16px; }}
+.lead {{ font: 700 42px/1.3 'Manrope'; margin: 0; }}
+.fact {{ display: flex; align-items: center; gap: 26px; margin-bottom: 22px; }}
+.num {{ width: 150px; flex: none; text-align: center; padding: 14px 0 18px; font: 800 {y.get('num', 42)}px 'Unbounded'; color: #F3F0E8; transform: rotate(-3deg); }}
+.ft {{ font: 800 36px/1.2 'Manrope'; color: #F3F0E8; }}
+.icons .atom {{ width: {icon}px; height: {icon}px; }} .dna {{ width: {int(icon * .5)}px; height: {int(icon * 1.1)}px; }}
+.cta {{ font-size: 36px; line-height: 1.25; padding: 30px 60px !important; }}
+""", f"""
+<div class="tag" style="top:{y['tag']}px"><i></i>{a['tag']}</div>
+<div class="icons" style="right:60px;top:{y['tag'] - 20}px;gap:16px">{ATOM}{dna().replace('#F13A43', '#1F7A4A')}</div>
+<div style="position:absolute;left:80px;right:80px;top:{y['h1']}px">{pls}</div>
+<p class="lead" style="position:absolute;left:80px;right:90px;top:{y['lead']}px">{a['lead']}</p>
+<div style="position:absolute;left:80px;right:80px;top:{y['facts']}px">{rows}</div>
+<div class="cta" style="top:{y['cta']}px;bottom:auto">{a['cta']}</div>
+""")
+
+
 # Обложки YouTube 1280×720 в стиле обложки «Моль за 4 минуты» (tools/youtube/art.py).
 def thumb(tag: str, h1: str, plaque: str, badge: str, icon: str, accent: str = '#F13A43') -> str:
     return doc(1280, 720, f"""
@@ -229,6 +274,17 @@ if __name__ == '__main__':
         (ROOT / 'deliverables' / 'ads').mkdir(parents=True, exist_ok=True)
         shot(ad2(1080, 1350, {'tag': 90, 'h1': 170, 'facts': 720, 'cta': 1240}), 1080, 1350, ROOT / 'deliverables' / 'ads' / 'target-himbio-4x5.png')
         shot(ad2(1080, 1920, {'tag': 260, 'h1': 350, 'facts': 920, 'cta': 1420}, 175), 1080, 1920, ROOT / 'deliverables' / 'ads' / 'target-himbio-9x16.png')
+        sys.exit()
+    if '--ad3' in sys.argv:
+        out = ROOT / 'deliverables' / 'ads'
+        out.mkdir(parents=True, exist_ok=True)
+        for kind in AUDIENCES:
+            pl = 64 if kind == 'students' else 54
+            shot(ad3(kind, 1080, 1350, {'tag': 90, 'h1': 250, 'lead': 500, 'facts': 700 if kind == 'students' else 720, 'cta': 1180, 'pl': pl}),
+                 1080, 1350, out / f'target-{kind}-4x5.png')
+            # 9:16: нижние ~300 px закрывает кнопка рекламы — призыв выше.
+            shot(ad3(kind, 1080, 1920, {'tag': 250, 'h1': 420, 'lead': 680, 'facts': 900 if kind == 'students' else 910, 'cta': 1420, 'pl': pl}, 160),
+                 1080, 1920, out / f'target-{kind}-9x16.png')
         sys.exit()
     if '--yt' in sys.argv:
         for name, html in THUMBS.items():

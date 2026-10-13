@@ -9,9 +9,8 @@ import r003Timing from './reels/r003.timing.json';
 import { TAILS as r003Tails } from './reels/r003.jsx';
 import { Avatar, HighlightCover, HIGHLIGHTS } from './brand.jsx';
 import { CarouselSlide, CAROUSEL_SIZE } from './carousel.jsx';
-import { SlideVideo } from './SlideVideo.jsx';
 import y001Timing from './reels/y001.timing.json';
-import y001Tails from './reels/y001.tails.json';
+import { TAILS as y001Tails } from './reels/y001.jsx';
 import y002Timing from './reels/y002.timing.json';
 import { TAILS as y002Tails } from './reels/y002.jsx';
 
@@ -37,7 +36,7 @@ export const Root = () => (
     ))}
     {(() => {
       const plan = buildPlan(y001Timing, FPS, y001Tails);
-      return <Composition id="YT001" component={SlideVideo} durationInFrames={plan.total + 10} fps={FPS} width={1920} height={1080} defaultProps={{ plan, dir: 'youtube/y001' }} />;
+      return <Composition id="Y001" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y001' }} />;
     })()}
     {(() => {
       const plan = buildPlan(y002Timing, FPS, y002Tails);

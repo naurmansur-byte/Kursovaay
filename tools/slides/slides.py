@@ -83,8 +83,15 @@ def body_html(lines: list[str], dark: bool) -> tuple[str, str]:
     return '\n'.join(out), '\n'.join(callouts)
 
 
+# Если текст не помещается в слайд, уменьшить блоки под заголовком (zoom), пока низ не встанет выше 1030 px.
+FIT = ('<script>function fit(){var k=[].slice.call(document.body.children).filter(function(e){return !e.matches(".top,.tag,h1,h2,.plaque,.atom,script")});'
+       'var z=1;function low(){var m=0;k.forEach(function(e){m=Math.max(m,e.getBoundingClientRect().bottom)});return m}'
+       'while(low()>1030&&z>0.5){z-=0.04;k.forEach(function(e){e.style.zoom=z})}}'
+       'fit();if(document.fonts)document.fonts.ready.then(fit);</script>')
+
+
 def page(css: str, inner: str, cls: str) -> str:
-    return f'<!doctype html><html lang="ru"><head><meta charset="utf-8"><style>{css}</style></head><body class="{cls}">{inner}</body></html>'
+    return f'<!doctype html><html lang="ru"><head><meta charset="utf-8"><style>{css}</style></head><body class="{cls}">{inner}{FIT}</body></html>'
 
 
 ATOM = ('<svg class="atom" viewBox="-200 -200 400 400">' + ''.join(

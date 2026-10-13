@@ -9,10 +9,11 @@ import { Background, enter } from './kit.jsx';
 import { SCENES as R001 } from './reels/r001.jsx';
 import { SCENES as R002 } from './reels/r002.jsx';
 import { SCENES as R003 } from './reels/r003.jsx';
+import { SCENES as Y001 } from './reels/y001.jsx';
 import { SCENES as Y002 } from './reels/y002.jsx';
 
 // Props ролика сериализуются в JSON, поэтому сцены подключаются здесь, по id ролика.
-const REELS = { R001, R002, R003, Y002 };
+const REELS = { R001, R002, R003, Y001, Y002 };
 
 export const useFonts = () => {
   const [handle] = useState(() => delayRender('fonts'));

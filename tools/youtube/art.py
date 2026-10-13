@@ -50,12 +50,12 @@ h1 {{ margin: 40px 0 0; font: 800 132px/1 'Unbounded'; text-transform: uppercase
 .formula {{ position: absolute; right: 70px; bottom: 70px; padding: 22px 34px; background: #F3F0E8; color: #151515; font: 800 64px 'Unbounded'; transform: rotate(3deg); }}
 .atom {{ position: absolute; right: 90px; top: 50px; width: 300px; height: 300px; transform: rotate(-12deg); }}
 </style></head><body>
-<div class="tag"><i></i>ХИМИЯ ДЛЯ ЕНТ</div><h1>Моль</h1><div class="plaque">за 10 минут</div>
+<div class="tag"><i></i>ХИМИЯ ДЛЯ ЕНТ</div><h1>Моль</h1><div class="plaque">за 4 минуты</div>
 {ATOM}<div class="formula">{inline('n = m / M')}</div>
 </body></html>"""
 
 
-THUMB2 = THUMB.replace('<h1>Моль</h1><div class="plaque">за 10 минут</div>', '<h1>Химия<br>на ЕНТ</h1><div class="plaque">не страшно</div>') \
+THUMB2 = THUMB.replace('<h1>Моль</h1><div class="plaque">за 4 минуты</div>', '<h1>Химия<br>на ЕНТ</h1><div class="plaque">не страшно</div>') \
     .replace(inline('n = m / M'), inline('C₂H₆O ✓')).replace('ХИМИЯ ДЛЯ ЕНТ', 'КУРС «ХИМИЯ ПРОСТО»') \
     .replace("font: 800 132px/1 'Unbounded'", "font: 800 112px/1.02 'Unbounded'")
 

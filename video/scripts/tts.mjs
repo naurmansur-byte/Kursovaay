@@ -29,7 +29,17 @@ for (const scene of script.scenes) {
     saveSubtitles: true,
     timeout: 30000,
   });
-  await tts.ttsPromise(scene.text, file);
+  // Edge TTS иногда отвечает 429 — повторить с нарастающей паузой.
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await tts.ttsPromise(scene.text, file);
+      break;
+    } catch (e) {
+      if (attempt >= 6) throw e;
+      console.log(`${scene.id}: ${e.message}, retry ${attempt}`);
+      await new Promise((r) => setTimeout(r, 5000 * attempt));
+    }
+  }
   const words = JSON.parse(await readFile(`${file}.json`, 'utf8')).map((w) => ({ t: w.part, start: w.start, end: w.end }));
   await rm(`${file}.json`);
   const speechEnd = words.length ? words[words.length - 1].end : 1000;

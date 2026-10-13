@@ -191,10 +191,9 @@ def ad2(w: int, h: int, y: dict, icon: int = 165) -> str:
 """)
 
 
-# Таргет v3 (14.10): две аудитории — ученики и родители. Цена — только в директ.
+# Таргет v3 (14.10): две аудитории — ученики и родители. По решению Мансура верхней подписи нет, цена — блоком в баннере.
 AUDIENCES = {
     'students': {
-        'tag': 'ХИМБИО ПРОСТО · ЕНТ',
         'plaques': [('11 класс?', '#F13A43', -4), ('сдаёшь хим-био?', '#1F7A4A', -3)],
         'lead': 'Готовим к ЕНТ по химии и биологии: по учебникам из перечня НЦТ и в формате теста.',
         'facts': [('90', 'минут живого урока вечером, онлайн'), ('5', 'человек в группе — тебя слышат'),
@@ -202,14 +201,14 @@ AUDIENCES = {
         'cta': 'Напиши «ТЕСТ» в директ — бесплатный входной тест',
     },
     'parents': {
-        'tag': 'ХИМБИО ПРОСТО · ДЛЯ РОДИТЕЛЕЙ',
         'plaques': [('Ребёнок сдаёт', '#F3F0E8', -3), ('химию и биологию?', '#F13A43', -4)],
         'lead': 'Профиль ЕНТ для медицинских вузов. Готовим с ноября по май — оба предмета в одном курсе.',
         'facts': [('2 + 2', 'урока в неделю по 90 минут: химия и биология'), ('5', 'учеников в группе, живой преподаватель'),
-                  ('ДЗ', 'проверяем каждую неделю, пробный ЕНТ раз в месяц'), ('Kaspi', 'оплата помесячно')],
-        'cta': 'Напишите «ПРОГРАММА» в директ — пришлём программу и стоимость',
+                  ('ДЗ', 'проверяем каждую неделю, пробный ЕНТ раз в месяц')],
+        'cta': 'Напишите «ПРОГРАММА» в директ — пришлём программу курса',
     },
 }
+PRICE = ('19 500 ₸ в месяц', 'химия + биология · оплата Kaspi')  # решение Мансура 14.10: цена — в рекламном баннере
 
 
 def ad3(kind: str, w: int, h: int, y: dict, icon: int = 150) -> str:
@@ -226,9 +225,12 @@ def ad3(kind: str, w: int, h: int, y: dict, icon: int = 150) -> str:
 .ft {{ font: 800 36px/1.2 'Manrope'; color: #F3F0E8; }}
 .icons .atom {{ width: {icon}px; height: {icon}px; }} .dna {{ width: {int(icon * .5)}px; height: {int(icon * 1.1)}px; }}
 .cta {{ font-size: 36px; line-height: 1.25; padding: 30px 60px !important; }}
+.price {{ position: absolute; left: 80px; display: flex; align-items: center; gap: 26px; }}
+.price b {{ background: #F3F0E8; color: #151515; padding: 14px 26px 16px; font: 800 52px/1.05 'Unbounded'; white-space: nowrap; transform: rotate(-2deg); }}
+.price span {{ font: 800 30px/1.25 'Manrope'; text-transform: uppercase; letter-spacing: .05em; }}
 """, f"""
-<div class="tag" style="top:{y['tag']}px"><i></i>{a['tag']}</div>
-<div class="icons" style="right:60px;top:{y['tag'] - 20}px;gap:16px">{ATOM}{dna().replace('#F13A43', '#1F7A4A')}</div>
+<div class="icons" style="right:60px;top:{y['icons']}px;gap:16px">{ATOM}{dna().replace('#F13A43', '#1F7A4A')}</div>
+<div class="price" style="top:{y['price']}px"><b>{PRICE[0]}</b><span>{PRICE[1].replace(' · ', '<br>')}</span></div>
 <div style="position:absolute;left:80px;right:80px;top:{y['h1']}px">{pls}</div>
 <p class="lead" style="position:absolute;left:80px;right:90px;top:{y['lead']}px">{a['lead']}</p>
 <div style="position:absolute;left:80px;right:80px;top:{y['facts']}px">{rows}</div>
@@ -280,10 +282,10 @@ if __name__ == '__main__':
         out.mkdir(parents=True, exist_ok=True)
         for kind in AUDIENCES:
             pl = 64 if kind == 'students' else 54
-            shot(ad3(kind, 1080, 1350, {'tag': 90, 'h1': 250, 'lead': 500, 'facts': 700 if kind == 'students' else 720, 'cta': 1180, 'pl': pl}),
+            shot(ad3(kind, 1080, 1350, {'icons': 60, 'h1': 230, 'lead': 470, 'facts': 660 if kind == 'students' else 680, 'price': 1020, 'cta': 1180, 'pl': pl}),
                  1080, 1350, out / f'target-{kind}-4x5.png')
             # 9:16: нижние ~300 px закрывает кнопка рекламы — призыв выше.
-            shot(ad3(kind, 1080, 1920, {'tag': 250, 'h1': 420, 'lead': 680, 'facts': 900 if kind == 'students' else 910, 'cta': 1420, 'pl': pl}, 160),
+            shot(ad3(kind, 1080, 1920, {'icons': 220, 'h1': 400, 'lead': 650, 'facts': 860 if kind == 'students' else 880, 'price': 1250, 'cta': 1420, 'pl': pl}, 160),
                  1080, 1920, out / f'target-{kind}-9x16.png')
         sys.exit()
     if '--yt' in sys.argv:

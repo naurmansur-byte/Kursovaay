@@ -13,3 +13,6 @@ tools/dashboard/out/
 !deliverables/**/*.mp4
 video/build/
 video/out/
+
+# Папка с готовыми материалами для Мансура (копии; исходники в course/, deliverables/)
+/00 Материалы ХимБио просто/

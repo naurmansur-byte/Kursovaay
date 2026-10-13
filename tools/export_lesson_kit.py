@@ -57,9 +57,13 @@ def blocks(text):
             yield 'paragraph', '• ' + plain(line[2:])
             i += 1
             continue
+        if re.match(r'^\d+[.)]\s+', line):  # пункт нумерованного списка — отдельным абзацем
+            yield 'paragraph', plain(line)
+            i += 1
+            continue
         data = [plain(line)]
         i += 1
-        while i < len(lines) and lines[i].strip() and not re.match(r'^(#|\||[-*] |```)', lines[i].strip()):
+        while i < len(lines) and lines[i].strip() and not re.match(r'^(#|\||[-*] |```|\d+[.)]\s)', lines[i].strip()):
             data.append(plain(lines[i]))
             i += 1
         yield 'paragraph', ' '.join(data)

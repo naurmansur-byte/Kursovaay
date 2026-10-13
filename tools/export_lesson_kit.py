@@ -166,26 +166,32 @@ def export_slides(source, output):
         if estimated_lines>20:raise RuntimeError(f'Slide {match[1]} too dense; revise visible text before export')
         slide = deck.slides.add_slide(deck.slide_layouts[6])
         slide.background.fill.solid()
-        slide.background.fill.fore_color.rgb = RGBColor(248,250,252)
+        slide.background.fill.fore_color.rgb = RGBColor.from_string('151515')
         title = slide.shapes.add_textbox(Inches(.7), Inches(.4), Inches(12), Inches(.9)).text_frame
+        title.word_wrap = False
         p = title.paragraphs[0]
         p.text = plain(match[0].lstrip('# ').strip())
-        p.font.size, p.font.bold = Pt(28), True
-        p.font.color.rgb = RGBColor(15,23,42)
+        # Unbounded is wider than the old default; leave room for long Cyrillic titles.
+        title_size = min(28, 800 / (max(len(p.text), 1) * .82))
+        p.font.name = 'Unbounded'
+        p.font.size, p.font.bold = Pt(title_size), True
+        p.font.color.rgb = RGBColor.from_string('F13A43')
         frame = slide.shapes.add_textbox(Inches(.8),Inches(1.55),Inches(11.8),Inches(5.15)).text_frame
         frame.word_wrap = True
         for j, line in enumerate(visible_lines):
             if not line.strip():continue
             p = frame.paragraphs[0] if not frame.text else frame.add_paragraph()
             p.text = line.lstrip('- ').strip()
-            p.font.name = 'DejaVu Sans'
+            p.font.name = 'Manrope'
             p.font.size = Pt(body_size)
-            p.font.color.rgb = RGBColor(30,41,59)
+            p.font.color.rgb = RGBColor.from_string('F3F0E8')
             p.space_after = Pt(3)
         slide.notes_slide.notes_text_frame.text = body
         foot = slide.shapes.add_textbox(Inches(.8),Inches(7),Inches(11.8), Inches(.3)).text_frame
         foot.text = f'Черновик для проверки преподавателем • {match[1]}'
+        foot.paragraphs[0].font.name = 'Manrope'
         foot.paragraphs[0].font.size = Pt(12)
+        foot.paragraphs[0].font.color.rgb = RGBColor.from_string('F3F0E8')
     output.parent.mkdir(parents=True,exist_ok=True)
     deck.save(output)
     restored=Presentation(output)

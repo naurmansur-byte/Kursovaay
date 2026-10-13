@@ -1,0 +1,58 @@
+/* Слайды «Химия просто», 1920×1080: стиль 2. Светлые слайды объяснения, тёмные — обложка и ответы. */
+@font-face { font-family: 'Unbounded'; font-weight: 200 900; src: url('{{FONTS}}/unbounded-cyrillic-wght-normal.woff2') format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Unbounded'; font-weight: 200 900; src: url('{{FONTS}}/unbounded-latin-wght-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Manrope'; font-weight: 200 800; src: url('{{FONTS}}/manrope-cyrillic-wght-normal.woff2') format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Manrope'; font-weight: 200 800; src: url('{{FONTS}}/manrope-latin-wght-normal.woff2') format('woff2'); }
+
+:root { --ink: #151515; --paper: #ffffff; --accent: #F13A43; --muted: #6B6760; --light: #F3F0E8; --tint: #F5F2EB; --line: #DEDAD1; }
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+body { position: relative; padding: 70px 110px; font: 500 46px/1.4 'Manrope', sans-serif; }
+body.light { background: var(--paper); color: var(--ink); }
+body.dark { background: var(--ink); color: var(--light); }
+body.light::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 14px; background: var(--ink); }
+
+.top { display: flex; justify-content: space-between; font: 800 22px 'Manrope', sans-serif; letter-spacing: .16em; color: var(--muted); }
+.top span:first-child { display: flex; align-items: center; gap: 14px; color: inherit; }
+.light .top span:first-child { color: var(--ink); }
+.dark .top span:first-child { color: var(--light); }
+.top i { width: 14px; height: 14px; background: var(--accent); border-radius: 50%; }
+
+h2 { display: flex; align-items: center; gap: 26px; margin: 46px 0 40px; font: 800 60px/1.12 'Unbounded', sans-serif; letter-spacing: -.01em; }
+h2 i { flex: none; width: 26px; height: 26px; background: var(--accent); transform: rotate(-4deg); }
+
+.body p { margin: 0 0 18px; }
+.body ul, .body ol { margin: 0 0 20px; padding: 0; list-style: none; counter-reset: n; }
+.body li { position: relative; padding-left: 62px; margin-bottom: 14px; }
+.body ul li::before { content: ''; position: absolute; left: 8px; top: .5em; width: 18px; height: 18px; background: var(--accent); transform: rotate(-4deg); }
+.body ol li { counter-increment: n; }
+.body ol li::before { content: counter(n); position: absolute; left: 0; top: 0; font: 800 .82em/1.7 'Unbounded', sans-serif; color: var(--accent); }
+.body.medium { font-size: 39px; }
+.body.dense { font-size: 33px; }
+strong { font-weight: 800; color: var(--accent); }
+.dark strong { color: #FF7A80; }
+sub, sup { font-size: .62em; line-height: 0; }
+sub { vertical-align: -.25em; }
+sup { vertical-align: .62em; }
+
+table { border-collapse: collapse; width: 100%; margin: 6px 0 22px; font-size: .86em; }
+th { text-align: left; padding: 14px 20px; font: 800 .62em 'Manrope', sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); border-bottom: 4px solid var(--ink); }
+td { padding: 14px 20px; border-bottom: 2px solid var(--line); }
+tr:nth-child(odd) td { background: #FAF8F4; }
+
+.callouts { position: absolute; left: 110px; right: 110px; bottom: 58px; display: grid; gap: 18px; }
+.callout { padding: 22px 34px; font-size: 32px; line-height: 1.35; }
+.callout b { margin-right: 16px; font: 800 24px 'Unbounded', sans-serif; text-transform: uppercase; letter-spacing: .04em; }
+.callout.trap { background: var(--accent); color: #fff; }
+.callout.trap strong { color: #fff; text-decoration: underline; }
+.callout.task { background: var(--ink); color: var(--light); }
+.callout.task b { color: var(--accent); }
+
+.plaque { display: inline-block; margin-top: 120px; padding: 18px 40px 24px; background: var(--accent); color: #fff; font: 800 46px 'Unbounded', sans-serif; text-transform: uppercase; transform: rotate(-3deg); }
+.plaque.small { margin-top: 60px; padding: 12px 30px 16px; font-size: 32px; }
+.cover-title { max-width: 1250px; margin: 46px 0 0; font: 800 92px/1.08 'Unbounded', sans-serif; text-transform: uppercase; color: var(--light); }
+.atom { position: absolute; right: 120px; bottom: 120px; width: 380px; height: 380px; transform: rotate(-12deg); }
+.answer-of { margin: 26px 0 40px; font: 700 30px 'Unbounded', sans-serif; color: #A8A39A; }
+.body.answer { font-size: 52px; line-height: 1.45; }
+.body.answer.medium { font-size: 44px; }
+.body.answer.dense { font-size: 38px; }

@@ -139,64 +139,189 @@ def export_notes_pdf(text, output):
     output.parent.mkdir(parents=True, exist_ok=True)
     SimpleDocTemplate(str(output),pagesize=A4,leftMargin=45,rightMargin=45,topMargin=35,bottomMargin=38).build(story,onFirstPage=footer,onLaterPages=footer)
 
+# --- Презентация в стиле 2 «Химия просто» (Макс, 13.10.2026) -----------------------------
+# Обложка тёмная; слайды объяснения светлые (читаемость в Google Meet); ответ — отдельный тёмный слайд
+# сразу после задания. Шрифты Unbounded и Manrope есть в Google Slides; в PowerPoint без них — замена.
+INK, PAPER, ACCENT, MUTED, TINT, LIGHT = '151515', 'FFFFFF', 'F13A43', '6B6760', 'F5F2EB', 'F3F0E8'
+CALLOUT = re.compile(r'^(Ловушка|Запомни|Задание[^:]*|Вопрос[^:]*|Входной вопрос|Проверь себя|Попробуй)\s*:\s*(.+)$', re.I)
+
+
+def _rgb(hex_):
+    return RGBColor.from_string(hex_)
+
+
+def _box(slide, x, y, w, h, fill, rotation=0):
+    from pptx.enum.shapes import MSO_SHAPE
+    shape = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(x), Inches(y), Inches(w), Inches(h))
+    shape.fill.solid(); shape.fill.fore_color.rgb = _rgb(fill); shape.line.fill.background(); shape.shadow.inherit = False
+    shape.rotation = rotation
+    return shape
+
+
+def _runs(paragraph, text, size, color, font='Manrope', bold=False, accent_bold=False):
+    """**жирное** -> отдельные runs; accent_bold красит жирное в красный."""
+    for k, part in enumerate(re.split(r'(\*\*[^*]+\*\*)', text)):
+        if not part:
+            continue
+        strong = part.startswith('**')
+        run = paragraph.add_run(); run.text = part.strip('*') if strong else part
+        run.font.name, run.font.size, run.font.bold = font, Pt(size), bold or strong
+        run.font.color.rgb = _rgb(ACCENT if strong and accent_bold else color)
+
+
+def _text(slide, x, y, w, h, size=20, color=INK):
+    tf = slide.shapes.add_textbox(Inches(x), Inches(y), Inches(w), Inches(h)).text_frame
+    tf.word_wrap = True
+    return tf
+
+
+def _para(tf):
+    return tf.paragraphs[0] if not tf.paragraphs[0].runs and len(tf.paragraphs) == 1 else tf.add_paragraph()
+
+
+def _chrome(slide, label, counter, dark):
+    fg = LIGHT if dark else INK
+    _box(slide, .7, .52, .13, .13, ACCENT)
+    p = _para(_text(slide, .9, .38, 8, .4)); _runs(p, label, 11, fg, bold=True)
+    p = _para(_text(slide, 10.6, .38, 2.1, .4)); _runs(p, counter, 11, MUTED if not dark else 'A8A39A', bold=True)
+    from pptx.enum.text import PP_ALIGN
+    p.alignment = PP_ALIGN.RIGHT
+
+
+def _title(slide, text, color):
+    tf = _text(slide, .7, .85, 12, 1.1)
+    p = _para(tf); _runs(p, text, min(30, 760 / (max(len(text), 1) * .8)), color, font='Unbounded', bold=True)
+
+
+def _table(slide, rows, top, body_size):
+    cols = max(len(r) for r in rows)
+    shape = slide.shapes.add_table(len(rows), cols, Inches(.8), Inches(top), Inches(11.7), Inches(.5 * len(rows)))
+    table = shape.table
+    for i, row in enumerate(rows):
+        for j in range(cols):
+            cell = table.cell(i, j); cell.text = ''
+            cell.fill.solid(); cell.fill.fore_color.rgb = _rgb(INK if i == 0 else (TINT if i % 2 == 0 else PAPER))
+            p = cell.text_frame.paragraphs[0]
+            _runs(p, row[j] if j < len(row) else '', body_size - (3 if i == 0 else 2), LIGHT if i == 0 else INK, bold=i == 0)
+    return top + .5 * len(rows) + .25
+
+
+def _content(slide, lines, top, body_size, dark=False):
+    """Пункты, нумерация, абзацы, таблицы; строки-выноски («Ловушка: …», «Задание: …») — блоками внизу."""
+    fg = LIGHT if dark else INK
+    rows, callouts, flow = [], [], []
+    for line in lines:
+        if line.startswith('|'):
+            cells = [c.strip() for c in line.strip('|').split('|')]
+            if not all(re.fullmatch(r':?-+:?', c) for c in cells):
+                rows.append(cells)
+            continue
+        if rows:
+            flow.append(('table', rows)); rows = []
+        m = CALLOUT.match(line.lstrip('- ').strip())
+        if m and not dark:
+            callouts.append(m.groups())
+        else:
+            flow.append(('line', line))
+    if rows:
+        flow.append(('table', rows))
+    tf = None
+    for kind, item in flow:
+        if kind == 'table':
+            top = _table(slide, item, top, body_size); tf = None
+            continue
+        if tf is None:
+            tf = _text(slide, .8, top, 11.7, 4.8)
+        p = _para(tf); p.space_after = Pt(6)
+        bullet = re.match(r'^(?:[-*]|(\d+)[.)])\s+(.*)$', item)
+        if bullet:
+            marker = f'{bullet.group(1)}.  ' if bullet.group(1) else '■  '
+            _runs(p, marker, body_size - (0 if bullet.group(1) else 6), ACCENT, bold=True)
+            _runs(p, bullet.group(2), body_size, fg, accent_bold=not dark)
+        else:
+            _runs(p, item, body_size, fg, accent_bold=not dark)
+    heights = [.5 + .38 * max(1, (len(label) + len(text) + 79) // 80) for label, text in callouts]
+    y = 7.5 - .4 - sum(h + .15 for h in heights)
+    for (label, text), h in zip(callouts, heights):
+        trap = label.lower().startswith('ловушка')
+        _box(slide, .8, y, 11.7, h, ACCENT if trap else INK)
+        tf2 = _text(slide, 1.05, y + .1, 11.3, h - .15)
+        p = _para(tf2); _runs(p, f'{label.upper()}:  ', body_size - 5, 'FFFFFF' if trap else ACCENT, font='Unbounded', bold=True)
+        _runs(p, text, body_size - 3, 'FFFFFF' if trap else LIGHT)
+        y += h + .15
+
+
+def _blocks(body):
+    def grab(name):
+        m = re.search(rf'(?:### {name}[^\n]*|\*\*{name}[^\n]*\*\*)\s*\n(.*?)(?=\n### |\n\*\*(?:Текст|Заметки|Раскрытие|Ответ|Формулы)[^\n]*\*\*\s*\n|\Z)', body, re.S)
+        return m.group(1).strip() if m else ''
+    return grab('Текст ученику'), grab('Раскрытие ответа')
+
+
+def _lines(text):
+    return [ln.strip() for ln in plain_keep_bold(text).splitlines() if ln.strip()]
+
+
+def plain_keep_bold(text):
+    """Как plain(), но сохраняет **жирное** для runs."""
+    return re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text).replace('`', '')
+
+
 def export_slides(source, output):
-    sections = list(re.finditer(r'^## Слайд (\d+)[^\n]*', source, re.M))
+    sections = list(re.finditer(r'^## Слайд (\d+)\.?\s*([^\n]*)', source, re.M))
     if not sections:
         raise RuntimeError('Expected headings: ## Слайд N. Title')
+    readme = output.parent.parent.parent / 'course' / output.parent.name / 'README.md'
+    topic_match = re.search(r'^# Неделя\s*0?(\d+)[.:]\s*(.+)$', readme.read_text(encoding='utf-8'), re.M) if readme.exists() else None
+    week_no, topic = (topic_match.group(1), topic_match.group(2).strip()) if topic_match else (output.parent.name[-2:].lstrip('0'), '')
+    label = f'ХИМИЯ ПРОСТО · НЕДЕЛЯ {week_no}'
     deck = Presentation()
     deck.slide_width, deck.slide_height = Inches(13.333), Inches(7.5)
+    blank = deck.slide_layouts[6]
+
+    cover = deck.slides.add_slide(blank)
+    cover.background.fill.solid(); cover.background.fill.fore_color.rgb = _rgb(INK)
+    _chrome(cover, 'ХИМИЯ ПРОСТО · ПОДГОТОВКА К ЕНТ', '', dark=True)
+    plaque = _box(cover, .8, 2.0, 3.1, .85, ACCENT, rotation=-3)
+    p = _para(plaque.text_frame); _runs(p, f'НЕДЕЛЯ {week_no}', 24, 'FFFFFF', font='Unbounded', bold=True)
+    tf = _text(cover, .8, 3.2, 11.8, 2.4)
+    p = _para(tf); _runs(p, (topic or '').upper(), min(48, 1000 / (max(len(topic), 1) * .78)), LIGHT, font='Unbounded', bold=True)
+    p = _para(_text(cover, .8, 6.3, 11.8, .5)); _runs(p, 'Уроки недели · презентация с заметками для преподавателя', 14, 'A8A39A')
+    cover.notes_slide.notes_text_frame.text = 'Обложка недели.'
+
+    total = len(sections)
     for index, match in enumerate(sections):
-        body = source[match.end():sections[index+1].start() if index+1<len(sections) else len(source)].strip()
-        # Visible text/teacher notes are deliberately separate in the Markdown source.
-        visible_match = re.search(r'(?:### Текст ученику|\*\*Текст ученику[^\n]*\*\*)\s*\n(.*?)(?=\n(?:### |\*\*(?:Заметки|Ответ|Раскрытие|Формулы))|\Z)',body,re.S)
-        if not visible_match:
-            raise RuntimeError(f'Missing visible text block on slide {match[1]}')
-        visible = plain(visible_match[1])
-        visible_lines=[]
-        for line in visible.splitlines():
-            line=line.strip()
-            if not line:continue
-            if line.startswith('|'):
-                cells=[c.strip() for c in line.strip('|').split('|')]
-                if all(re.fullmatch(r':?-+:?',c) for c in cells):continue
-                line='  ·  '.join(c for c in cells if c)
-            visible_lines.append(line)
-        estimated_lines=sum(max(1,(len(line)+69)//70) for line in visible_lines)
-        body_size=22 if estimated_lines<=12 else 20 if estimated_lines<=16 else 18
-        if estimated_lines>20:raise RuntimeError(f'Slide {match[1]} too dense; revise visible text before export')
-        slide = deck.slides.add_slide(deck.slide_layouts[6])
-        slide.background.fill.solid()
-        slide.background.fill.fore_color.rgb = RGBColor.from_string('151515')
-        title = slide.shapes.add_textbox(Inches(.7), Inches(.4), Inches(12), Inches(.9)).text_frame
-        title.word_wrap = False
-        p = title.paragraphs[0]
-        p.text = plain(match[0].lstrip('# ').strip())
-        # Unbounded is wider than the old default; leave room for long Cyrillic titles.
-        title_size = min(28, 800 / (max(len(p.text), 1) * .82))
-        p.font.name = 'Unbounded'
-        p.font.size, p.font.bold = Pt(title_size), True
-        p.font.color.rgb = RGBColor.from_string('F13A43')
-        frame = slide.shapes.add_textbox(Inches(.8),Inches(1.55),Inches(11.8),Inches(5.15)).text_frame
-        frame.word_wrap = True
-        for j, line in enumerate(visible_lines):
-            if not line.strip():continue
-            p = frame.paragraphs[0] if not frame.text else frame.add_paragraph()
-            p.text = line.lstrip('- ').strip()
-            p.font.name = 'Manrope'
-            p.font.size = Pt(body_size)
-            p.font.color.rgb = RGBColor.from_string('F3F0E8')
-            p.space_after = Pt(3)
+        number, name = match.group(1), plain(match.group(2)).strip()
+        body = source[match.end():sections[index + 1].start() if index + 1 < total else len(source)].strip()
+        visible, answer = _blocks(body)
+        if not visible:
+            raise RuntimeError(f'Missing visible text block on slide {number}')
+        lines = _lines(visible)
+        estimated = sum(max(1, (len(ln) + 69) // 70) for ln in lines)
+        if estimated > 20:
+            raise RuntimeError(f'Slide {number} too dense; revise visible text before export')
+        size = 22 if estimated <= 10 else 20 if estimated <= 14 else 18
+        slide = deck.slides.add_slide(blank)
+        slide.background.fill.solid(); slide.background.fill.fore_color.rgb = _rgb(PAPER)
+        _chrome(slide, label, f'{number} / {total}', dark=False)
+        _title(slide, name, INK)
+        _content(slide, lines, 2.0, size)
         slide.notes_slide.notes_text_frame.text = body
-        foot = slide.shapes.add_textbox(Inches(.8),Inches(7),Inches(11.8), Inches(.3)).text_frame
-        foot.text = f'Черновик для проверки преподавателем • {match[1]}'
-        foot.paragraphs[0].font.name = 'Manrope'
-        foot.paragraphs[0].font.size = Pt(12)
-        foot.paragraphs[0].font.color.rgb = RGBColor.from_string('F3F0E8')
-    output.parent.mkdir(parents=True,exist_ok=True)
+        if answer:
+            reveal = deck.slides.add_slide(blank)
+            reveal.background.fill.solid(); reveal.background.fill.fore_color.rgb = _rgb(INK)
+            _chrome(reveal, label, f'{number} / {total} · ответ', dark=True)
+            plaque = _box(reveal, .8, 1.0, 1.9, .65, ACCENT, rotation=-3)
+            p = _para(plaque.text_frame); _runs(p, 'ОТВЕТ', 18, 'FFFFFF', font='Unbounded', bold=True)
+            p = _para(_text(reveal, 3.0, 1.0, 9.6, .7)); _runs(p, name, 18, 'A8A39A', font='Unbounded', bold=True)
+            alines = _lines(answer)
+            asize = 24 if sum(len(a) for a in alines) < 300 else 20
+            _content(reveal, alines, 2.1, asize, dark=True)
+            reveal.notes_slide.notes_text_frame.text = 'Показать после попытки учеников.\n\n' + answer
+    output.parent.mkdir(parents=True, exist_ok=True)
     deck.save(output)
-    restored=Presentation(output)
-    if len(restored.slides)!=len(sections):raise RuntimeError('Incomplete presentation export')
-    print(f'PPTX: {len(restored.slides)} slides, teacher notes retained')
+    restored = Presentation(output)
+    print(f'PPTX: {len(restored.slides)} slides ({total} content + answers + cover), teacher notes retained')
 
 def main():
     parser=argparse.ArgumentParser()
@@ -208,14 +333,35 @@ def main():
     student={'notes-student','pre-work','homework'}
     for name in ['notes-student','pre-work','homework','lesson-1-plan','lesson-2-plan','homework-solutions','teacher-notes','README']:
         text=(source/f'{name}.md').read_text(encoding='utf-8')
+        if name in student and text.startswith('---'):
+            continue  # новая разметка: ученику — оформленный PDF (ниже), Word не нужен
         export_docx(text,output/('student' if name in student else 'teacher')/f'{name}.docx')
     quiz=(source/'quiz.md').read_text(encoding='utf-8')
     boundary=re.search(r'^## (?:Ключ|Для преподавателя|Преподавател|Только преподавателю)',quiz,re.M)
     if not boundary:raise RuntimeError('Expected separate teacher section in quiz.md')
     export_docx(quiz[:boundary.start()],output/'student/quiz.docx')
     export_docx(quiz,output/'teacher/quiz-with-key.docx')
-    export_notes_pdf((source/'notes-student.md').read_text(encoding='utf-8'),output/'student/notes-student.pdf')
-    export_slides((source/'slides-outline.md').read_text(encoding='utf-8'),output/'slides.pptx')
+    # Оформленные раздатки и слайды-картинки (Макс): нужны пакет markdown и Chrome/Chromium. Без них — простые версии.
+    import importlib.util, sys as _sys
+    _sys.path[:0] = [str(REPO/'tools'/'handout'), str(REPO/'tools'/'slides')]
+    designed = importlib.util.find_spec('markdown') is not None
+    for name in ['notes-student', 'pre-work', 'homework', 'quiz']:
+        md = source/f'{name}.md'
+        if designed and md.read_text(encoding='utf-8').startswith('---'):
+            import handout
+            try:
+                handout.main(str(md.relative_to(REPO)), str((output/'student'/f'{name}.pdf').relative_to(REPO)))
+                continue
+            except RuntimeError as error:
+                print(f'Handout skipped ({error}); plain PDF used')
+        if name == 'notes-student':
+            export_notes_pdf(md.read_text(encoding='utf-8'), output/'student/notes-student.pdf')
+    export_slides((source/'slides-outline.md').read_text(encoding='utf-8'),output/'slides-editable.pptx')
+    try:
+        import slides
+        slides.build(args.week)
+    except Exception as error:  # нет Chrome — остаётся редактируемая версия
+        print(f'Image slides skipped ({error}); use slides-editable.pptx')
     print(f'Local review/import files: {output}; no Google upload was performed')
 
 if __name__=='__main__':main()

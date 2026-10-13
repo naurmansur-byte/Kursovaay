@@ -195,16 +195,16 @@ def ad2(w: int, h: int, y: dict, icon: int = 165) -> str:
 AUDIENCES = {
     'students': {
         'plaques': [('11 класс?', '#F13A43', -4), ('сдаёшь хим-био?', '#1F7A4A', -3)],
-        'lead': 'Готовим к ЕНТ по химии и биологии: по учебникам из перечня НЦТ и в формате теста.',
-        'facts': [('90', 'минут живого урока вечером, онлайн'), ('5', 'человек в группе — тебя слышат'),
-                  ('ДЗ', 'с проверкой и пробный ЕНТ раз в месяц')],
+        'lead': 'Готовим к ЕНТ по учебникам из перечня НЦТ и в формате теста.',
+        'facts': [('4 урока', 'в неделю: 2 по химии и 2 по биологии'), ('90 мин', 'каждый урок, вечером, онлайн'),
+                  ('5', 'человек в группе — тебя слышат'), ('ДЗ', 'с проверкой и пробный ЕНТ раз в месяц')],
         'cta': 'Напиши «ТЕСТ» в директ — бесплатный входной тест',
     },
     'parents': {
         'plaques': [('Ребёнок сдаёт', '#F3F0E8', -3), ('химию и биологию?', '#F13A43', -4)],
-        'lead': 'Профиль ЕНТ для медицинских вузов. Готовим с ноября по май — оба предмета в одном курсе.',
-        'facts': [('2 + 2', 'урока в неделю по 90 минут: химия и биология'), ('5', 'учеников в группе, живой преподаватель'),
-                  ('ДЗ', 'проверяем каждую неделю, пробный ЕНТ раз в месяц')],
+        'lead': 'Профиль ЕНТ для медицинских вузов. Оба предмета в одном курсе — с ноября по май.',
+        'facts': [('4 урока', 'в неделю: 2 по химии и 2 по биологии'), ('90 мин', 'каждый урок, вечером, онлайн'),
+                  ('5', 'учеников в группе, живой преподаватель'), ('ДЗ', 'проверяем каждую неделю, пробный ЕНТ раз в месяц')],
         'cta': 'Напишите «ПРОГРАММА» в директ — пришлём программу курса',
     },
 }
@@ -220,9 +220,9 @@ def ad3(kind: str, w: int, h: int, y: dict, icon: int = 150) -> str:
     return doc(w, h, AD_CSS + f"""
 .pl {{ display: inline-block; white-space: nowrap; font: 800 {y.get('pl', 64)}px/1.05 'Unbounded'; text-transform: uppercase; padding: 10px 24px 16px; }}
 .lead {{ font: 700 42px/1.3 'Manrope'; margin: 0; }}
-.fact {{ display: flex; align-items: center; gap: 26px; margin-bottom: 22px; }}
-.num {{ width: 150px; flex: none; text-align: center; padding: 14px 0 18px; font: 800 {y.get('num', 42)}px 'Unbounded'; color: #F3F0E8; transform: rotate(-3deg); }}
-.ft {{ font: 800 36px/1.2 'Manrope'; color: #F3F0E8; }}
+.fact {{ display: flex; align-items: center; gap: 26px; margin-bottom: 18px; }}
+.num {{ width: 170px; flex: none; text-align: center; padding: 14px 0 18px; font: 800 {y.get('num', 42)}px 'Unbounded'; color: #F3F0E8; transform: rotate(-3deg); white-space: nowrap; }}
+.ft {{ font: 800 34px/1.2 'Manrope'; color: #F3F0E8; }}
 .icons .atom {{ width: {icon}px; height: {icon}px; }} .dna {{ width: {int(icon * .5)}px; height: {int(icon * 1.1)}px; }}
 .cta {{ font-size: 36px; line-height: 1.25; padding: 30px 60px !important; }}
 .price {{ position: absolute; left: 80px; display: flex; align-items: center; gap: 26px; }}
@@ -282,10 +282,10 @@ if __name__ == '__main__':
         out.mkdir(parents=True, exist_ok=True)
         for kind in AUDIENCES:
             pl = 64 if kind == 'students' else 54
-            shot(ad3(kind, 1080, 1350, {'icons': 60, 'h1': 230, 'lead': 470, 'facts': 660 if kind == 'students' else 680, 'price': 1020, 'cta': 1180, 'pl': pl}),
+            shot(ad3(kind, 1080, 1350, {'icons': 50, 'h1': 200, 'lead': 440, 'facts': 580, 'price': 1050, 'cta': 1180, 'pl': pl}),
                  1080, 1350, out / f'target-{kind}-4x5.png')
             # 9:16: нижние ~300 px закрывает кнопка рекламы — призыв выше.
-            shot(ad3(kind, 1080, 1920, {'icons': 220, 'h1': 400, 'lead': 650, 'facts': 860 if kind == 'students' else 880, 'price': 1250, 'cta': 1420, 'pl': pl}, 160),
+            shot(ad3(kind, 1080, 1920, {'icons': 220, 'h1': 400, 'lead': 650, 'facts': 810, 'price': 1270, 'cta': 1420, 'pl': pl}, 160),
                  1080, 1920, out / f'target-{kind}-9x16.png')
         sys.exit()
     if '--yt' in sys.argv:

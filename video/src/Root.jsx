@@ -9,6 +9,9 @@ import r003Timing from './reels/r003.timing.json';
 import { TAILS as r003Tails } from './reels/r003.jsx';
 import { Avatar, HighlightCover, HIGHLIGHTS } from './brand.jsx';
 import { CarouselSlide, CAROUSEL_SIZE } from './carousel.jsx';
+import { SlideVideo } from './SlideVideo.jsx';
+import y001Timing from './reels/y001.timing.json';
+import y001Tails from './reels/y001.tails.json';
 
 const FPS = 30;
 
@@ -30,6 +33,10 @@ export const Root = () => (
     {Array.from({ length: CAROUSEL_SIZE }, (_, i) => (
       <Composition key={i} id={`About-${i + 1}`} component={CarouselSlide} durationInFrames={60} fps={FPS} width={1080} height={1350} defaultProps={{ n: i + 1 }} />
     ))}
+    {(() => {
+      const plan = buildPlan(y001Timing, FPS, y001Tails);
+      return <Composition id="YT001" component={SlideVideo} durationInFrames={plan.total + 10} fps={FPS} width={1920} height={1080} defaultProps={{ plan, dir: 'youtube/y001' }} />;
+    })()}
     <Composition id="Avatar" component={Avatar} durationInFrames={1} fps={FPS} width={1080} height={1080} />
     {HIGHLIGHTS.map((h) => (
       <Composition key={h.id} id={`Highlight-${h.id}`} component={HighlightCover} durationInFrames={1} fps={FPS} width={1080} height={1920} defaultProps={{ icon: h.id }} />

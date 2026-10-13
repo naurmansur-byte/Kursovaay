@@ -16,6 +16,10 @@ await mkdir(outDir, { recursive: true });
 
 const timing = { id: script.id, scenes: [] };
 for (const scene of script.scenes) {
+  if (!scene.text) {  // слайд без озвучки — короткая пауза
+    timing.scenes.push({ id: scene.id, audio: null, speechEndMs: 1800, words: [] });
+    continue;
+  }
   const file = path.join(outDir, `${scene.id}.mp3`);
   const tts = new EdgeTTS({
     voice: script.voice,

@@ -159,6 +159,38 @@ BIO_VARIANTS = {
 }
 
 
+# Таргет v2 (14.10): объясняет, что «ХимБио» — это химия + биология в одном курсе, и что входит.
+FACTS = [
+    ('2 + 2', 'урока в неделю: химия пн/чт, биология вт/пт'),
+    ('5', 'человек в группе · онлайн'),
+    ('ДЗ', 'с проверкой · пробные ЕНТ'),
+    ('1.11', 'старт курса · до конца мая'),
+]
+
+
+def ad2(w: int, h: int, y: dict, icon: int = 165) -> str:
+    rows = ''.join(
+        f'<div class="fact"><div class="num" style="background:{"#F13A43" if i % 2 == 0 else "#1F7A4A"}">{n}</div><div class="ft">{t}</div></div>'
+        for i, (n, t) in enumerate(FACTS))
+    return doc(w, h, AD_CSS + f"""
+.pl {{ display: inline-block; font: 800 104px/1 'Unbounded'; text-transform: uppercase; color: #F3F0E8; padding: 12px 30px 20px; }}
+.fact {{ display: flex; align-items: center; gap: 28px; margin-bottom: 26px; }}
+.num {{ width: 150px; flex: none; text-align: center; padding: 16px 0 20px; font: 800 46px 'Unbounded'; color: #F3F0E8; transform: rotate(-3deg); }}
+.ft {{ font: 800 40px/1.2 'Manrope'; color: #F3F0E8; }}
+.icons .atom {{ width: {icon}px; height: {icon}px; }} .dna {{ width: {int(icon * .5)}px; height: {int(icon * 1.1)}px; }}
+""", f"""
+<div class="tag" style="top:{y['tag']}px"><i></i>ХИМБИО ПРОСТО · ЕНТ</div>
+<div style="position:absolute;left:80px;top:{y['h1']}px">
+  <div class="pl" style="background:#F13A43;transform:rotate(-4deg)">Химия</div><br>
+  <div class="pl" style="background:#1F7A4A;transform:rotate(-3deg);margin-top:18px">+ биология</div>
+  <div style="font:800 58px/1.15 Unbounded;text-transform:uppercase;margin-top:34px">к ЕНТ —<br>в одном курсе</div>
+</div>
+<div class="icons" style="right:60px;top:{y['h1'] + 280}px;gap:20px">{ATOM}{dna().replace('#F13A43', '#1F7A4A')}</div>
+<div style="position:absolute;left:80px;right:80px;top:{y['facts']}px">{rows}</div>
+<div class="cta" style="top:{y['cta']}px;bottom:auto;padding:34px 0">Запись — в директ @himbio.prosto</div>
+""")
+
+
 # Обложки YouTube 1280×720 в стиле обложки «Моль за 4 минуты» (tools/youtube/art.py).
 def thumb(tag: str, h1: str, plaque: str, badge: str, icon: str, accent: str = '#F13A43') -> str:
     return doc(1280, 720, f"""
@@ -192,6 +224,11 @@ if __name__ == '__main__':
         (ROOT / 'deliverables' / 'stories-bio').mkdir(parents=True, exist_ok=True)
         for name, html in STORIES.items():
             shot(html.replace(ATOM, dna()).replace('#F13A43', '#1F7A4A'), 1080, 1920, ROOT / 'deliverables' / 'stories-bio' / f'{name}-bio.png')
+        sys.exit()
+    if '--ad2' in sys.argv:
+        (ROOT / 'deliverables' / 'ads').mkdir(parents=True, exist_ok=True)
+        shot(ad2(1080, 1350, {'tag': 90, 'h1': 170, 'facts': 720, 'cta': 1240}), 1080, 1350, ROOT / 'deliverables' / 'ads' / 'target-himbio-4x5.png')
+        shot(ad2(1080, 1920, {'tag': 260, 'h1': 350, 'facts': 920, 'cta': 1420}, 175), 1080, 1920, ROOT / 'deliverables' / 'ads' / 'target-himbio-9x16.png')
         sys.exit()
     if '--yt' in sys.argv:
         for name, html in THUMBS.items():

@@ -103,6 +103,8 @@ def export_docx(text, output):
 def export_notes_pdf(text, output):
     font = Path('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf')
     bold = font.with_name('DejaVuSans-Bold.ttf')
+    if not font.exists():  # Windows (Max's PC): Arial has Cyrillic.
+        font, bold = Path('C:/Windows/Fonts/arial.ttf'), Path('C:/Windows/Fonts/arialbd.ttf')
     if not font.exists() or not bold.exists():
         raise RuntimeError('Install DejaVu Sans fonts before PDF export')
     pdfmetrics.registerFont(TTFont('DejaVu', str(font)))

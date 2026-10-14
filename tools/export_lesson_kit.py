@@ -39,6 +39,11 @@ def blocks(text):
                 i += 1
             yield 'table', rows
             continue
+        picture = re.match(r'^!\[([^\]]*)\]\(([^)\s]+)\)$', line)
+        if picture:
+            yield 'image', (picture[1], picture[2])
+            i += 1
+            continue
         match = re.match(r'^(#{1,6})\s+(.+)', line)
         if match:
             yield 'heading', (len(match[1]), plain(match[2]))
@@ -72,7 +77,8 @@ def page_break_title(title):
     match = re.match(r'Страница (\d+) из', title)
     return bool(match and int(match[1]) > 1)
 
-def export_docx(text, output):
+def export_docx(text, output, base=None):
+    """base — папка исходного .md: из неё берутся рисунки pics/*.png; без неё вместо рисунка — его описание."""
     doc = Document()
     section = doc.sections[0]
     section.page_width, section.page_height = Cm(21), Cm(29.7)
@@ -97,6 +103,13 @@ def export_docx(text, output):
                     for p in cell.paragraphs:
                         for run in p.runs:
                             run.font.size = DocxPt(9.5)
+        elif kind == 'image':
+            alt, path = value
+            picture = (Path(base) / path) if base else None
+            if picture and picture.exists():
+                doc.add_picture(str(picture), width=Cm(16))
+            else:
+                doc.add_paragraph(f'Рисунок: {alt}')
         else:
             doc.add_paragraph(value)
     section.footer.paragraphs[0].text = 'ХимБио просто • Черновик для проверки преподавателем'
@@ -134,6 +147,8 @@ def export_notes_pdf(text, output):
                                        ('VALIGN',(0,0),(-1,-1),'TOP'),
                                        ('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5)]))
             story += [table, Spacer(1,6)]
+        elif kind == 'image':
+            story.append(Paragraph(escape('Рисунок: ' + value[0]), body))
         else:
             story.append(Paragraph(escape(value).replace('\n','<br/>'), body))
     def footer(canvas, doc):

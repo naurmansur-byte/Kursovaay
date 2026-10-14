@@ -35,8 +35,19 @@ def inline(text: str) -> str:
     return text
 
 
-def body_html(lines: list[str], dark: bool) -> tuple[str, str]:
-    """Пункты/нумерация/абзацы/таблицы -> HTML основного блока и выносок снизу."""
+PIC = re.compile(r'^!\[([^\]]*)\]\(([^)\s]+)\)$')
+
+
+def picture(alt: str, path: str, base: Path | None) -> str:
+    """Строка `![описание](pics/x.png)` -> картинка (путь от папки .md) или рамка с описанием, если файла ещё нет."""
+    f = (base / path).resolve() if base else None
+    if f and f.exists():
+        return f'<img class="pic" src="{f.as_uri()}" alt="">'
+    return f'<div class="pic-missing">Рисунок: {html.escape(alt)}</div>'
+
+
+def body_html(lines: list[str], dark: bool, base: Path | None = None) -> tuple[str, str]:
+    """Пункты/нумерация/абзацы/таблицы/рисунки -> HTML основного блока и выносок снизу."""
     out, callouts, table, listing = [], [], [], None
 
     def flush_table():
@@ -61,6 +72,11 @@ def body_html(lines: list[str], dark: bool) -> tuple[str, str]:
                 table.append(cells)
             continue
         flush_table()
+        pic = PIC.match(line.strip())
+        if pic:
+            close_list()
+            out.append(picture(pic.group(1), pic.group(2), base))
+            continue
         m = CALLOUT.match(line.lstrip('- ').strip())
         if m and not dark:
             close_list()

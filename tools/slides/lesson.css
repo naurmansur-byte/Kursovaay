@@ -68,3 +68,6 @@ h2 sub, h2 sup, .part-title sub, .part-title sup, .cover-title sub, .cover-title
 
 /* Длинный заголовок не заходит под таймер «N минут». */
 body:has(.timer) h2 { padding-right: 330px; }
+/* Рисунки урока: строка ![описание](pics/x.png) в слайде */
+.body .pic { display: block; max-width: 100%; max-height: 720px; margin: 0 auto 24px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 3px rgba(21,21,21,.08); }
+.body .pic-missing { margin: 0 0 24px; padding: 36px 44px; border: 4px dashed rgba(21,21,21,.3); border-radius: 14px; font-size: 34px; }

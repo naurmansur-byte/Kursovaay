@@ -51,11 +51,17 @@ def callouts(text: str) -> str:
     return '\n'.join(out)
 
 
-def build_html(src: Path) -> str:
-    meta, body = front_matter(src.read_text(encoding='utf-8'))
+def build_html(src: Path, text: str | None = None) -> str:
+    """text — готовый Markdown вместо файла (например, контроль без ключа); рисунки всё равно ищутся от папки src."""
+    meta, body = front_matter(src.read_text(encoding='utf-8') if text is None else text)
     body = re.sub(r'^# .*\n', '', body, count=1)  # заголовок рисует шапка
     html = markdown.markdown(callouts(body), extensions=['tables', 'md_in_html', 'sane_lists', 'nl2br'])
-    css = (HERE / 'handout.css').read_text(encoding='utf-8').replace('{{FONTS}}', (ROOT / 'content/brand/fonts').as_uri())
+
+    def pic(m: re.Match) -> str:  # рисунки: путь от папки .md; если файла ещё нет — рамка с описанием
+        f = (src.parent / m.group(2)).resolve()
+        return f'<img class="pic" src="{f.as_uri()}" alt="">' if f.exists() else f'<span class="pic-missing">Рисунок: {m.group(1)}</span>'
+    html = re.sub(r'<img alt="([^"]*)" src="(?![a-z]+:)([^"]+)"\s*/?>', pic, html)
+    css =(HERE / 'handout.css').read_text(encoding='utf-8').replace('{{FONTS}}', (ROOT / 'content/brand/fonts').as_uri())
     week = meta.get('week', '')
     label = meta.get('label') or f'Неделя {week}'  # label: своя плашка и подпись страницы вместо «Неделя N»
     # format: phone — узкая страница под экран телефона, крупный текст (ДЗ, памятки).
@@ -82,11 +88,11 @@ def chrome() -> str:
     raise RuntimeError('Chrome/Edge not found for PDF printing')
 
 
-def main(src: str, pdf: str) -> None:
+def main(src: str, pdf: str, text: str | None = None) -> None:
     src_path, pdf_path = (ROOT / src).resolve(), (ROOT / pdf).resolve()
     pdf_path.parent.mkdir(parents=True, exist_ok=True)
     html_path = pdf_path.with_suffix('.html')
-    html_path.write_text(build_html(src_path), encoding='utf-8')
+    html_path.write_text(build_html(src_path, text), encoding='utf-8')
     subprocess.run([chrome(), '--headless=new', '--disable-gpu', '--no-pdf-header-footer', f'--print-to-pdf={pdf_path}', html_path.as_uri()],
                    check=True, capture_output=True, timeout=120)
     print(f'PDF: {pdf_path} ({pdf_path.stat().st_size // 1024} KB), HTML: {html_path.name}')

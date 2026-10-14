@@ -121,7 +121,7 @@ def build(src: Path, out_pptx: Path, label: str, plaque: str, keep: Path | None,
                     add(content(i, (label_tag, ''), s['title'], f'<ol class="steps">{lis}</ol>'), notes,
                         s['steps'].get(k, s['voice'] if k == 1 else ''))
             elif kind == 'ловушка':
-                main, _ = body_html(s['lines'], dark=True)
+                main, _ = body_html(s['lines'], dark=True, base=src.parent)
                 add(content(i, (label_tag, 'inv'), s['title'], f'<div class="body">{main}</div>', 'trapbg'), notes, s['voice'])
             elif kind == 'практика':
                 timer = f'<div class="timer">{html.escape(s["hint"])}</div>' if s['hint'] else ''
@@ -135,7 +135,7 @@ def build(src: Path, out_pptx: Path, label: str, plaque: str, keep: Path | None,
                 lis = ''.join(f'<li>{inline(ln.lstrip("- "))}</li>' for ln in s['lines'])
                 add(content(i, (label_tag, ''), s['title'], f'<ul class="recap">{lis}</ul>', 'dark'), notes, s['voice'])
             else:  # понятие, дома, курс и прочее
-                main, calls = body_html(s['lines'], dark=False)
+                main, calls = body_html(s['lines'], dark=False, base=src.parent)
                 add(content(i, (label_tag, ''), s['title'], f'<div class="body">{main}</div><div class="callouts">{calls}</div>'),
                     notes, s['voice'])
 

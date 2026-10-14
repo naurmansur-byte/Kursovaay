@@ -198,16 +198,17 @@ AUDIENCES = {
         'lead': 'Готовим к ЕНТ по учебникам из перечня НЦТ и в формате теста.',
         'facts': [('4 урока', 'в неделю: 2 по химии и 2 по биологии'), ('90 мин', 'каждый урок, вечером, онлайн'),
                   ('5', 'человек в группе — тебя слышат'), ('ДЗ', 'с проверкой и пробный ЕНТ раз в месяц')],
-        'cta': 'Напиши «ТЕСТ» в директ — бесплатный входной тест',
+        'cta': 'Напиши нам в WhatsApp — бесплатный входной тест',
     },
     'parents': {
         'plaques': [('Ребёнок сдаёт', '#F3F0E8', -3), ('химию и биологию?', '#F13A43', -4)],
         'lead': 'Профиль ЕНТ для медицинских вузов. Оба предмета в одном курсе — с ноября по май.',
         'facts': [('4 урока', 'в неделю: 2 по химии и 2 по биологии'), ('90 мин', 'каждый урок, вечером, онлайн'),
                   ('5', 'учеников в группе, живой преподаватель'), ('ДЗ', 'проверяем каждую неделю, пробный ЕНТ раз в месяц')],
-        'cta': 'Напишите «ПРОГРАММА» в директ — пришлём программу курса',
+        'cta': 'Напишите нам в WhatsApp — пришлём программу курса',
     },
 }
+DISCOUNT = ('−30%', 'первым 20')  # решение Мансура 14.10: первым 20 ученикам скидка 30 %; связь — WhatsApp из рекламы
 PRICE = ('19 500 ₸ в месяц', 'химия + биология · оплата Kaspi')  # решение Мансура 14.10: цена — в рекламном баннере
 
 
@@ -228,8 +229,12 @@ def ad3(kind: str, w: int, h: int, y: dict, icon: int = 150) -> str:
 .price {{ position: absolute; left: 80px; display: flex; align-items: center; gap: 26px; }}
 .price b {{ background: #F3F0E8; color: #151515; padding: 14px 26px 16px; font: 800 52px/1.05 'Unbounded'; white-space: nowrap; transform: rotate(-2deg); }}
 .price span {{ font: 800 30px/1.25 'Manrope'; text-transform: uppercase; letter-spacing: .05em; }}
+.sale {{ position: absolute; right: 60px; width: 250px; height: 250px; border-radius: 50%; background: #F13A43; transform: rotate(10deg);
+         display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 0 8px #151515, 0 0 0 12px #F3F0E8; }}
+.sale b {{ font: 800 56px/1 'Unbounded'; color: #F3F0E8; white-space: nowrap; }}
+.sale span {{ font: 800 26px/1.1 'Manrope'; text-transform: uppercase; letter-spacing: .04em; color: #F3F0E8; margin-top: 10px; white-space: nowrap; }}
 """, f"""
-<div class="icons" style="right:60px;top:{y['icons']}px;gap:16px">{ATOM}{dna().replace('#F13A43', '#1F7A4A')}</div>
+<div class="sale" style="top:{y['icons'] - 10}px"><b>{DISCOUNT[0]}</b><span>{DISCOUNT[1]}</span></div>
 <div class="price" style="top:{y['price']}px"><b>{PRICE[0]}</b><span>{PRICE[1].replace(' · ', '<br>')}</span></div>
 <div style="position:absolute;left:80px;right:80px;top:{y['h1']}px">{pls}</div>
 <p class="lead" style="position:absolute;left:80px;right:90px;top:{y['lead']}px">{a['lead']}</p>

@@ -128,47 +128,57 @@ const Week = ({ scene }) => {
   );
 };
 
-// 5. Цена и старт.
+// Круглая наклейка скидки (решение Мансура 14.10: первым 20 — скидка 30 %).
+const Sale = ({ at, y }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (frame < at) return null;
+  const p = enter(frame, at, fps, { damping: 10, stiffness: 200, mass: 0.6 });
+  return (
+    <Row y={y}>
+      <div style={{ width: 300, height: 300, borderRadius: '50%', background: C.accent, boxShadow: `0 0 0 10px ${C.bg}, 0 0 0 16px ${C.fg}`, transform: `scale(${2 - p}) rotate(${10 + (1 - p) * 40}deg)`, opacity: Math.min(1, p * 3), display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ fontFamily: F.display, fontWeight: 800, fontSize: 70, color: C.fg, whiteSpace: 'nowrap' }}>−30%</div>
+        <div style={{ fontFamily: F.body, fontWeight: 800, fontSize: 32, textTransform: 'uppercase', color: C.fg, marginTop: 8 }}>первым 20</div>
+      </div>
+    </Row>
+  );
+};
+
+// 5. Цена, скидка и старт.
 const Price = ({ scene }) => {
   const W = useW(scene);
-  const [tSum, tMonth, tBoth, tStart] = [W('девятнадцать', 2), W('месяц', 40), W('оба', 52), W('старт', 75)];
+  const [tSum, tMonth, tBoth, tSale, tStart] = [W('девятнадцать', 2), W('месяц', 40), W('оба', 52), W('скидка', 70), W('старт', 100)];
   return (
     <AbsoluteFill>
-      <Slam at={tSum} y={330} size={145}>19 500 ₸</Slam>
-      <Kinetic at={tMonth} y={620} size={84} rotate={-2}>в месяц</Kinetic>
-      <Row y={760}><Chip at={tBoth} size={42}>химия + биология вместе</Chip></Row>
-      <Row y={960}><Plaque at={tStart} bg={GREEN} size={74} rotate={-4}>Старт 2 ноября</Plaque></Row>
-      <Sfx at={tSum} name="boom" volume={0.5} /><Sfx at={tMonth} name="whoosh" /><Sfx at={tBoth} name="pop" /><Sfx at={tStart} name="boom" volume={0.45} />
+      <Slam at={tSum} y={260} size={145}>19 500 ₸</Slam>
+      <Kinetic at={tMonth} y={530} size={84} rotate={-2}>в месяц</Kinetic>
+      <Row y={660}><Chip at={tBoth} size={42}>химия + биология вместе</Chip></Row>
+      <Sale at={tSale} y={800} />
+      <Row y={1170}><Plaque at={tStart} bg={GREEN} size={70} rotate={-4}>Старт 2 ноября</Plaque></Row>
+      <Sfx at={tSum} name="boom" volume={0.5} /><Sfx at={tMonth} name="whoosh" /><Sfx at={tBoth} name="pop" /><Sfx at={tSale} name="boom" volume={0.55} /><Sfx at={tStart} name="pop" />
     </AbsoluteFill>
   );
 };
 
-// 6. Призыв: «ТЕСТ» в директ.
+// 6. Призыв: напиши нам в WhatsApp (кнопка рекламы ведёт в WhatsApp; решение Мансура 14.10).
 const Cta = ({ scene }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
   const W = useW(scene);
-  const [tWord, tDm, tFree] = [W('тест', 12), W('директ', 30), W('бесплатный', 45)];
-  const letters = 'ТЕСТ'.split('');
+  const [tWa, tFree] = [W('ватсап', 14), W('бесплатный', 40)];
   return (
     <AbsoluteFill>
-      <Kinetic at={0} y={230} size={110} rotate={-3}>Напиши</Kinetic>
-      <Row y={420} style={{ gap: 10 }}>
-        {frame >= tWord && letters.map((ch, i) => {
-          const p = enter(frame, tWord + i * 3, fps, { damping: 11, stiffness: 200 });
-          return (
-            <div key={i} style={{ transform: `translateY(${(1 - p) * -160}px) rotate(${(1 - p) * (i % 2 ? 18 : -18) - 4}deg)`, opacity: Math.min(1, p * 2), background: i % 2 ? GREEN : C.accent, fontFamily: F.display, fontWeight: 800, fontSize: 190, lineHeight: 1, padding: '16px 24px 26px', color: C.fg }}>{ch}</div>
-          );
-        })}
-      </Row>
-      <Kinetic at={tDm} y={760} size={96} rotate={-3} from="right" plaque>в директ</Kinetic>
-      <Appear at={tFree} y={980}>
+      <Kinetic at={0} y={240} size={110} rotate={-3}>Напиши нам</Kinetic>
+      {frame >= tWa && (
+        <Row y={450}>
+          <div style={{ transform: `scale(${punch(frame, tWa, 0.3, 12)}) rotate(-4deg)`, background: '#25D366', padding: '20px 44px 28px', fontFamily: F.display, fontWeight: 800, fontSize: 130, lineHeight: 1, color: C.bg, whiteSpace: 'nowrap' }}>WhatsApp</div>
+        </Row>
+      )}
+      <Appear at={tFree} y={760}>
         <div style={{ textAlign: 'center' }}>
-          <Label size={46} color={C.fg}>бесплатный входной тест</Label>
-          <div style={{ fontFamily: F.body, fontWeight: 800, fontSize: 40, color: C.muted, marginTop: 14 }}>@himbio.prosto</div>
+          <Label size={50} color={C.fg}>бесплатный входной тест</Label>
         </div>
       </Appear>
-      <Sfx at={1} name="whoosh" />{letters.map((_, i) => <Sfx key={i} at={tWord + i * 3} name="pop" volume={0.35} />)}<Sfx at={tDm} name="whoosh" /><Sfx at={tFree} name="ding" volume={0.45} />
+      <Sfx at={1} name="whoosh" /><Sfx at={tWa} name="boom" volume={0.5} /><Sfx at={tFree} name="ding" volume={0.45} />
     </AbsoluteFill>
   );
 };

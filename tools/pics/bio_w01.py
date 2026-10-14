@@ -5,16 +5,9 @@
 from __future__ import annotations
 
 from common import (GREEN, GREY, INK, LIGHT_BLUE, LIGHT_GREEN, LIGHT_YELLOW, ROOT, arrow, chloro, dna_loop, elongated_cell, ends,
-                    label, mito, nucleus, render, ribosomes, ruler, text)
+                    lab, label, mito, nucleus, render, ribosomes, ruler, text)
 
 OUT = ROOT / 'course' / 'biology' / 'week-01' / 'pics'
-
-
-def lab(px: float, py: float, tx: float, ty: float, s: str) -> str:
-    """Подпись над или под объектом, текст по центру; линия от точки на объекте к краю подписи."""
-    ey = ty + 8 if ty < py else ty - 26
-    return (f'<line x1="{px:.0f}" y1="{py:.0f}" x2="{tx:.0f}" y2="{ey:.0f}" stroke="{INK}" stroke-width="2.5"/>'
-            f'<circle cx="{px:.0f}" cy="{py:.0f}" r="5" fill="{INK}"/>' + text(tx, ty, s, 's', 'middle'))
 
 
 def cell_comparison() -> str:

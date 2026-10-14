@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -29,6 +30,8 @@ text {{ font-family: 'Manrope'; fill: {INK}; }}
 .s {{ font-size: 25px; font-weight: 700; fill: #3B3833; }}
 .h {{ font-family: 'Unbounded'; font-size: 34px; font-weight: 800; }}
 .cap {{ font-size: 24px; font-weight: 700; fill: {GREY}; }}
+.f {{ font-size: 52px; font-weight: 800; }}
+.w {{ font-family: 'Unbounded'; font-size: 28px; font-weight: 800; fill: #fff; }}
 """
 
 
@@ -50,6 +53,13 @@ def label(px: float, py: float, tx: float, ty: float, s: str, cls: str = 't', co
     dx = -8 if anchor == 'end' else 8
     return (f'<line x1="{px:.0f}" y1="{py:.0f}" x2="{tx:.0f}" y2="{ty - 8:.0f}" stroke="{color}" stroke-width="2.5"/>'
             f'<circle cx="{px:.0f}" cy="{py:.0f}" r="5" fill="{color}"/>' + text(tx + dx, ty, s, cls, anchor))
+
+
+def lab(px: float, py: float, tx: float, ty: float, s: str) -> str:
+    """Подпись над или под объектом, текст по центру; линия от точки на объекте к краю подписи."""
+    ey = ty + 8 if ty < py else ty - 26
+    return (f'<line x1="{px:.0f}" y1="{py:.0f}" x2="{tx:.0f}" y2="{ey:.0f}" stroke="{INK}" stroke-width="2.5"/>'
+            f'<circle cx="{px:.0f}" cy="{py:.0f}" r="5" fill="{INK}"/>' + text(tx, ty, s, 's', 'middle'))
 
 
 def ruler(x: float, y: float, length: float, caption: str, color: str = INK) -> str:
@@ -120,3 +130,30 @@ def arrow(x1: float, y1: float, x2: float, y2: float, color: str = INK, w: float
     head = f'{x2:.0f},{y2:.0f} {x2 + 22 * math.cos(a1):.0f},{y2 + 22 * math.sin(a1):.0f} {x2 + 22 * math.cos(a2):.0f},{y2 + 22 * math.sin(a2):.0f}'
     return (f'<line x1="{x1:.0f}" y1="{y1:.0f}" x2="{x2 - 14 * math.cos(ang):.0f}" y2="{y2 - 14 * math.sin(ang):.0f}" stroke="{color}" '
             f'stroke-width="{w}"/><polygon points="{head}" fill="{color}"/>')
+
+
+SUB = str.maketrans('₀₁₂₃₄₅₆₇₈₉', '0123456789')
+SUP = str.maketrans({'⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁺': '+', '⁻': '−'})
+
+
+def chem(s: str) -> str:
+    """Формула с Unicode-индексами (H₂SO₄, Fe²⁺) -> SVG-текст с настоящими нижними/верхними индексами."""
+    s = re.sub('[₀-₉]+', lambda m: f'<tspan baseline-shift="-0.28em" font-size="68%">{m.group(0).translate(SUB)}</tspan>', s)
+    return re.sub('[⁰-⁹⁺⁻]+', lambda m: f'<tspan baseline-shift="0.6em" font-size="68%">{m.group(0).translate(SUP)}</tspan>', s)
+
+
+def span(s: str, color: str) -> str:
+    """Цветной кусок внутри текста (например, кислотный остаток в формуле)."""
+    return f'<tspan style="fill:{color}">{s}</tspan>'
+
+
+def smooth(points: list[tuple[float, float]], closed: bool = False) -> str:
+    """Плавная линия через точки (Catmull-Rom -> кривые Безье), атрибут d для <path>."""
+    pts = points + points[:3] if closed else [points[0]] + points + [points[-1]]
+    d = f'M{pts[1][0]:.0f} {pts[1][1]:.0f}'
+    for k in range(1, len(pts) - 2):
+        p0, p1, p2, p3 = pts[k - 1], pts[k], pts[k + 1], pts[k + 2]
+        c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6)
+        c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
+        d += f' C{c1[0]:.0f} {c1[1]:.0f} {c2[0]:.0f} {c2[1]:.0f} {p2[0]:.0f} {p2[1]:.0f}'
+    return d + (' Z' if closed else '')

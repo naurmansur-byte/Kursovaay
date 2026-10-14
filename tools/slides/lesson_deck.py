@@ -20,7 +20,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
-from slides import ATOM, body_html, inline, page, render  # noqa: E402
+from slides import ATOM, PIC, body_html, inline, page, picture, render  # noqa: E402
 
 TAGS = {'понятие': 'Понятие', 'схема': 'Схема', 'пример': 'Разберём', 'ловушка': 'Ловушка', 'практика': 'Попробуй сам',
         'итог': 'Итог', 'дома': 'Дома', 'курс': 'Курс'}
@@ -110,10 +110,14 @@ def build(src: Path, out_pptx: Path, label: str, plaque: str, keep: Path | None,
             kind, notes = s['kind'], '\n'.join(s['notes'])
             label_tag = TAGS.get(kind, kind.capitalize())
             if kind == 'схема':
-                formula, *rows = s['lines']
+                pics = [PIC.match(r) for r in s['lines'] if PIC.match(r)]
+                formula, *rows = [r for r in s['lines'] if not PIC.match(r)]
                 items = ''.join(f'<div><b>{inline(a)}</b><span>{inline(b)}</span></div>' for a, _, b in (r.partition(' — ') for r in rows))
                 add(content(i, (label_tag, ''), s['title'], f'<div class="scheme"><div class="big">{inline(formula)}</div>'
                                                              f'<div class="keys">{items}</div></div>'), notes, s['voice'])
+                for m in pics:  # рисунок к схеме — следующим слайдом с тем же заголовком
+                    add(content(i, (label_tag, ''), s['title'], f'<div class="body">{picture(m.group(1), m.group(2), src.parent)}</div>'),
+                        notes, '')
             elif kind == 'пример':
                 steps = [NUM.sub('', ln) for ln in s['lines']]
                 for k in range(1, len(steps) + 1):

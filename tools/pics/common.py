@@ -132,14 +132,14 @@ def arrow(x1: float, y1: float, x2: float, y2: float, color: str = INK, w: float
             f'stroke-width="{w}"/><polygon points="{head}" fill="{color}"/>')
 
 
-SUB = str.maketrans('₀₁₂₃₄₅₆₇₈₉', '0123456789')
+SUB = str.maketrans('₀₁₂₃₄₅₆₇₈₉ₐₘ', '0123456789Am')
 SUP = str.maketrans({'⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁺': '+', '⁻': '−'})
 
 
 def chem(s: str) -> str:
     """Формула с Unicode-индексами (H₂SO₄, Fe²⁺) -> SVG-текст с настоящими нижними/верхними индексами."""
-    s = re.sub('[₀-₉]+', lambda m: f'<tspan baseline-shift="-0.28em" font-size="68%">{m.group(0).translate(SUB)}</tspan>', s)
-    return re.sub('[⁰-⁹⁺⁻]+', lambda m: f'<tspan baseline-shift="0.6em" font-size="68%">{m.group(0).translate(SUP)}</tspan>', s)
+    s = re.sub('[₀-₉ₐₘ]+', lambda m: f'<tspan baseline-shift="-0.28em" font-size="68%">{m.group(0).translate(SUB)}</tspan>', s)
+    return re.sub('[⁰¹²³⁴-⁹⁺⁻]+', lambda m: f'<tspan baseline-shift="0.6em" font-size="68%">{m.group(0).translate(SUP)}</tspan>', s)
 
 
 def span(s: str, color: str) -> str:

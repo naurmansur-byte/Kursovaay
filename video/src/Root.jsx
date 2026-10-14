@@ -29,6 +29,22 @@ import a002Timing from './reels/a002.timing.json';
 import { TAILS as a002Tails } from './reels/a002.jsx';
 import a003Timing from './reels/a003.timing.json';
 import { TAILS as a003Tails } from './reels/a003.jsx';
+import r004Timing from './reels/r004.timing.json';
+import { TAILS as r004Tails } from './reels/r004.jsx';
+import r005Timing from './reels/r005.timing.json';
+import { TAILS as r005Tails } from './reels/r005.jsx';
+import r006Timing from './reels/r006.timing.json';
+import { TAILS as r006Tails } from './reels/r006.jsx';
+import r007Timing from './reels/r007.timing.json';
+import { TAILS as r007Tails } from './reels/r007.jsx';
+import b004Timing from './reels/b004.timing.json';
+import { TAILS as b004Tails } from './reels/b004.jsx';
+import b005Timing from './reels/b005.timing.json';
+import { TAILS as b005Tails } from './reels/b005.jsx';
+import b006Timing from './reels/b006.timing.json';
+import { TAILS as b006Tails } from './reels/b006.jsx';
+import b007Timing from './reels/b007.timing.json';
+import { TAILS as b007Tails } from './reels/b007.jsx';
 
 const FPS = 30;
 
@@ -43,6 +59,14 @@ const REELS = [
   { id: 'A001', timing: a001Timing, tails: a001Tails },  // реклама для учеников, хук «100 из 140»
   { id: 'A002', timing: a002Timing, tails: a002Tails },  // хук «Стоп + ловушка»
   { id: 'A003', timing: a003Timing, tails: a003Tails },  // хук «миф: не нужно зубрить все учебники»
+  { id: 'R004', timing: r004Timing, tails: r004Tails },  // рилс-вопрос (quiz.jsx)
+  { id: 'R005', timing: r005Timing, tails: r005Tails },  // рилс-вопрос (quiz.jsx)
+  { id: 'R006', timing: r006Timing, tails: r006Tails },  // рилс-вопрос (quiz.jsx)
+  { id: 'R007', timing: r007Timing, tails: r007Tails },  // рилс-вопрос (quiz.jsx)
+  { id: 'B004', timing: b004Timing, tails: b004Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
+  { id: 'B005', timing: b005Timing, tails: b005Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
+  { id: 'B006', timing: b006Timing, tails: b006Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
+  { id: 'B007', timing: b007Timing, tails: b007Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
 ];
 
 export const Root = () => (

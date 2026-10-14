@@ -29,6 +29,8 @@ import a002Timing from './reels/a002.timing.json';
 import { TAILS as a002Tails } from './reels/a002.jsx';
 import a003Timing from './reels/a003.timing.json';
 import { TAILS as a003Tails } from './reels/a003.jsx';
+import a004Timing from './reels/a004.timing.json';
+import { TAILS as a004Tails } from './reels/a004.jsx';
 import r004Timing from './reels/r004.timing.json';
 import { TAILS as r004Tails } from './reels/r004.jsx';
 import r005Timing from './reels/r005.timing.json';
@@ -45,6 +47,14 @@ import b006Timing from './reels/b006.timing.json';
 import { TAILS as b006Tails } from './reels/b006.jsx';
 import b007Timing from './reels/b007.timing.json';
 import { TAILS as b007Tails } from './reels/b007.jsx';
+import y005Timing from './reels/y005.timing.json';
+import { TAILS as y005Tails } from './reels/y005.jsx';
+import y006Timing from './reels/y006.timing.json';
+import { TAILS as y006Tails } from './reels/y006.jsx';
+import y007Timing from './reels/y007.timing.json';
+import { TAILS as y007Tails } from './reels/y007.jsx';
+import y008Timing from './reels/y008.timing.json';
+import { TAILS as y008Tails } from './reels/y008.jsx';
 
 const FPS = 30;
 
@@ -58,7 +68,8 @@ const REELS = [
   { id: 'B003', timing: b003Timing, tails: b003Tails, subject: 'bio' },
   { id: 'A001', timing: a001Timing, tails: a001Tails },  // реклама для учеников, хук «100 из 140»
   { id: 'A002', timing: a002Timing, tails: a002Tails },  // хук «Стоп + ловушка»
-  { id: 'A003', timing: a003Timing, tails: a003Tails },  // хук «миф: не нужно зубрить все учебники»
+  { id: 'A003', timing: a003Timing, tails: a003Tails },
+  { id: 'A004', timing: a004Timing, tails: a004Tails },  // анонс YouTube-канала  // хук «миф: не нужно зубрить все учебники»
   { id: 'R004', timing: r004Timing, tails: r004Tails },  // рилс-вопрос (quiz.jsx)
   { id: 'R005', timing: r005Timing, tails: r005Tails },  // рилс-вопрос (quiz.jsx)
   { id: 'R006', timing: r006Timing, tails: r006Tails },  // рилс-вопрос (quiz.jsx)
@@ -98,6 +109,22 @@ export const Root = () => (
     {(() => {
       const plan = buildPlan(y004Timing, FPS, y004Tails);
       return <Composition id="Y004" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y004' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y005Timing, FPS, y005Tails);
+      return <Composition id="Y005" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y005' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y006Timing, FPS, y006Tails);
+      return <Composition id="Y006" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y006' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y007Timing, FPS, y007Tails);
+      return <Composition id="Y007" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y007', subject: 'bio' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y008Timing, FPS, y008Tails);
+      return <Composition id="Y008" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y008', subject: 'bio' }} />;
     })()}
     <Composition id="Avatar" component={Avatar} durationInFrames={1} fps={FPS} width={1080} height={1080} />
     {HIGHLIGHTS.map((h) => (

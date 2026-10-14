@@ -23,6 +23,9 @@ curl.exe -s -A "Mozilla/5.0" -e "https://okulyk.kz/download-pdf/?527" -o "_textb
 
 # Заголовки параграфов по тексту (для карты INDEX)
 .\.venv\Scripts\python.exe -I tools\textbooks\heads.py "$PWD\_textbooks\ocr" heads.txt 350 527
+
+# Вырезки страниц для сверки чисел: книга:страница:верх:низ[:лево:право] (доли страницы)
+.\.venv\Scripts\python.exe -I tools\textbooks\crop.py <папка> 527:89:0.6:0.7 450:74:0.3:0.95
 ```
 
 Биология 8 (346) имеет текстовый слой: текст берётся `pypdf` напрямую (`page.extract_text()`), маркеры страниц те же.

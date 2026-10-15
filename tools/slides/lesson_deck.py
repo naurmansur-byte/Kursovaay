@@ -111,13 +111,15 @@ def build(src: Path, out_pptx: Path, label: str, plaque: str, keep: Path | None,
             label_tag = TAGS.get(kind, kind.capitalize())
             if kind == 'схема':
                 pics = [PIC.match(r) for r in s['lines'] if PIC.match(r)]
-                formula, *rows = [r for r in s['lines'] if not PIC.match(r)]
-                items = ''.join(f'<div><b>{inline(a)}</b><span>{inline(b)}</span></div>' for a, _, b in (r.partition(' — ') for r in rows))
-                add(content(i, (label_tag, ''), s['title'], f'<div class="scheme"><div class="big">{inline(formula)}</div>'
-                                                             f'<div class="keys">{items}</div></div>'), notes, s['voice'])
-                for m in pics:  # рисунок к схеме — следующим слайдом с тем же заголовком
+                text_lines = [r for r in s['lines'] if not PIC.match(r)]
+                if text_lines:
+                    formula, *rows = text_lines
+                    items = ''.join(f'<div><b>{inline(a)}</b><span>{inline(b)}</span></div>' for a, _, b in (r.partition(' — ') for r in rows))
+                    add(content(i, (label_tag, ''), s['title'], f'<div class="scheme"><div class="big">{inline(formula)}</div>'
+                                                                 f'<div class="keys">{items}</div></div>'), notes, s['voice'])
+                for k, m in enumerate(pics):  # рисунок к схеме — следующим слайдом (или единственным, если схема — только рисунок)
                     add(content(i, (label_tag, ''), s['title'], f'<div class="body">{picture(m.group(1), m.group(2), src.parent)}</div>'),
-                        notes, '')
+                        notes, '' if text_lines or k else s['voice'])
             elif kind == 'пример':
                 steps = [NUM.sub('', ln) for ln in s['lines']]
                 for k in range(1, len(steps) + 1):

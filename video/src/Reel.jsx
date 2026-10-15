@@ -32,9 +32,25 @@ import { SCENES as Y005 } from './reels/y005.jsx';
 import { SCENES as Y006 } from './reels/y006.jsx';
 import { SCENES as Y007 } from './reels/y007.jsx';
 import { SCENES as Y008 } from './reels/y008.jsx';
+import { SCENES as R008 } from './reels/r008.jsx';
+import { SCENES as R009 } from './reels/r009.jsx';
+import { SCENES as R010 } from './reels/r010.jsx';
+import { SCENES as R011 } from './reels/r011.jsx';
+import { SCENES as B008 } from './reels/b008.jsx';
+import { SCENES as B009 } from './reels/b009.jsx';
+import { SCENES as B010 } from './reels/b010.jsx';
+import { SCENES as B011 } from './reels/b011.jsx';
+import { SCENES as R012 } from './reels/r012.jsx';
+import { SCENES as R013 } from './reels/r013.jsx';
+import { SCENES as R014 } from './reels/r014.jsx';
+import { SCENES as R015 } from './reels/r015.jsx';
+import { SCENES as B012 } from './reels/b012.jsx';
+import { SCENES as B013 } from './reels/b013.jsx';
+import { SCENES as B014 } from './reels/b014.jsx';
+import { SCENES as B015 } from './reels/b015.jsx';
 
 // Props ролика сериализуются в JSON, поэтому сцены подключаются здесь, по id ролика.
-const REELS = { R001, R002, R003, Y001, Y002, B001, B002, B003, Y003, Y004, A001, A002, A003, A004, R004, R005, R006, R007, B004, B005, B006, B007, Y005, Y006, Y007, Y008 };
+const REELS = { R001, R002, R003, Y001, Y002, B001, B002, B003, Y003, Y004, A001, A002, A003, A004, R004, R005, R006, R007, B004, B005, B006, B007, Y005, Y006, Y007, Y008, R008, R009, R010, R011, B008, B009, B010, B011, R012, R013, R014, R015, B012, B013, B014, B015 };
 
 export const useFonts = () => {
   const [handle] = useState(() => delayRender('fonts'));

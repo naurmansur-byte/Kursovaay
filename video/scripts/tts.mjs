@@ -21,7 +21,7 @@ const timingPath = path.join(root, 'src/reels', `${reel}.timing.json`);
 const previous = only ? JSON.parse(await readFile(timingPath, 'utf8')).scenes : [];
 
 // Аббревиатуры — по буквам (просьба Мансура: «ЕНТ» — чётко «Е-Эн-Тэ», а не слово). В тайминге буквы снова склеиваются в аббревиатуру.
-const SPELL = { ЕНТ: ['Е', 'Эн', 'Тэ'], НЦТ: ['Эн', 'Цэ', 'Тэ'] };
+const SPELL = { ЕНТ: ['Е', 'Эн', 'Тэ'], НЦТ: ['Эн', 'Цэ', 'Тэ'], АТФ: ['А', 'Тэ', 'Эф'] };
 const speak = (text) => Object.entries(SPELL).reduce(
   (s, [abbr, letters]) => s.replace(new RegExp(`(?<![А-Яа-яЁё])${abbr}(?![А-Яа-яЁё])`, 'g'), letters.join(' ')), text);
 const unspell = (words) => {

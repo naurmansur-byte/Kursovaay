@@ -87,6 +87,22 @@ import b014Timing from './reels/b014.timing.json';
 import { TAILS as b014Tails } from './reels/b014.jsx';
 import b015Timing from './reels/b015.timing.json';
 import { TAILS as b015Tails } from './reels/b015.jsx';
+import r016Timing from './reels/r016.timing.json';
+import { TAILS as r016Tails } from './reels/r016.jsx';
+import r017Timing from './reels/r017.timing.json';
+import { TAILS as r017Tails } from './reels/r017.jsx';
+import r018Timing from './reels/r018.timing.json';
+import { TAILS as r018Tails } from './reels/r018.jsx';
+import r019Timing from './reels/r019.timing.json';
+import { TAILS as r019Tails } from './reels/r019.jsx';
+import b016Timing from './reels/b016.timing.json';
+import { TAILS as b016Tails } from './reels/b016.jsx';
+import b017Timing from './reels/b017.timing.json';
+import { TAILS as b017Tails } from './reels/b017.jsx';
+import b018Timing from './reels/b018.timing.json';
+import { TAILS as b018Tails } from './reels/b018.jsx';
+import b019Timing from './reels/b019.timing.json';
+import { TAILS as b019Tails } from './reels/b019.jsx';
 
 const FPS = 30;
 
@@ -126,6 +142,14 @@ const REELS = [
   { id: 'B013', timing: b013Timing, tails: b013Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
   { id: 'B014', timing: b014Timing, tails: b014Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
   { id: 'B015', timing: b015Timing, tails: b015Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
+  { id: 'R016', timing: r016Timing, tails: r016Tails },  // рилс-вопрос (quiz.jsx)
+  { id: 'R017', timing: r017Timing, tails: r017Tails },  // рилс-вопрос (quiz.jsx)
+  { id: 'R018', timing: r018Timing, tails: r018Tails },  // рилс-вопрос (quiz.jsx)
+  { id: 'R019', timing: r019Timing, tails: r019Tails },  // рилс-вопрос (quiz.jsx)
+  { id: 'B016', timing: b016Timing, tails: b016Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
+  { id: 'B017', timing: b017Timing, tails: b017Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
+  { id: 'B018', timing: b018Timing, tails: b018Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
+  { id: 'B019', timing: b019Timing, tails: b019Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
 ];
 
 export const Root = () => (

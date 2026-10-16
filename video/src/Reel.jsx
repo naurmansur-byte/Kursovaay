@@ -48,9 +48,17 @@ import { SCENES as B012 } from './reels/b012.jsx';
 import { SCENES as B013 } from './reels/b013.jsx';
 import { SCENES as B014 } from './reels/b014.jsx';
 import { SCENES as B015 } from './reels/b015.jsx';
+import { SCENES as R016 } from './reels/r016.jsx';
+import { SCENES as R017 } from './reels/r017.jsx';
+import { SCENES as R018 } from './reels/r018.jsx';
+import { SCENES as R019 } from './reels/r019.jsx';
+import { SCENES as B016 } from './reels/b016.jsx';
+import { SCENES as B017 } from './reels/b017.jsx';
+import { SCENES as B018 } from './reels/b018.jsx';
+import { SCENES as B019 } from './reels/b019.jsx';
 
 // Props ролика сериализуются в JSON, поэтому сцены подключаются здесь, по id ролика.
-const REELS = { R001, R002, R003, Y001, Y002, B001, B002, B003, Y003, Y004, A001, A002, A003, A004, R004, R005, R006, R007, B004, B005, B006, B007, Y005, Y006, Y007, Y008, R008, R009, R010, R011, B008, B009, B010, B011, R012, R013, R014, R015, B012, B013, B014, B015 };
+const REELS = { R001, R002, R003, Y001, Y002, B001, B002, B003, Y003, Y004, A001, A002, A003, A004, R004, R005, R006, R007, B004, B005, B006, B007, Y005, Y006, Y007, Y008, R008, R009, R010, R011, B008, B009, B010, B011, R012, R013, R014, R015, B012, B013, B014, B015, R016, R017, R018, R019, B016, B017, B018, B019 };
 
 export const useFonts = () => {
   const [handle] = useState(() => delayRender('fonts'));

@@ -2,7 +2,7 @@
 
 Презентации уроков (PPTX + PDF), раздатки ученику (PDF), материалы преподавателю (DOCX), памятка (PNG).
 Запуск из корня: .venv/Scripts/python tools/build_week.py biology/week-01      (химия: week-04)
-Результат: exports/<неделя>/ и копия в «00 Материалы ХимБио просто/Курс биологии|химии/Неделя N/».
+Результат: exports/<неделя>/ и копия в «00 Материалы ХимБио просто/Курс — для преподавателей/Химия|Биология/Неделя NN — тема/».
 """
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ import handout  # noqa: E402
 import lesson_deck  # noqa: E402
 import memo  # noqa: E402
 from export_lesson_kit import export_docx  # noqa: E402
+from teacher_drive import week_dir  # noqa: E402
 
 MATERIALS = ROOT / '00 Материалы ХимБио просто'
 KEY = re.compile(r'^## (?:Ключ|Для преподавателя|Преподавател|Только преподавателю)', re.M)
@@ -29,7 +30,7 @@ TEACHER = [('lesson-1-plan', 'Урок 1 — план'), ('lesson-2-plan', 'Ур
 def build(week: str) -> Path:
     src, out = ROOT / 'course' / week, ROOT / 'exports' / week
     n = int(week[-2:])
-    dest = MATERIALS / ('Курс биологии' if week.startswith('biology') else 'Курс химии') / f'Неделя {n}'
+    dest = week_dir(week)
     for sub in ('Ученику', 'Преподавателю'):
         (dest / sub).mkdir(parents=True, exist_ok=True)
 

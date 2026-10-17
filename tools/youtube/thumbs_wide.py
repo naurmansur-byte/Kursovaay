@@ -1,4 +1,4 @@
-"""Обложки YouTube 1280×720 для Y005–Y008 (стиль 2). Запуск: .venv/Scripts/python tools/youtube/thumbs_wide.py"""
+"""Обложки YouTube 1280×720 для длинных видео (стиль 2). Запуск: .venv/Scripts/python tools/youtube/thumbs_wide.py [y009 …]"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -13,6 +13,10 @@ ITEMS = [
     ('y006', '#F13A43', 'ЕНТ · химия', 'Хим. связь', '3 ловушки ЕНТ', ['вид связи', 'полярность CO₂', 'решётки']),
     ('y007', '#1F7A4A', 'ЕНТ · биология', 'Кровь', '3 ловушки ЕНТ', ['лёгочная артерия', 'круги', 'группы крови']),
     ('y008', '#1F7A4A', 'ЕНТ · биология', 'Иммунитет', 'и дыхание', ['вакцина', 'резус-конфликт', 'вдох']),
+    ('y009', '#F13A43', 'ЕНТ · химия #01', 'Формула', 'как читать запись', ['индекс', 'коэффициент', 'заряд']),
+    ('y010', '#F13A43', 'ЕНТ · химия #02', 'Валентность', '3 задачи с ловушками', ['формула', 'массовая доля', 'уравнение']),
+    ('y011', '#1F7A4A', 'ЕНТ · биология #01', 'Клетка', '3 задачи с ловушками', ['структуры', 'тип клетки', 'размер по шкале']),
+    ('y012', '#1F7A4A', 'ЕНТ · биология #02', 'ДНК', 'и вещества клетки', ['углеводы', 'Чаргафф', 'длина ДНК']),
 ]
 
 
@@ -35,6 +39,10 @@ h1 {{ margin: 40px 0 0; font: 800 104px/1 'Unbounded'; text-transform: uppercase
 
 if __name__ == '__main__':
     OUT.mkdir(parents=True, exist_ok=True)
+    import sys
+    only = set(sys.argv[1:])
     for vid, accent, tag, title, plaque, chips in ITEMS:
+        if only and vid not in only:
+            continue
         shot(page(accent, tag, title, plaque, chips), 1280, 720, OUT / f'thumb-{vid}.png')
         print(OUT / f'thumb-{vid}.png')

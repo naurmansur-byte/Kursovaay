@@ -1,16 +1,32 @@
-// Шаблон YouTube-ролика 16:9 «3 задачи ЕНТ с ловушками»: title → (q, e, t, a) × 3 → cta. Ролик задаётся конфигом (makeWide).
+// Шаблон YouTube-ролика 16:9: title → [p1…pN «главное по теме»] → (q, e, t, a) × 3 → [sum «итог»] → cta. Ролик задаётся конфигом (makeWide).
 // Тайминги — по словам озвучки: [стем, запасной кадр]. Строка с префиксом '$' — формула KaTeX.
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
+import katex from 'katex';
 import { C, F } from '../theme.js';
 import { Appear, Atom, Card, Dna, Kinetic, Label, Option, Row, Sfx, TeX, enter, punch, shake } from '../kit.jsx';
 import { Slam, TopicIntro, useW } from '../scenes.jsx';
 
 const Abs = ({ x, y, children, style }) => <div style={{ position: 'absolute', left: x, top: y, ...style }}>{children}</div>;
 
+// Строка: '$…' — целиком формула; текст с вставками '$…$' — слова шрифтом бренда, формулы KaTeX; иначе — просто текст.
+const Mixed = ({ value, size, color }) => (
+  <div style={{ fontFamily: F.body, fontWeight: 800, fontSize: size, lineHeight: 1.25, color, whiteSpace: 'nowrap' }}>
+    {value.split(/\$([^$]+)\$/).map((part, i) =>
+      i % 2 ? (
+        <span key={i} style={{ fontSize: '1.1em', fontWeight: 400 }} dangerouslySetInnerHTML={{ __html: katex.renderToString(part, { throwOnError: false, strict: false, output: 'html' }) }} />
+      ) : (
+        <span key={i}>{part}</span>
+      )
+    )}
+  </div>
+);
+
 const Line = ({ value, size = 54, color = C.fg }) =>
-  value.startsWith('$') ? (
+  value.startsWith('$') && value.indexOf('$', 1) === -1 ? (
     <TeX tex={value.slice(1)} size={size + 6} color={color} />
+  ) : value.includes('$') ? (
+    <Mixed value={value} size={size} color={color} />
   ) : (
     <div style={{ fontFamily: F.body, fontWeight: 800, fontSize: size, lineHeight: 1.2, color }}>{value}</div>
   );
@@ -45,7 +61,7 @@ export const makeWide = (cfg) => {
             <div style={{ marginTop: 22, display: 'grid', gap: 8 }}>
               {q.question.map((t) => <TeX key={t} tex={t} size={q.questionSize ?? 56} />)}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginTop: 30 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: q.cols === 1 ? '1fr' : '1fr 1fr', gap: q.cols === 1 ? 12 : 20, marginTop: 30 }}>
               {q.options.map(([l, v], i) => <Option key={l} letter={l} value={v} unit="" at={6 + i * 3} />)}
             </div>
           </Card>
@@ -130,7 +146,7 @@ export const makeWide = (cfg) => {
   const Cta = ({ scene }) => {
     const frame = useCurrentFrame();
     const W = useW(scene);
-    const [tC, tH, tOn, tG, tS, tD, tSub] = [W('химбио', 80), W('химия', 112), W('онлайн', 149), W('группы', 171), W('старт', 208), W('директ', 302), W('подпишись', 401)];
+    const [tC, tH, tOn, tS, tD, tSub] = [W('химбио', 80), W('химия', 112), W('онлайн', 149), W('старт', 190), W('директ', 260), W('подпишись', 340)];
     return (
       <AbsoluteFill>
         <Kinetic at={2} y={150} size={70} rotate={-3}>Так разбираем каждую тему</Kinetic>
@@ -144,23 +160,91 @@ export const makeWide = (cfg) => {
           </div>
         </Appear>
         <Row y={510} style={{ gap: 18 }}>
-          <Chip at={tH} red>химия + биология</Chip><Chip at={tOn}>онлайн</Chip><Chip at={tG}>группы по 5</Chip><Chip at={tS} red>старт 1 ноября</Chip>
+          <Chip at={tH} red>химия + биология</Chip><Chip at={tOn}>онлайн</Chip><Chip at={tS} red>старт 1 ноября</Chip>
         </Row>
         <Appear at={tD - 20} y={650}><div style={{ font: `700 44px ${F.body}`, color: C.muted }}>Запись — в директ Instagram</div></Appear>
         <Kinetic at={tD} y={720} size={96} rotate={-2}>@himbio.prosto</Kinetic>
         {frame >= tSub && (
-          <Abs x={1390} y={850}>
+          <Abs x={1290} y={850}>
             <div style={{ transform: `scale(${punch(frame, tSub, 0.25)}) rotate(4deg)`, padding: '22px 44px', background: C.accent, borderRadius: 60, font: `800 40px ${F.display}`, color: '#fff', whiteSpace: 'nowrap' }}>ПОДПИСАТЬСЯ</div>
           </Abs>
         )}
-        <Sfx at={2} name="whoosh" /><Sfx at={tC} name="whoosh" />{[tH, tOn, tG, tS].map((t, i) => <Sfx key={i} at={t} name="pop" volume={0.35} />)}
+        <Sfx at={2} name="whoosh" /><Sfx at={tC} name="whoosh" />{[tH, tOn, tS].map((t, i) => <Sfx key={i} at={t} name="pop" volume={0.35} />)}
         <Sfx at={tD} name="whoosh" /><Sfx at={tSub} name="ding" volume={0.5} />
       </AbsoluteFill>
     );
   };
 
-  const SCENES = { title: Title, cta: Cta };
-  const TAILS = { title: 24, cta: 60 };
+  // «Главное по теме»: заголовок-плашка и строки, которые появляются по словам озвучки.
+  const Point = (n) => ({ scene }) => {
+    const frame = useCurrentFrame();
+    const W = useW(scene);
+    const p = cfg.points[n - 1];
+    const times = p.rows.map(([, stem, fb]) => W(stem, fb));
+    return (
+      <AbsoluteFill>
+        <Kinetic at={0} y={150} size={76} rotate={-3} plaque>{p.title}</Kinetic>
+        <Appear at={2} y={300}>
+          <Card width={1600}>
+            <div style={{ display: 'grid', gap: p.gap ?? 24 }}>
+              {p.rows.map(([value, , , red], i) =>
+                frame < times[i] ? null : (
+                  <div key={i} style={{ transform: `scale(${0.92 + 0.08 * enter(frame, times[i], 30)})`, transformOrigin: 'left center', borderLeft: `10px solid ${red ? C.accent : C.faint}`, paddingLeft: 26 }}>
+                    <Line value={value} size={p.size ?? 54} />
+                  </div>
+                )
+              )}
+            </div>
+          </Card>
+        </Appear>
+        <Sfx at={1} name="whoosh" />
+        {times.map((t, i) => <Sfx key={i} at={t} name="pop" volume={0.3} />)}
+      </AbsoluteFill>
+    );
+  };
+
+  // Итог: три вывода и анонс следующего видео.
+  const Summary = ({ scene }) => {
+    const frame = useCurrentFrame();
+    const { fps } = useVideoConfig();
+    const W = useW(scene);
+    const sm = cfg.summary;
+    const times = sm.rows.map(([, stem, fb]) => W(stem, fb));
+    const tN = W(sm.next[1], times[times.length - 1] + 60);
+    return (
+      <AbsoluteFill>
+        <Kinetic at={0} y={150} size={90} rotate={-3} plaque>Итог</Kinetic>
+        <div style={{ position: 'absolute', left: 160, top: 320, width: 1600, display: 'grid', gap: 26 }}>
+          {sm.rows.map(([text], i) => {
+            const at = times[i];
+            if (frame < at) return null;
+            const pr = enter(frame, at, fps);
+            return (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 26, opacity: pr, transform: `translateX(${(1 - pr) * 120}px)` }}>
+                <div style={{ width: 70, height: 70, flex: 'none', background: C.accent, display: 'grid', placeItems: 'center', fontFamily: F.display, fontWeight: 800, fontSize: 38, color: C.fg }}>{i + 1}</div>
+                <div style={{ fontFamily: F.body, fontWeight: 800, fontSize: 50, lineHeight: 1.15, color: C.fg }}>{text}</div>
+              </div>
+            );
+          })}
+        </div>
+        {frame >= tN && (
+          <Abs x={160} y={690}>
+            <div style={{ transform: `scale(${punch(frame, tN, 0.2)})`, transformOrigin: 'left center', padding: '18px 34px', border: `4px solid ${C.fg}`, font: `800 44px ${F.body}`, color: C.fg, whiteSpace: 'nowrap' }}>{sm.next[0]}</div>
+          </Abs>
+        )}
+        <Sfx at={1} name="whoosh" />
+        {times.map((t, i) => <Sfx key={i} at={t} name="pop" volume={0.35} />)}
+        <Sfx at={tN} name="ding" volume={0.45} />
+      </AbsoluteFill>
+    );
+  };
+
+  const SCENES = { title: Title, cta: Cta, sum: Summary };
+  const TAILS = { title: 24, cta: 60, sum: 30 };
+  (cfg.points || []).forEach((_, i) => {
+    SCENES[`p${i + 1}`] = Point(i + 1);
+    TAILS[`p${i + 1}`] = 24;
+  });
   for (const n of [1, 2, 3]) {
     SCENES[`q${n}`] = Question(n);
     SCENES[`e${n}`] = Explain(n);

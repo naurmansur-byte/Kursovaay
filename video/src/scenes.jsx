@@ -120,7 +120,7 @@ export const CourseOutro = ({ scene, word = 'курс', icon = 'atom' }) => {
   const letterSize = Math.min(200, (930 / letters.length - 42) / 0.85);
   const chips = [
     ['онлайн', tCourse + 10],
-    ['группы по 5 человек', tCourse + 14],
+    ['химия + биология', tCourse + 14],
     ['старт 1 ноября', tStart],
   ];
   return (

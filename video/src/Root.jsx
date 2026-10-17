@@ -55,6 +55,14 @@ import y007Timing from './reels/y007.timing.json';
 import { TAILS as y007Tails } from './reels/y007.jsx';
 import y008Timing from './reels/y008.timing.json';
 import { TAILS as y008Tails } from './reels/y008.jsx';
+import y009Timing from './reels/y009.timing.json';
+import { TAILS as y009Tails } from './reels/y009.jsx';
+import y010Timing from './reels/y010.timing.json';
+import { TAILS as y010Tails } from './reels/y010.jsx';
+import y011Timing from './reels/y011.timing.json';
+import { TAILS as y011Tails } from './reels/y011.jsx';
+import y012Timing from './reels/y012.timing.json';
+import { TAILS as y012Tails } from './reels/y012.jsx';
 import r008Timing from './reels/r008.timing.json';
 import { TAILS as r008Tails } from './reels/r008.jsx';
 import r009Timing from './reels/r009.timing.json';
@@ -103,6 +111,14 @@ import b018Timing from './reels/b018.timing.json';
 import { TAILS as b018Tails } from './reels/b018.jsx';
 import b019Timing from './reels/b019.timing.json';
 import { TAILS as b019Tails } from './reels/b019.jsx';
+import s001Timing from './reels/s001.timing.json';
+import { TAILS as s001Tails } from './reels/s001.jsx';
+import s002Timing from './reels/s002.timing.json';
+import { TAILS as s002Tails } from './reels/s002.jsx';
+import s003Timing from './reels/s003.timing.json';
+import { TAILS as s003Tails } from './reels/s003.jsx';
+import s004Timing from './reels/s004.timing.json';
+import { TAILS as s004Tails } from './reels/s004.jsx';
 
 const FPS = 30;
 
@@ -150,6 +166,10 @@ const REELS = [
   { id: 'B017', timing: b017Timing, tails: b017Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
   { id: 'B018', timing: b018Timing, tails: b018Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
   { id: 'B019', timing: b019Timing, tails: b019Tails, subject: 'bio' },  // рилс-вопрос (quiz.jsx)
+  { id: 'S001', timing: s001Timing, tails: s001Tails, subject: 'bio' },  // рубрика (series.jsx)
+  { id: 'S002', timing: s002Timing, tails: s002Tails, subject: 'chem' },  // рубрика (series.jsx)
+  { id: 'S003', timing: s003Timing, tails: s003Tails, subject: 'chem' },  // рубрика (series.jsx)
+  { id: 'S004', timing: s004Timing, tails: s004Tails, subject: 'bio' },  // рубрика (series.jsx)
 ];
 
 export const Root = () => (
@@ -197,6 +217,22 @@ export const Root = () => (
     {(() => {
       const plan = buildPlan(y008Timing, FPS, y008Tails);
       return <Composition id="Y008" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y008', subject: 'bio' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y009Timing, FPS, y009Tails);
+      return <Composition id="Y009" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y009' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y010Timing, FPS, y010Tails);
+      return <Composition id="Y010" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y010' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y011Timing, FPS, y011Tails);
+      return <Composition id="Y011" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y011', subject: 'bio' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y012Timing, FPS, y012Tails);
+      return <Composition id="Y012" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y012', subject: 'bio' }} />;
     })()}
     <Composition id="Avatar" component={Avatar} durationInFrames={1} fps={FPS} width={1080} height={1080} />
     {HIGHLIGHTS.map((h) => (

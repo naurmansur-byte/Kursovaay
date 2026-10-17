@@ -12,6 +12,8 @@ exports/
 tools/dashboard/out/
 !deliverables/**/*.mp4
 video/build/
+video/build2/
+video/build-alt/
 video/out/
 
 # Папка с готовыми материалами для Мансура (копии; исходники в course/, deliverables/)

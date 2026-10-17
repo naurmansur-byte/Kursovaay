@@ -62,6 +62,8 @@ def docs() -> None:
         ('course/diagnostic/teacher.md', '03 Входная диагностика/Химия — ключ и уровни.pdf'),
         ('course/biology/diagnostic/student.md', '03 Входная диагностика/Биология — лист ученика.pdf'),
         ('course/biology/diagnostic/teacher.md', '03 Входная диагностика/Биология — ключ и уровни.pdf'),
+        ('course/diagnostic/parent-report.md', '03 Входная диагностика/Итоги для родителя — шаблон.pdf'),
+        ('course/diagnostic/score-sheet.md', '03 Входная диагностика/Лист подсчёта — инструкция.pdf'),
     ]
     for i, (src, name) in enumerate(items):
         pdf = tmp / f'{i:02d}.pdf'
@@ -69,6 +71,8 @@ def docs() -> None:
         dest = PACK / name
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(pdf, dest)
+    shutil.copy2(ROOT / 'course/diagnostic/score-sheet.csv', PACK / '03 Входная диагностика' / 'Лист подсчёта — для Google Таблиц.csv')
+    shutil.copy2(ROOT / 'course/diagnostic/parent-message.md', PACK / '03 Входная диагностика' / 'Сообщение родителю 27.10.txt')
 
 
 if __name__ == '__main__':

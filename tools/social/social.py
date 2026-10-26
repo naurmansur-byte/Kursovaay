@@ -243,6 +243,47 @@ def ad3(kind: str, w: int, h: int, y: dict, icon: int = 150) -> str:
 """)
 
 
+# Таргет для родителей «Бесплатный созвон» (26.10): без размера групп, без цены и скидки; связь — WhatsApp из рекламы.
+CALL = {
+    'plaques': [('Бесплатный созвон', '#F13A43', -4), ('для родителей', '#F3F0E8', -3)],
+    'lead': 'Подготовка к ЕНТ по химии и биологии: расскажем, как устроен профиль и с чего начать до старта курса 1 ноября.',
+    'facts': [('ЕНТ', 'профиль «химия + биология»: что проверяют и как готовиться'),
+              ('Тест', 'бесплатный входной тест покажет уровень ребёнка'),
+              ('План', 'подготовка с ноября по май: 4 урока в неделю'),
+              ('?', 'ответим на ваши вопросы о курсе')],
+    'free': ('Бесплатно', 'онлайн · в удобное время'),
+    'cta': 'Напишите нам в WhatsApp — запишем на созвон',
+}
+
+
+def ad_call(w: int, h: int, y: dict, icon: int = 170) -> str:
+    a = CALL
+    pls = ''.join(f'<div class="pl" style="background:{bg};color:{"#151515" if bg == "#F3F0E8" else "#F3F0E8"};transform:rotate({r}deg);margin-top:{0 if i == 0 else 16}px">{t}</div><br>'
+                  for i, (t, bg, r) in enumerate(a['plaques']))
+    rows = ''.join(f'<div class="fact"><div class="num" style="background:{"#F13A43" if i % 2 == 0 else "#1F7A4A"}">{n}</div><div class="ft">{t}</div></div>'
+                   for i, (n, t) in enumerate(a['facts']))
+    return doc(w, h, AD_CSS + f"""
+.pl {{ display: inline-block; white-space: nowrap; font: 800 {y.get('pl', 60)}px/1.05 'Unbounded'; text-transform: uppercase; padding: 10px 24px 16px; }}
+.lead {{ font: 700 40px/1.3 'Manrope'; margin: 0; }}
+.fact {{ display: flex; align-items: center; gap: 26px; margin-bottom: 18px; }}
+.num {{ width: 170px; flex: none; text-align: center; padding: 14px 0 18px; font: 800 42px 'Unbounded'; color: #F3F0E8; transform: rotate(-3deg); white-space: nowrap; }}
+.ft {{ font: 800 33px/1.2 'Manrope'; color: #F3F0E8; }}
+.icons {{ position: absolute; display: flex; align-items: flex-end; gap: 18px; }}
+.icons .atom {{ width: {icon}px; height: {icon}px; position: static; }} .dna {{ width: {int(icon * .5)}px; height: {int(icon * 1.1)}px; }}
+.cta {{ font-size: 36px; line-height: 1.25; padding: 30px 60px !important; }}
+.price {{ position: absolute; left: 80px; display: flex; align-items: center; gap: 26px; }}
+.price b {{ background: #F3F0E8; color: #151515; padding: 14px 26px 16px; font: 800 52px/1.05 'Unbounded'; white-space: nowrap; transform: rotate(-2deg); text-transform: uppercase; }}
+.price span {{ font: 800 30px/1.25 'Manrope'; text-transform: uppercase; letter-spacing: .05em; }}
+""", f"""
+<div class="icons" style="right:80px;top:{y['icons']}px">{ATOM}{dna()}</div>
+<div class="price" style="top:{y['price']}px"><b>{a['free'][0]}</b><span>{a['free'][1].replace(' · ', '<br>')}</span></div>
+<div style="position:absolute;left:80px;right:80px;top:{y['h1']}px">{pls}</div>
+<p class="lead" style="position:absolute;left:80px;right:90px;top:{y['lead']}px">{a['lead']}</p>
+<div style="position:absolute;left:80px;right:80px;top:{y['facts']}px">{rows}</div>
+<div class="cta" style="top:{y['cta']}px;bottom:auto">{a['cta']}</div>
+""")
+
+
 # Обложки YouTube 1280×720 в стиле обложки «Моль за 4 минуты» (tools/youtube/art.py).
 def thumb(tag: str, h1: str, plaque: str, badge: str, icon: str, accent: str = '#F13A43') -> str:
     return doc(1280, 720, f"""
@@ -292,6 +333,12 @@ if __name__ == '__main__':
             # 9:16: нижние ~300 px закрывает кнопка рекламы — призыв выше.
             shot(ad3(kind, 1080, 1920, {'icons': 220, 'h1': 400, 'lead': 650, 'facts': 810, 'price': 1270, 'cta': 1420, 'pl': pl}, 160),
                  1080, 1920, out / f'target-{kind}-9x16.png')
+        sys.exit()
+    if '--call' in sys.argv:
+        out = ROOT / 'deliverables' / 'ads'
+        shot(ad_call(1080, 1350, {'icons': 40, 'h1': 230, 'lead': 470, 'facts': 640, 'price': 1060, 'cta': 1180}), 1080, 1350, out / 'target-call-parents-4x5.png')
+        # 9:16: нижние ~300 px закрывает кнопка рекламы — призыв выше.
+        shot(ad_call(1080, 1920, {'icons': 200, 'h1': 420, 'lead': 670, 'facts': 840, 'price': 1270, 'cta': 1420}), 1080, 1920, out / 'target-call-parents-9x16.png')
         sys.exit()
     if '--yt' in sys.argv:
         for name, html in THUMBS.items():

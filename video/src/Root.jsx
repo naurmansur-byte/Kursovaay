@@ -119,6 +119,8 @@ import s003Timing from './reels/s003.timing.json';
 import { TAILS as s003Tails } from './reels/s003.jsx';
 import s004Timing from './reels/s004.timing.json';
 import { TAILS as s004Tails } from './reels/s004.jsx';
+import p001Timing from './reels/p001.timing.json';
+import { TAILS as p001Tails } from './reels/p001.jsx';
 
 const FPS = 30;
 
@@ -170,6 +172,7 @@ const REELS = [
   { id: 'S002', timing: s002Timing, tails: s002Tails, subject: 'chem' },  // рубрика (series.jsx)
   { id: 'S003', timing: s003Timing, tails: s003Tails, subject: 'chem' },  // рубрика (series.jsx)
   { id: 'S004', timing: s004Timing, tails: s004Tails, subject: 'bio' },  // рубрика (series.jsx)
+  { id: 'P001', timing: p001Timing, tails: p001Tails },  // бесплатная неделя (промо)
 ];
 
 export const Root = () => (

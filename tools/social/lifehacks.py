@@ -70,7 +70,7 @@ CHEM = ('#F13A43', 'ХИМИЯ', 'lifehacks-chem', [
     '<div class="row">c — моль на литр <b>раствора</b>, не воды</div></div>',
     '<div class="plaque kicker">Курс «ХимБио просто»</div><h1>Разберём<br>с тобой</h1>'
     '<div class="lead">Химия и биология к ЕНТ в одном курсе — по учебникам из перечня НЦТ и в формате теста.</div>'
-    '<div class="chips"><div class="chip">онлайн</div><div class="chip">группы по 5 человек</div><div class="chip hot">старт 1 ноября</div></div>'
+    '<div class="chips"><div class="chip">онлайн</div><div class="chip">химия + биология</div><div class="chip hot">старт 1 ноября</div></div>'
     '<div class="big">Пиши<br>«курс»</div><div class="note">в директ или в комментарии</div>',
 ])
 
@@ -93,7 +93,7 @@ BIO = ('#1F7A4A', 'БИОЛОГИЯ', 'lifehacks-bio', [
     '<div class="row">CO<sub>2</sub> даёт углерод для глюкозы</div><div class="row">Световая фаза — тилакоиды, темновая — строма</div></div>',
     '<div class="plaque kicker">Курс «ХимБио просто»</div><h1>Разберём<br>с тобой</h1>'
     '<div class="lead">Химия и биология к ЕНТ в одном курсе — по учебникам из перечня НЦТ и в формате теста.</div>'
-    '<div class="chips"><div class="chip">онлайн</div><div class="chip">группы по 5 человек</div><div class="chip hot">старт 1 ноября</div></div>'
+    '<div class="chips"><div class="chip">онлайн</div><div class="chip">химия + биология</div><div class="chip hot">старт 1 ноября</div></div>'
     '<div class="big">Пиши<br>«курс»</div><div class="note">в директ или в комментарии</div>',
 ])
 

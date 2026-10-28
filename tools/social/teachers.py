@@ -52,7 +52,7 @@ def teacher(t: dict) -> str:
     subj, acc = SUBJ[t['subject']]
     photo = PRIVATE / t['photo'] if t.get('photo') else None
     if photo and photo.exists():
-        pic = f'<img src="{photo.as_uri()}" style="width:100%;height:100%;object-fit:cover;display:block">'
+        pic = f'<img src="{photo.as_uri()}" style="width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block">'
     else:
         pic = (f'<div class="ph">{CAMERA}<p>фото по пояс,<br>светлый фон</p></div>')
     stats = ''.join(f'<div class="stat"><b>{n}</b><span>{lbl}</span></div>' for n, lbl in t['stats'][:2])

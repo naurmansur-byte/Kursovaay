@@ -4,7 +4,8 @@
 Данные и фото — вне Git: «00 Материалы ХимБио просто/Преподаватели/teachers.json» (+ фото рядом).
 Если файла нет, рисуется шаблон с заглушками в deliverables/instagram/teachers-template/.
 Формат teachers.json: [{"name": "...", "subject": "chem|bio", "photo": "file.jpg",
-  "stats": [["10", "лет преподаёт"], ["6", "выпусков ЕНТ"]], "facts": ["...", "..."], "quote": "..."}]
+  "stats": [["47/50", "балл ЕНТ по химии"]], "facts": ["..."], "quote": "..."}]  (PNG без фона ляжет на фирменный фон;
+  facts и quote можно не заполнять)
 """
 from __future__ import annotations
 
@@ -52,18 +53,26 @@ def teacher(t: dict) -> str:
     subj, acc = SUBJ[t['subject']]
     photo = PRIVATE / t['photo'] if t.get('photo') else None
     if photo and photo.exists():
-        pic = f'<img src="{photo.as_uri()}" style="width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block">'
+        img = f'<img src="{photo.as_uri()}" style="position:relative;width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block">'
+        # PNG с вырезанным фоном кладём на фирменный фон: светлая бумага и косые полосы стиля 2
+        pic = (f'<div class="slash" style="left:250px;width:200px;background:{acc}"></div>'
+               f'<div class="slash" style="left:490px;width:50px;background:{GREEN if acc == RED else RED}"></div>{img}'
+               if photo.suffix.lower() == '.png' else img)
     else:
         pic = (f'<div class="ph">{CAMERA}<p>фото по пояс,<br>светлый фон</p></div>')
-    stats = ''.join(f'<div class="stat"><b>{n}</b><span>{lbl}</span></div>' for n, lbl in t['stats'][:2])
-    facts = ''.join(f'<li><i></i>{f}</li>' for f in t['facts'][:3])
+    stats = ''.join(f'<div class="stat"><b>{n.split("/")[0]}{"<small>/" + n.split("/")[1] + "</small>" if "/" in n else ""}</b>'
+                    f'<span>{lbl}</span></div>' for n, lbl in t['stats'][:2])
+    facts = ''.join(f'<li><i></i>{f}</li>' for f in t.get('facts', [])[:3])
+    quote = f'<div class="quote">{t["quote"]}</div>' if t.get('quote') else ''
     return doc(1080, 1350, f"""
 .plaque {{ position: absolute; left: 80px; top: 100px; padding: 12px 30px 18px; font-size: 46px; background: {acc}; z-index: 2; }}
-.stats {{ position: absolute; left: 80px; top: 250px; width: 340px; display: flex; flex-direction: column; gap: 40px; }}
+.stats {{ position: absolute; left: 80px; top: {250 if len(t['stats']) > 1 else 320}px; width: 340px; display: flex; flex-direction: column; gap: 40px; }}
 .stat b {{ display: block; font: 800 150px/1 'Unbounded'; color: {PAPER}; }}
+.stat b small {{ font-size: 50px; color: #B9B3A8; }}
 .stat span {{ display: block; margin-top: 8px; font: 800 34px/1.2 'Manrope'; color: #B9B3A8; text-transform: uppercase; letter-spacing: .04em; }}
 .photo {{ position: absolute; left: 470px; top: 90px; width: 530px; height: 680px; border: 6px solid {PAPER};
-  box-shadow: -20px 20px 0 {acc}; transform: rotate(3deg); background: #1D1D1D; overflow: hidden; }}
+  box-shadow: -20px 20px 0 {acc}; transform: rotate(3deg); background: {'#E9E4D8' if photo and photo.suffix.lower() == '.png' else '#1D1D1D'}; overflow: hidden; }}
+.photo .slash {{ position: absolute; top: -100px; bottom: -100px; transform: skewX(-14deg); }}
 .ph {{ height: 100%; border: 4px dashed rgba(243,240,232,.35); margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }}
 .ph p {{ margin: 0; text-align: center; font: 700 34px/1.3 'Manrope'; color: #B9B3A8; }}
 .who {{ position: absolute; left: 80px; top: 840px; width: 920px; display: flex; flex-direction: column; gap: 28px; }}
@@ -75,7 +84,7 @@ li i {{ flex: none; width: 18px; height: 18px; background: {acc}; transform: tra
   font: 800 34px/1.25 'Manrope'; transform: rotate(-1.5deg); }}
 .quote::before {{ content: '«'; position: absolute; left: 26px; top: 14px; font: 800 64px/1 'Unbounded'; color: {acc}; }}
 """, f"""<div class="plaque">{subj}</div><div class="stats">{stats}</div>
-<div class="photo">{pic}</div><div class="who"><h2>{t['name']}</h2><ul>{facts}</ul></div><div class="quote">{t['quote']}</div>""")
+<div class="photo">{pic}</div><div class="who"><h2>{t['name']}</h2><ul>{facts}</ul></div>{quote}""")
 
 
 FINAL = doc(1080, 1350, """

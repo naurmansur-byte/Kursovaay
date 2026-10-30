@@ -22,10 +22,11 @@ from teacher_drive import week_dir  # noqa: E402
 MATERIALS = ROOT / '00 Материалы ХимБио просто'
 KEY = re.compile(r'^## (?:Ключ|Для преподавателя|Преподавател|Только преподавателю)', re.M)
 STUDENT = [('notes-student', '1 Конспект'), ('pre-work', '2 Закрепление после урока 1'), ('homework', '3 Домашняя работа'),
-           ('quiz', '4 Контроль (урок 2)'), ('calc-track', '5 Расчётный трек')]
+           ('quiz', '4 Контроль (урок 2)'), ('calc-track', '5 Расчётный трек'),
+           ('context-track', '5 Контекст-трек')]
 TEACHER = [('lesson-1-plan', 'Урок 1 — план'), ('lesson-2-plan', 'Урок 2 — план'), ('homework-solutions', 'ДЗ — решения и критерии'),
            ('teacher-notes', 'Заметки преподавателю'), ('quiz', 'Контроль — с ключом'),
-           ('calc-track-solutions', 'Расчётный трек — решения')]
+           ('calc-track-solutions', 'Расчётный трек — решения'), ('context-track-solutions', 'Контекст-трек — решения')]
 
 
 def build(week: str) -> Path:
@@ -42,7 +43,7 @@ def build(week: str) -> Path:
 
     for name, title in STUDENT:
         md = src / f'{name}.md'
-        if not md.exists():  # расчётный трек есть только в неделях 6–22 химии
+        if not md.exists():  # расчётный трек — химия 6–22, контекст-трек — биология 3–22
             continue
         text = md.read_text(encoding='utf-8')
         cut = KEY.search(text) if name == 'quiz' else None

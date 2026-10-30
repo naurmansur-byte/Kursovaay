@@ -22,9 +22,10 @@ from teacher_drive import week_dir  # noqa: E402
 MATERIALS = ROOT / '00 Материалы ХимБио просто'
 KEY = re.compile(r'^## (?:Ключ|Для преподавателя|Преподавател|Только преподавателю)', re.M)
 STUDENT = [('notes-student', '1 Конспект'), ('pre-work', '2 Закрепление после урока 1'), ('homework', '3 Домашняя работа'),
-           ('quiz', '4 Контроль (урок 2)')]
+           ('quiz', '4 Контроль (урок 2)'), ('calc-track', '5 Расчётный трек')]
 TEACHER = [('lesson-1-plan', 'Урок 1 — план'), ('lesson-2-plan', 'Урок 2 — план'), ('homework-solutions', 'ДЗ — решения и критерии'),
-           ('teacher-notes', 'Заметки преподавателю'), ('quiz', 'Контроль — с ключом')]
+           ('teacher-notes', 'Заметки преподавателю'), ('quiz', 'Контроль — с ключом'),
+           ('calc-track-solutions', 'Расчётный трек — решения')]
 
 
 def build(week: str) -> Path:
@@ -41,6 +42,8 @@ def build(week: str) -> Path:
 
     for name, title in STUDENT:
         md = src / f'{name}.md'
+        if not md.exists():  # расчётный трек есть только в неделях 6–22 химии
+            continue
         text = md.read_text(encoding='utf-8')
         cut = KEY.search(text) if name == 'quiz' else None
         pdf = out / 'student' / f'{name}.pdf'
@@ -48,6 +51,8 @@ def build(week: str) -> Path:
         shutil.copy2(pdf, dest / 'Ученику' / f'{title}.pdf')
 
     for name, title in TEACHER:
+        if not (src / f'{name}.md').exists():
+            continue
         docx = out / 'teacher' / f'{name}.docx'
         export_docx((src / f'{name}.md').read_text(encoding='utf-8'), docx, base=src)
         shutil.copy2(docx, dest / 'Преподавателю' / f'{title}.docx')

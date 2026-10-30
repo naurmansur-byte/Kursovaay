@@ -264,12 +264,12 @@ def teacher(t: dict) -> str:
 .ph {{ height: 100%; display: flex; align-items: center; justify-content: center; font: 800 40px 'Manrope'; color: #8F897F; }}
 .eye2 {{ position: absolute; left: 870px; top: 140px; font: 800 26px 'Manrope'; letter-spacing: .16em; display: flex; align-items: center; gap: 14px; color: {MUTED}; }}
 .eye2 i {{ width: 14px; height: 14px; border-radius: 50%; background: {RED}; }}
-h1 {{ position: absolute; left: 870px; top: 190px; margin: 0; font: 800 110px/1 'Unbounded'; text-transform: uppercase; letter-spacing: -.02em; }}
-.sts {{ position: absolute; left: 870px; top: 370px; display: flex; gap: 70px; }}
+h1 {{ position: absolute; left: 870px; top: 195px; right: 90px; margin: 0; font: 800 88px/1.04 'Unbounded'; text-transform: uppercase; letter-spacing: -.02em; }}
+.sts {{ position: absolute; left: 870px; top: 430px; display: flex; gap: 70px; }}
 .st b {{ font: 800 140px/1 'Unbounded'; }} .st b small {{ font-size: 48px; color: {MUTED}; }}
 .st:first-child b {{ color: {RED}; }} .st:nth-child(2) b {{ color: {LGREEN}; }}
 .st span {{ display: block; margin-top: 10px; font: 800 28px/1.2 'Manrope'; text-transform: uppercase; letter-spacing: .04em; color: {MUTED}; }}
-ul {{ position: absolute; left: 870px; right: 90px; top: 640px; margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 18px; }}
+ul {{ position: absolute; left: 870px; right: 90px; top: 700px; margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 18px; }}
 li {{ font: 700 34px/1.3 'Manrope'; display: flex; gap: 18px; }} li i {{ flex: none; width: 16px; height: 16px; margin-top: 14px; background: {RED}; }}
 """)
 

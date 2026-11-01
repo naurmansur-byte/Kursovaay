@@ -1,6 +1,6 @@
 """Карусель «Знакомьтесь: преподаватели» 1080×1350 в стиле 2 (химия — красный, биология — зелёный).
 
-Запуск: .venv/Scripts/python tools/social/teachers.py
+Запуск: .venv/Scripts/python tools/social/teachers.py  (--cards — простые карточки «Преподаватель химии/биологии» без баллов)
 Данные и фото — вне Git: «00 Материалы ХимБио просто/Преподаватели/teachers.json» (+ фото рядом).
 Если файла нет, рисуется шаблон с заглушками в deliverables/instagram/teachers-template/.
 Формат teachers.json: [{"name": "...", "subject": "chem|bio", "photo": "file.jpg",
@@ -87,6 +87,30 @@ li i {{ flex: none; width: 18px; height: 18px; background: {acc}; transform: tra
 <div class="photo">{pic}</div><div class="who"><h2>{t['name']}</h2><ul>{facts}</ul></div>{quote}""")
 
 
+ROLE = {'chem': 'Преподаватель химии', 'bio': 'Преподаватель биологии'}
+
+
+def card(t: dict) -> str:
+    """Простая карточка без баллов и фактов: предмет, фото на фирменном фоне, имя, «Преподаватель …»."""
+    subj, acc = SUBJ[t['subject']]
+    other = GREEN if acc == RED else RED
+    photo = PRIVATE / t['photo']
+    return doc(1080, 1350, f"""
+.plaque {{ position: absolute; left: 80px; top: 90px; padding: 12px 30px 18px; font-size: 46px; background: {acc}; z-index: 2; }}
+.photo {{ position: absolute; left: 150px; top: 200px; width: 780px; height: 800px; border: 6px solid {PAPER};
+  box-shadow: -22px 22px 0 {acc}; transform: rotate(2deg); background: #E9E4D8; overflow: hidden; }}
+.photo .slash {{ position: absolute; top: -100px; bottom: -100px; transform: skewX(-14deg); }}
+.photo img {{ position: relative; width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; display: block; }}
+.who {{ position: absolute; left: 80px; top: 1080px; width: 920px; display: flex; flex-direction: column; gap: 22px; }}
+h2 {{ margin: 0; font: 800 80px/1.02 'Unbounded'; text-transform: uppercase; letter-spacing: -.01em; }}
+.role {{ display: flex; align-items: center; gap: 18px; font: 800 40px/1.2 'Manrope'; color: #B9B3A8; }}
+.role i {{ flex: none; width: 22px; height: 22px; background: {acc}; }}
+""", f"""<div class="plaque">{subj}</div>
+<div class="photo"><div class="slash" style="left:330px;width:230px;background:{acc}"></div>
+<div class="slash" style="left:600px;width:56px;background:{other}"></div><img src="{photo.as_uri()}"></div>
+<div class="who"><h2>{t['name']}</h2><div class="role"><i></i>{ROLE[t['subject']]}</div></div>""")
+
+
 FINAL = doc(1080, 1350, """
 h2 { position: absolute; left: 80px; top: 110px; margin: 0; font: 800 96px/1.02 'Unbounded'; text-transform: uppercase; letter-spacing: -.02em; }
 .rows { position: absolute; left: 80px; right: 80px; top: 400px; display: flex; flex-direction: column; gap: 22px; }
@@ -106,6 +130,13 @@ h2 { position: absolute; left: 80px; top: 110px; margin: 0; font: 800 96px/1.02 
 
 def main() -> None:
     data_file = PRIVATE / 'teachers.json'
+    if '--cards' in sys.argv:  # простые карточки «Преподаватель …» для учеников и сторис
+        out = PRIVATE / 'Карточки'
+        out.mkdir(parents=True, exist_ok=True)
+        for t in json.loads(data_file.read_text(encoding='utf-8')):
+            shot(card(t), 1080, 1350, out / f"{ROLE[t['subject']]} — {t['name']}.png")
+        print(f'cards -> {out}')
+        return
     if data_file.exists():
         data = json.loads(data_file.read_text(encoding='utf-8'))
         out = ROOT / '00 Материалы ХимБио просто' / 'Instagram и Threads' / 'Карусель — преподаватели'

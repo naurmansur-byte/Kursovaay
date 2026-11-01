@@ -88,7 +88,7 @@ def schedule() -> str:
 def teachers() -> str:
     cards = sorted(CARDS.glob('Преподаватель *.png'), key=lambda p: 'биологии' in p.name)  # химия, затем биология
     imgs = ''.join(f'<img src="{p.as_uri()}">' for p in cards)
-    return slide(4, 'Твои преподаватели', f'<div class="cards">{imgs}</div>', """
+    return slide(4, 'Преподаватели', f'<div class="cards">{imgs}</div>', """
 .cards { position: absolute; left: 0; right: 0; top: 250px; display: flex; justify-content: center; gap: 70px; }
 .cards img { height: 760px; border: 4px solid #F3F0E8; }
 """)

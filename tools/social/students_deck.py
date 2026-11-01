@@ -58,7 +58,7 @@ h1 { position: absolute; left: 300px; top: 250px; margin: 0; font: 800 104px/1.0
 def numbers() -> str:
     items = [('2', 'предмета: химия и биология', RED), ('4', 'урока в неделю — по 2 на каждый предмет', LGREEN),
              ('90', 'минут урок, онлайн в Google Meet', RED), ('23', 'недели новых тем по каждому предмету', LGREEN),
-             ('2', 'полных пробника ЕНТ в мае', RED), ('7', 'месяцев: со 2 ноября по 30 мая', LGREEN)]
+             ('1', 'тест каждую неделю в Google Форме — по теме недели, в формате ЕНТ', RED), ('7', 'месяцев: со 2 ноября по 30 мая', LGREEN)]
     its = ''.join(f'<div class="i box"><b style="color:{c}">{n}</b><span>{t}</span></div>' for n, t, c in items)
     return slide(2, 'Курс в цифрах', f'<div class="its">{its}</div>', """
 .its { position: absolute; left: 90px; right: 90px; top: 310px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
@@ -126,9 +126,9 @@ def materials() -> str:
 
 
 def homework() -> str:
-    rows = [('Тест', 'ответы одной строкой в Telegram', '<code>1В 2Б 3АВД 4: А2 Б4</code>'),
+    rows = [('Тест в ДЗ', 'ответы одной строкой в Telegram', '<code>1В 2Б 3АВД 4: А2 Б4</code>'),
             ('Задачи', 'фото решения из тетради', 'видно ход: формула, подстановка, ответ'),
-            ('Найди ошибку', 'одна-две фразы или голосовое', 'объясни, где ошибся «ученик»')]
+            ('Тест недели', 'Google Форма по теме недели', 'в формате ЕНТ, баллы — сразу после отправки')]
     rs = ''.join(f'<div class="r box"><h3>{a}</h3><p>{b}</p><div class="ex">{c}</div></div>' for a, b, c in rows)
     return slide(7, 'Как сдавать домашнюю работу', f"""<div class="rs">{rs}</div>
 <div class="note">Строка в примере — образец оформления, а не ответы. Преподаватель проверяет и разбирает ошибки на следующем уроке.</div>""", """
@@ -145,7 +145,7 @@ def ent() -> str:
             ('Соответствие', '2 пункта и 4 варианта', '2 · 1 · 0'), ('Контекст', 'текст, таблица или опыт и 5 вопросов', '5 × 1')]
     rs = ''.join(f'<div class="r"><b>{a}</b><span>{b}</span><em>{c}</em></div>' for a, b, c in rows)
     return slide(8, 'Формат ЕНТ — с первой недели', f"""<div class="rs box">{rs}</div>
-<div class="big"><b>40 %</b><span>баллов предмета — двухбалльные задания. Поэтому тренируем их каждую неделю: в ДЗ, контроле и пробниках.</span></div>""", """
+<div class="big"><b>40 %</b><span>баллов предмета — двухбалльные задания. Поэтому тренируем их каждую неделю: в ДЗ, контроле и тесте недели.</span></div>""", """
 .rs { position: absolute; left: 90px; top: 300px; width: 1060px; padding: 10px 36px; }
 .r { display: grid; grid-template-columns: 380px 1fr 200px; gap: 20px; align-items: baseline; padding: 26px 0; border-bottom: 2px solid #3A3A3A; }
 .r:last-child { border-bottom: none; }
@@ -178,7 +178,7 @@ def books() -> str:
              'В конце — ошибки школьных учебников и верные формулировки']
     return slide(10, 'Конспект ЕНТ — две книги курса', f"""<div class="books">{book('химия', RED, 257, 83)}{book('биология', LGREEN, 272, 110)}</div>
 <ul class="dot">{"".join(f"<li><i></i>{x}</li>" for x in items)}</ul>
-<div class="note">Весь курс в одной книге по каждому предмету — для повторения перед контролем, пробником и самим ЕНТ.</div>""", """
+<div class="note">Весь курс в одной книге по каждому предмету — для повторения перед контролем, тестом недели и самим ЕНТ.</div>""", """
 .books { position: absolute; left: 110px; top: 300px; display: flex; gap: 60px; }
 .book { position: relative; width: 380px; height: 520px; transform: rotate(-3deg); }
 .book:nth-child(2) { transform: rotate(3deg); margin-top: 30px; }
@@ -206,11 +206,11 @@ def textbooks() -> str:
 
 
 def checks() -> str:
-    rows = [('Каждую неделю', 'контроль 10 минут в формате ЕНТ на втором уроке', RED),
-            ('После разделов', 'рубежи — проверка большой темы целиком', LGREEN),
-            ('Уровень A · B · C', 'маршрут ДЗ под тебя — меняется по результатам, это не оценка', RED),
-            ('Май', 'два полных пробника: 40 заданий, 50 баллов, 80 минут', LGREEN),
-            ('После пробника', 'карта ошибок по темам и твой план повторения до ЕНТ', RED)]
+    rows = [('Тест недели', 'Google Форма по каждой теме недели в формате ЕНТ — баллы сразу после отправки', RED),
+            ('Каждую неделю', 'контроль 10 минут в формате ЕНТ на втором уроке', LGREEN),
+            ('После разделов', 'рубежи — проверка большой темы целиком', RED),
+            ('Уровень A · B · C', 'маршрут ДЗ под тебя — меняется по результатам, это не оценка', LGREEN),
+            ('После теста', 'разбор ошибок по темам и что повторить', RED)]
     rs = ''.join(f'<div class="r"><b style="color:{c}">{a}</b><span>{b}</span></div>' for a, b, c in rows)
     return slide(12, 'Как проверяем прогресс', f'<div class="rs">{rs}</div>', """
 .rs { position: absolute; left: 90px; right: 90px; top: 290px; display: flex; flex-direction: column; gap: 18px; }

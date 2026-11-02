@@ -193,6 +193,7 @@ GS = r'''/**
 const DRIVE_ROOT = '__ROOT__';
 const DRIVE_FOLDER = '__FOLDER__';
 const NAME_Q = 'Имя и фамилия';
+const MAX_ROWS = 301;  // до 300 ответов на форму
 const TESTS = __TESTS__;
 
 function createPlacementForms() {
@@ -261,7 +262,8 @@ function buildSummary_(ss, resp, t) {
   ss.moveActiveSheet(1);
   const R = "'" + respName.replace(/'/g, "''") + "'!";
   const esc = s => String(s).replace(/"/g, '""');
-  const col = title => 'INDEX(' + R + 'A2:' + lastCol + ',0,MATCH("' + esc(title) + '",' + R + '1:1,0))';
+  // Строки ответов ограничены: открытый диапазон A2:AT даёт ~1000 строк, и ARRAYFORMULA с 4-й строки не помещается в лист (#REF!).
+  const col = title => 'INDEX(' + R + 'A2:' + lastCol + MAX_ROWS + ',0,MATCH("' + esc(title) + '",' + R + '1:1,0))';
   const name = col(NAME_Q);
   const hit = q => '(' + col(q.q) + '="' + esc(q.a) + '")';
   const weeks = Object.keys(t.weeks).map(Number).sort((a, b) => a - b);
@@ -281,7 +283,7 @@ function buildSummary_(ss, resp, t) {
     sh.getRange(3, c).setFormula('=IFERROR(COUNTIF(' + L + '4:' + L + ',0)/COUNT($B$4:$B),)');
   });
   sh.getRange(2, 3, 2, weeks.length).setNumberFormat('0%').setFontWeight('bold');
-  const data = sh.getRange(4, 3, 200, weeks.length);
+  const data = sh.getRange(4, 3, MAX_ROWS, weeks.length);
   const rule = (v, color) => SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied('=AND(ISNUMBER(C4),C4=' + v + ')').setBackground(color).setRanges([data]).build();
   sh.setConditionalFormatRules([rule(2, '#c8e6c9'), rule(1, '#fff3c4'), rule(0, '#f8c9c4')]);
   sh.setFrozenRows(3);

@@ -227,20 +227,41 @@ function buildTest_(t, folder) {
     if (!resp) Utilities.sleep(1000);
   }
   if (!resp) throw new Error('Не нашёл лист ответов в ' + ss.getUrl());
-  buildSummary_(SpreadsheetApp.openById(ss.getId()), resp.getName(), t);
+  buildSummary_(SpreadsheetApp.openById(ss.getId()), resp, t);
   DriveApp.getFileById(form.getId()).moveTo(folder);
   DriveApp.getFileById(ss.getId()).moveTo(folder);
   return t.subject + ': ответы ученика — ' + form.getPublishedUrl() + ' | редактирование — ' + form.getEditUrl() + ' | таблица — ' + ss.getUrl();
 }
 
-function buildSummary_(ss, respName, t) {
+/** Пересобрать лист «По неделям» в уже созданных таблицах (после правки формул). */
+function rebuildSummaries() {
+  const out = [];
+  TESTS.forEach(t => {
+    const it = DriveApp.getFilesByName(t.title + ' — ответы');
+    while (it.hasNext()) {
+      const f = it.next();
+      if (f.getMimeType() !== MimeType.GOOGLE_SHEETS) continue;
+      const ss = SpreadsheetApp.openById(f.getId());
+      const resp = ss.getSheets().filter(s => s.getFormUrl())[0];
+      if (resp) { buildSummary_(ss, resp, t); out.push(t.subject + ': ' + ss.getUrl()); }
+    }
+  });
+  Logger.log(out.join('\n'));
+}
+
+function buildSummary_(ss, resp, t) {
+  // Формулы пишем с запятыми — в русской локали они не разбираются, поэтому таблица в en_US.
+  ss.setSpreadsheetLocale('en_US');
+  SpreadsheetApp.flush();
+  const respName = resp.getName();
+  const lastCol = resp.getRange(1, resp.getMaxColumns()).getA1Notation().replace(/\d+/g, '');
   const sh = ss.getSheets().filter(s => !s.getFormUrl())[0] || ss.insertSheet();
   sh.setName('По неделям');
   ss.setActiveSheet(sh);
   ss.moveActiveSheet(1);
   const R = "'" + respName.replace(/'/g, "''") + "'!";
   const esc = s => String(s).replace(/"/g, '""');
-  const col = title => 'INDEX(' + R + 'A2:ZZ,0,MATCH("' + esc(title) + '",' + R + '1:1,0))';
+  const col = title => 'INDEX(' + R + 'A2:' + lastCol + ',0,MATCH("' + esc(title) + '",' + R + '1:1,0))';
   const name = col(NAME_Q);
   const hit = q => '(' + col(q.q) + '="' + esc(q.a) + '")';
   const weeks = Object.keys(t.weeks).map(Number).sort((a, b) => a - b);

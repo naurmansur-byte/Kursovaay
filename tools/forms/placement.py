@@ -262,8 +262,10 @@ function buildSummary_(ss, resp, t) {
   ss.moveActiveSheet(1);
   const R = "'" + respName.replace(/'/g, "''") + "'!";
   const esc = s => String(s).replace(/"/g, '""');
-  // Строки ответов ограничены: открытый диапазон A2:AT даёт ~1000 строк, и ARRAYFORMULA с 4-й строки не помещается в лист (#REF!).
-  const col = title => 'INDEX(' + R + 'A2:' + lastCol + MAX_ROWS + ',0,MATCH("' + esc(title) + '",' + R + '1:1,0))';
+  // Диапазон — строкой в INDIRECT: Формы вставляют строку ответа и сдвигают обычную ссылку A2:AT (первые ответы выпадают).
+  // Строки ограничены MAX_ROWS: иначе ARRAYFORMULA с 4-й строки не помещается в лист (#REF!).
+  const range = 'INDIRECT("' + esc(R + 'A2:' + lastCol + MAX_ROWS) + '")';
+  const col = title => 'INDEX(' + range + ',0,MATCH("' + esc(title) + '",' + R + '1:1,0))';
   const name = col(NAME_Q);
   const hit = q => '(' + col(q.q) + '="' + esc(q.a) + '")';
   const weeks = Object.keys(t.weeks).map(Number).sort((a, b) => a - b);

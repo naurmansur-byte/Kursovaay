@@ -6,9 +6,16 @@
 """
 from __future__ import annotations
 
+import math
+import sys
+
+import bio_w08
+import bio_w09
+import bio_w10
+import bio_w13
 from bio_w01 import chloro, mito, ribosomes
 from bio_w06 import BLUE, LBLUE, LRED, RED
-from common import INK, ROOT, render, text
+from common import INK, ROOT, render, smooth, text
 
 BIO = ROOT / 'course' / 'biology'
 MUSCLE = '#E9B3AE'
@@ -140,10 +147,132 @@ def heart_numbered() -> str:
     return s
 
 
+def numbered(module, fn, nums: dict, extra: str = '', dx: float = 0, dy: float = 0, drop: tuple = ()) -> str:
+    """Рисунок недели с номерами вместо подписей: тот же рисунок из bio_wNN.py, выноски из nums получают номер,
+    все прочие подписи и заголовок убираются, чтобы ответ не был виден. nums: подпись → номер или (номер, x, y);
+    drop — ещё функции рисунка, которые нужно убрать (например, стрелки-подсказки)."""
+    names = [k for k in ('lbl', 'label', 'text', 'lines_at', *drop) if hasattr(module, k)]
+    saved = {k: getattr(module, k) for k in names}
+    used = set()
+
+    def callout(px, py, tx, ty, s, *a, **k):
+        v = nums.get(s)
+        if v is None:
+            return ''
+        used.add(s)
+        n, tx, ty = (v, tx, ty) if isinstance(v, int) else v
+        return num(px, py, tx, ty, n)
+
+    for k in names:
+        setattr(module, k, callout if k in ('lbl', 'label') else (lambda *a, **kw: ''))
+    try:
+        svg = fn()
+    finally:
+        for k, v in saved.items():
+            setattr(module, k, v)
+    assert used == set(nums), set(nums) - used
+    return f'<g transform="translate({dx} {dy})">{svg}{extra}</g>'
+
+
+def urinary_numbered() -> str:
+    """1 почка, 2 надпочечник, 3 мочеточник, 4 почечная артерия, 5 мочевой пузырь, 6 почечная вена, 7 мочеиспускательный канал."""
+    return numbered(bio_w08, bio_w08.urinary_system, {'почка': 1, 'надпочечник': 2, 'мочеточник': 3, 'почечная артерия': 4,
+                                                      'мочевой пузырь': 5, 'почечная вена': 6, 'мочеиспускательный канал': 7}, dy=-60)
+
+
+def kidney_numbered() -> str:
+    """1 пирамидка мозгового слоя, 2 корковый слой, 3 чашечка, 4 почечная вена, 5 лоханка, 6 мочеточник, 7 почечная артерия."""
+    extra = num(1180, 400, 1300, 330, 7) + num(1180, 440, 1300, 530, 4)
+    return numbered(bio_w08, bio_w08.kidney_section, {'мозговой слой: пирамидки': 1, 'корковый слой': 2, 'чашечка': 3, 'лоханка': 5,
+                                                      'мочеточник': 6}, extra, dy=-40)
+
+
+def nephron_numbered() -> str:
+    """1 клубочек, 2 капсула, 3 приносящая артериола, 4 выносящая артериола, 5 проксимальный извитой каналец, 6 петля Генле,
+    7 дистальный извитой каналец, 8 собирательная трубка, 9 капилляры вокруг канальцев."""
+    return numbered(bio_w08, bio_w08.nephron, {'клубочек': 1, 'капсула': 2, 'выносящая': (4, 560, 104), 'проксимальный извитой каналец': 5,
+                                               'петля Генле': 6, 'дистальный извитой каналец': 7, 'собирательная трубка': 8,
+                                               'капилляры вокруг канальцев': 9}, num(200, 197, 92, 112, 3), dy=-50)
+
+
+def skeleton_numbered() -> str:
+    """1 мозговой отдел черепа, 2 лицевой отдел, 3 ключица, 4 грудина, 5 рёбра, 6 лопатка, 7 позвоночник, 8 плечевая кость,
+    9 локтевая, 10 лучевая, 11 кисть, 12 тазовая кость, 13 бедренная, 14 надколенник, 15 большая берцовая, 16 малая берцовая, 17 стопа."""
+    # локтевая — внутренняя кость предплечья, лучевая — наружная; большая берцовая — внутренняя и толстая, малая — наружная и тонкая
+    extra = ('<g transform="translate(100 0)">' + num(431, 740, 330, 770, 9) + num(418, 700, 330, 650, 10)
+             + num(578, 1200, 650, 1215, 15) + num(551, 1215, 330, 1200, 16) + '</g>')
+    return numbered(bio_w09, bio_w09.skeleton, {'череп: мозговой отдел': 1, 'лицевой отдел': 2, 'ключица (плечевой пояс)': 3, 'грудина': 4,
+                                                'рёбра — 12 пар': 5, 'лопатка (плечевой пояс)': 6, 'позвоночник': 7, 'плечевая кость': 8,
+                                                'кисть': 11, 'тазовая кость (3 сросшиеся)': 12, 'бедренная кость': 13, 'надколенник': 14,
+                                                'стопа': 17}, extra, dy=-40)
+
+
+def neuron_numbered() -> str:
+    """1 дендриты, 2 ядро, 3 перехват Ранвье, 4 тело нейрона, 5 аксон, 6 миелиновая оболочка, 7 окончания аксона."""
+    # стрелки направления импульса убраны: о направлении есть вопрос; выноска тела — сверху, чтобы не попасть на дендрит
+    return numbered(bio_w10, bio_w10.neuron, {'дендриты': 1, 'ядро': 2, 'перехват Ранвье': 3, 'аксон': 5,
+                                              'миелиновая оболочка (шванновская клетка)': 6, 'окончания → синапсы': 7},
+                    '<g transform="translate(150 0)">' + num(295, 262, 410, 80, 4) + '</g>', drop=('arrow',))
+
+
+def brain_numbered() -> str:
+    """Продольный разрез головного мозга, крупно (формы — из bio_w10.brain_cortex): 1 большие полушария, 2 мозжечок,
+    3 промежуточный мозг, 4 продолговатый мозг, 5 средний мозг, 6 мост."""
+    k, ox, oy = 1.6, 84, -136
+    p = lambda x, y: (ox + k * x, oy + k * y)
+    s = f'<g transform="translate({ox} {oy}) scale({k})">'
+    s += f'<path d="{smooth([(110, 300), (160, 170), (330, 120), (520, 150), (600, 260), (560, 380), (420, 410), (250, 400), (150, 380)], True)}" fill="#F6D7D2" stroke="#A2463C" stroke-width="3"/>'
+    s += ''.join(f'<path d="M{x1} {y1} q 30 {20 + j * 4} 70 {6 - j * 3}" fill="none" stroke="#C98478" stroke-width="2"/>'
+                 for j, (x1, y1) in enumerate(((180, 210), (260, 170), (360, 160), (450, 190), (200, 300), (300, 260), (420, 270), (500, 300))))
+    s += '<ellipse cx="380" cy="360" rx="60" ry="34" fill="#F2C14E" stroke="#8A6A2A" stroke-width="2"/>'
+    s += '<ellipse cx="420" cy="410" rx="40" ry="26" fill="#9CCB86" stroke="#2E7D4F" stroke-width="2"/>'
+    s += f'<path d="{smooth([(470, 420), (560, 400), (600, 460), (520, 500), (460, 480)], True)}" fill="#C7A6E0" stroke="#5B4A8A" stroke-width="2"/>'
+    s += ''.join(f'<path d="M{480 + j * 4} {430 + j * 14} q 50 -10 100 {8 + j * 6}" fill="none" stroke="#5B4A8A" stroke-width="1.5"/>' for j in range(4))
+    s += '<ellipse cx="440" cy="455" rx="34" ry="22" fill="#7FB3D5" stroke="#3A57A7" stroke-width="2"/>'
+    s += '<path d="M430 470 Q 420 520 425 590" stroke="#7FB3D5" stroke-width="30" fill="none"/></g>'
+    s += num(*p(300, 220), 200, 150, 1) + num(*p(545, 450), 1150, 560, 2) + num(*p(370, 360), 200, 470, 3)
+    s += num(*p(427, 560), 1150, 800, 4) + num(*p(420, 410), 200, 600, 5) + num(*p(452, 457), 200, 730, 6)
+    return s
+
+
+def eye_numbered() -> str:
+    """1 роговица, 2 радужка со зрачком, 3 хрусталик, 4 стекловидное тело, 5 сетчатка, 6 сосудистая оболочка, 7 склера,
+    8 жёлтое пятно, 9 зрительный нерв (место выхода — слепое пятно). Врезки с очками обрезаны шириной холста."""
+    cx, cy = 600, 360
+    # три оболочки задней части глаза толще, чем на рисунке недели, чтобы их было видно по отдельности;
+    # сосудистая оболочка — между склерой и сетчаткой, спереди переходит в радужку
+    a1, a2 = math.radians(-148), math.radians(148)
+    pt = lambda r, deg: (cx + r * math.cos(math.radians(deg)), cy + r * math.sin(math.radians(deg)))
+    rings = ''.join(f'<path d="M{cx + r * math.cos(a1):.0f} {cy + r * math.sin(a1):.0f} A {r} {r} 0 1 1 {cx + r * math.cos(a2):.0f} '
+                    f'{cy + r * math.sin(a2):.0f}" fill="none" stroke="{c}" stroke-width="{w}"/>'
+                    for r, c, w in ((235, '#B59A6E', 10), (225, '#7A3B2E', 9), (215, '#D9705F', 8)))
+    extra = (f'<g transform="translate(90 0)">{rings}<circle cx="{cx + 216}" cy="{cy}" r="10" fill="#F2C14E" stroke="#8A6A2A" stroke-width="2"/>'
+             + num(*pt(235, -45), 890, 105, 7) + num(*pt(215, -20), 905, 195, 5) + num(*pt(225, 40), 960, 590, 6)
+             + num(cx + 216, cy, 960, 290, 8) + num(343, 285, 300, 165, 1) + '</g>')  # роговица — точка на самой дуге
+    return numbered(bio_w10, bio_w10.eye_optics, {'радужка, зрачок': 2, 'хрусталик (аккомодация)': 3, 'стекловидное тело': 4,
+                                                  'слепое пятно, зрительный нерв': 9}, extra, dy=-40)
+
+
+def flower_numbered() -> str:
+    """1 цветоножка, 2 цветоложе, 3 чашелистик, 4 лепесток, 5 пыльник, 6 тычиночная нить, 7 рыльце, 8 столбик, 9 завязь, 10 семязачаток."""
+    return numbered(bio_w13, bio_w13.flower, {'цветоножка': 1, 'цветоложе': 2, 'чашелистик': 3, 'лепесток': 4, 'пыльник': 5,
+                                              'тычиночная нить': 6, 'рыльце': 7, 'столбик': 8, 'завязь': 9, 'семязачаток': 10}, dx=-150, dy=-170)
+
+
 if __name__ == '__main__':
     jobs = {BIO / 'week-01' / 'pics' / 'cell-animal-numbered.png': (animal_cell(), 1600, 900),
             BIO / 'week-01' / 'pics' / 'cell-plant-numbered.png': (plant_cell(), 1400, 900),
-            BIO / 'week-06' / 'pics' / 'heart-numbered.png': (heart_numbered(), 1400, 1060)}
+            BIO / 'week-06' / 'pics' / 'heart-numbered.png': (heart_numbered(), 1400, 1060),
+            BIO / 'week-08' / 'pics' / 'urinary-numbered.png': (urinary_numbered(), 1120, 900),
+            BIO / 'week-08' / 'pics' / 'kidney-numbered.png': (kidney_numbered(), 1400, 860),
+            BIO / 'week-08' / 'pics' / 'nephron-numbered.png': (nephron_numbered(), 1180, 810),
+            BIO / 'week-09' / 'pics' / 'skeleton-numbered.png': (skeleton_numbered(), 1200, 1360),
+            BIO / 'week-10' / 'pics' / 'neuron-numbered.png': (neuron_numbered(), 1650, 510),
+            BIO / 'week-10' / 'pics' / 'brain-numbered.png': (brain_numbered(), 1300, 860),
+            BIO / 'week-10' / 'pics' / 'eye-numbered.png': (eye_numbered(), 1300, 680),
+            BIO / 'week-13' / 'pics' / 'flower-numbered.png': (flower_numbered(), 1250, 740)}
+    only = set(sys.argv[1:])
+    jobs = {k: v for k, v in jobs.items() if not only or any(o in k.name for o in only)}
     for out, (svg, w, h) in jobs.items():
         render(svg, w, h, out)
         print(out)

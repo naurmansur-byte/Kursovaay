@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 import subprocess
 import sys
@@ -118,6 +119,18 @@ def traps(prefix: str, n: int) -> str:
             + markdown.markdown(m.group(1).strip(), extensions=MD) + '</div>')
 
 
+def pic_quiz(week_dir: Path, n: int, answers: list[str]) -> str:
+    """Рисунки с номерами и вопросы «что под цифрой» (pic-quiz.json); ответы копятся для раздела в конце книги."""
+    f = week_dir / 'pic-quiz.json'
+    if not f.exists():
+        return ''
+    data = json.loads(f.read_text(encoding='utf-8'))
+    figs = ''.join(f'<img class="pic" src="{pic_uri(week_dir / g["src"])}" alt="{escape(g["alt"])}">' for g in data['figs'])
+    qs = ''.join(f'<li>{escape(q["q"])}</li>' for q in data['q'])
+    answers.append(f'<p><b>Неделя {n}.</b> ' + ' '.join(f'{i}) {escape(q["a"])}.' for i, q in enumerate(data['q'], 1)) + '</p>')
+    return f'<div class="block-title">Рисунки: что под цифрой</div>{figs}<ol class="picq">{qs}</ol>'
+
+
 def errata(book: str) -> str:
     lines = (ROOT / 'course' / 'textbooks' / 'ERRATA.md').read_text(encoding='utf-8').splitlines()
     start = next(i for i, l in enumerate(lines) if l.startswith('| Учебник'))
@@ -185,12 +198,13 @@ table.err { font-size: 8.6pt; break-inside: auto; }
 table.err td:first-child { width: 22mm; font-weight: 700; }
 table.err td:nth-child(2) { width: 42%; }
 table.err tr { break-inside: avoid; }
+ol.picq { margin: 2mm 0 0; padding-left: 6mm; } ol.picq li { margin-bottom: 1.2mm; }
 """
 
 
 def build(key: str) -> Path:
     s = SUBJ[key]
-    chapters, toc = [], []
+    chapters, toc, answers = [], [], []
     for n in WEEKS:
         wd = s['src'] / f'week-{n:02d}'
         meta, body = notes(wd)
@@ -198,7 +212,11 @@ def build(key: str) -> Path:
         has_facts = 'Факты ЕНТ недели' in body
         toc.append(f'<li><b>Неделя {n}</b><span>{escape(title)}</span></li>')
         chapters.append(f'<section class="chapter"><div class="ch-head"><div class="plaque">Неделя {n}</div>'
-                        f'<div class="ch-title">{escape(title)}</div></div>{body}{memo(wd, has_facts)}{traps(s["digest"], n)}</section>')
+                        f'<div class="ch-title">{escape(title)}</div></div>{body}{memo(wd, has_facts)}{traps(s["digest"], n)}'
+                        f'{pic_quiz(wd, n, answers)}</section>')
+    if answers:
+        toc.append('<li><b>Ответы</b><span>Рисунки: что под цифрой</span></li>')
+    answers_html = f'<section class="errata"><h2>Ответы: рисунки, что под цифрой</h2>{"".join(answers)}</section>' if answers else ''
     err_html, n_err = errata(s['book'])
     today = date.today().strftime('%d.%m.%Y')
     css = ((ROOT / 'tools' / 'handout' / 'handout.css').read_text(encoding='utf-8').replace('{{FONTS}}', (ROOT / 'content/brand/fonts').as_uri())
@@ -218,6 +236,7 @@ def build(key: str) -> Path:
 <li>В ссылках вида «Х10-1 с. 6» или «Б9 § 12» — учебник из перечня НЦТ, класс, часть и страница. В конце книги — ошибки этих учебников и верные формулировки.</li>
 </ul></div></section>
 {''.join(chapters)}
+{answers_html}
 <section class="errata"><h2>Ошибки школьных учебников и как правильно</h2>
 <p class="intro">В учебниках из перечня НЦТ встречаются опечатки, неверные ответы задач и устаревшие числа. Ниже — {n_err} мест, которые мы нашли при подготовке курса, и как правильно. На ЕНТ опирайся на верную формулировку.</p>
 {err_html}</section>

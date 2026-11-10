@@ -8,6 +8,7 @@
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import random
 import sys
@@ -58,10 +59,12 @@ def good(letters: list[str]) -> bool:
 
 def tasks(t: dict) -> list[dict]:
     """Перемешанные задания с буквами."""
-    seed = sum(map(ord, t['subject'])) * 100 + t['week']
+    # Неделя 1 уже выдана со старым зерном — её буквы не меняем. Для остальных зерно у каждой недели своё:
+    # со старой формулой «зерно + попытка» соседние недели давали одинаковый порядок букв.
+    seed = sum(map(ord, t['subject'])) * 100 + 1 if t['week'] == 1 else int(hashlib.md5(f'{t["subject"]}-{t["week"]}'.encode()).hexdigest()[:8], 16)
     choice = t['single'] + t['context']['questions']
     for attempt in range(10000):
-        rnd = random.Random(seed + attempt)
+        rnd = random.Random(seed + attempt * (1 if t['week'] == 1 else 7919))
         rows = [rnd.sample([q['a'], *q['wrong']], 4) for q in choice]
         if good(['ABCD'[o.index(q['a'])] for o, q in zip(rows, choice)]):
             break

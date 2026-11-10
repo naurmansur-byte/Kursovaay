@@ -1,9 +1,9 @@
-"""Сборник недели, 1920×1080 в стиле 2: задания в формате ЕНТ по теме недели, преподаватель решает на экране вместе с учениками.
+"""Пробник недели N (раньше «сборник недели»), 1920×1080 в стиле 2: задания в формате ЕНТ по теме недели, преподаватель решает на экране вместе с учениками.
 
 Запуск: .venv/Scripts/python tools/social/sbornik.py chem-1 bio-1
 Источник — course/week-NN/sbornik.json и course/biology/week-NN/sbornik.json: те же доли, что на ЕНТ, в 2,5 раза короче
 (10 один ответ, 2 к тексту, 2 соответствие, 2 несколько ответов; уровни A/B/C = 8/5/3).
-Результат — в папке недели: «Ученику/6 Сборник недели.pdf» (без ответов), «Преподавателю/Сборник недели — с решениями.pdf».
+Результат — в папке недели: «Ученику/6 Пробник недели N.pdf» (без ответов), «Преподавателю/Пробник недели N — с решениями.pdf».
 Варианты перемешиваются с постоянным зерном: повторный запуск даёт те же буквы, а порядок верных букв проверяется.
 """
 from __future__ import annotations
@@ -112,7 +112,7 @@ html, body {{ overflow: hidden; }}
 def cover(t: dict, teacher: bool) -> str:
     how = 'Решаем вместе: вы показываете на экране, ученики думают, отвечают и спрашивают.' if teacher else 'Решаем вместе с преподавателем: смотри, спрашивай, отвечай.'
     return doc(W, H, css(ACCENT[t['subject']]), f"""<div class="cv"><span class="plaque">{NAME[t['subject']]} · неделя {t['week']}</span>
-<h1>Сборник недели</h1><h2>{t['topic']}</h2><p>{how}</p></div>""")
+<h1>Пробник недели {t['week']}</h1><h2>{t['topic']}</h2><p>{how}</p></div>""")
 
 
 def opts(q: dict, teacher: bool, numbers: bool = False) -> str:
@@ -134,6 +134,14 @@ def page(t: dict, q: dict, teacher: bool) -> str:
 <div class="w">{text}{head}{body}{ans}</div>""")
 
 
+def student_name(t: dict) -> str:
+    return f"6 Пробник недели {t['week']}.pdf"
+
+
+def teacher_name(t: dict) -> str:
+    return f"Пробник недели {t['week']} — с решениями.pdf"
+
+
 def save(pages: list[str], out: Path) -> None:
     from PIL import Image
     with tempfile.TemporaryDirectory() as tmp:
@@ -152,8 +160,8 @@ def main() -> None:
         check(t)
         qs = tasks(t)
         dest = week_dir(src.parent.relative_to(ROOT / 'course').as_posix())
-        save([cover(t, False)] + [page(t, q, False) for q in qs], dest / 'Ученику' / '6 Сборник недели.pdf')
-        save([cover(t, True)] + [page(t, q, True) for q in qs], dest / 'Преподавателю' / 'Сборник недели — с решениями.pdf')
+        save([cover(t, False)] + [page(t, q, False) for q in qs], dest / 'Ученику' / student_name(t))
+        save([cover(t, True)] + [page(t, q, True) for q in qs], dest / 'Преподавателю' / teacher_name(t))
         print(code, ' '.join(f'{q["n"]}{answer(q)}' for q in qs), '->', dest.name)
 
 

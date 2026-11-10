@@ -6,7 +6,7 @@
  * и папку на Диске. Формы, которые уже есть в папке, пропускает. Ссылки — в журнале выполнения.
  */
 const CHK_ROOT = '1Waj13qhB_B_Dt9e9Kawqz6epA7vWrLYu';
-const CHK_FOLDER = '09 Проверка понимания — Google Формы';
+const CHK_FOLDER = '3 Проверка понимания — Google Формы';
 const CHK_NAME_Q = 'Имя и фамилия';
 const CHK_FORMS = [
  {

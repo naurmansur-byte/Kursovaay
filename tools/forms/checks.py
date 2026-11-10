@@ -19,7 +19,7 @@ import random
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 DRIVE_ROOT = '1Waj13qhB_B_Dt9e9Kawqz6epA7vWrLYu'  # «ХимБио просто» на Диске Мансура
-DRIVE_FOLDER = '09 Проверка понимания — Google Формы'
+DRIVE_FOLDER = '3 Проверка понимания — Google Формы'  # папка «3 …» в «ХимБио просто» (до 10.11 — «09 …»)
 DONT_KNOW = 'Не знаю'
 
 # (предмет, неделя, урок, тема, [(вопрос, [верный, неверный ×3], объяснение)])

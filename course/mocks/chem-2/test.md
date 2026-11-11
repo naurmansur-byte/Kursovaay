@@ -1,7 +1,7 @@
 ---
 week: 25
 subject: chemistry
-title: Учебный пробник 2 · Химия
+title: Итоговый пробник 2 · Химия
 subtitle: 40 заданий · 50 баллов · 80 минут
 format: phone
 ---

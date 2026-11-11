@@ -1,8 +1,8 @@
-"""Сборка учебных пробников (недели 24–25) в папку материалов.
+"""Сборка итоговых пробников (недели 24–25) в папку материалов.
 
 Ученику: бланк (PDF под телефон) и карта ошибок (PDF). Преподавателю: план уроков, ключ и разбор (DOCX).
 Запуск из корня: .venv/Scripts/python tools/build_mock.py chem-1 bio-1 chem-2 bio-2
-Результат: exports/mocks/<пробник>/ и копия в «00 Материалы ХимБио просто/Курс — для преподавателей/Химия|Биология/Неделя 24|25 — Учебный пробник N/».
+Результат: exports/mocks/<пробник>/ и копия в «00 Материалы ХимБио просто/Курс — для преподавателей/Химия|Биология/Неделя 24|25 — Итоговый пробник N/».
 """
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ def build(mock: str) -> Path:
     src, out = ROOT / 'course' / 'mocks' / mock, ROOT / 'exports' / 'mocks' / mock
     n = int(mock[-1])
     week, (a, b) = (24, (47, 48)) if n == 1 else (25, (49, 50))
-    dest = PACK / ('Биология' if mock.startswith('bio') else 'Химия') / f'Неделя {week} — Учебный пробник {n}'
+    dest = PACK / ('Биология' if mock.startswith('bio') else 'Химия') / f'Неделя {week} — Итоговый пробник {n}'
     for sub in ('Ученику', 'Преподавателю'):
         (dest / sub).mkdir(parents=True, exist_ok=True)
     for name, title in STUDENT:

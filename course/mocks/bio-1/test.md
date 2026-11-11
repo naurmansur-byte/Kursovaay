@@ -1,7 +1,7 @@
 ---
 week: 24
 subject: biology
-title: Учебный пробник 1 · Биология
+title: Итоговый пробник 1 · Биология
 subtitle: 40 заданий · 50 баллов · 80 минут
 format: phone
 ---

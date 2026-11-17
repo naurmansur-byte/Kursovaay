@@ -1,4 +1,4 @@
-"""Книги «Конспект ЕНТ: химия» и «Конспект ЕНТ: биология» — PDF из готовых комплектов недель 1–23.
+"""Книги «Конспект ЕНТ: химия» и «Конспект ЕНТ: биология» — PDF из готовых комплектов недель 1–22 и памятки перед пробниками.
 
 Глава = неделя: конспект ученика (notes-student.md) без ссылок на уроки и ДЗ, памятка (memo.md),
 «Что легко перепутать» из выжимки недели (course/textbooks/*-NN-*.md). В конце — ошибки учебников из ERRATA.md
@@ -26,7 +26,7 @@ from handout import callouts, chrome, front_matter  # noqa: E402
 
 OUT = ROOT / '00 Материалы ХимБио просто' / 'Конспект ЕНТ'
 CACHE = ROOT / 'exports' / 'book' / 'pics'
-WEEKS = range(1, 24)
+WEEKS = range(1, 23)  # неделя 23 — пробники (решение Мансура 17.11.2026)
 SUBJ = {
     'chem': dict(name='химия', title='Конспект ЕНТ: химия', src=ROOT / 'course', digest='chem', book='Химия', accent='#F13A43',
                  books='Химия 7–11 класс (Оспанова, Аухадиева, Белоусова; Мектеп)'),
@@ -64,8 +64,8 @@ def drop_callouts(body: str, title_re: str) -> str:
     return '\n'.join(out)
 
 
-def notes(week_dir: Path) -> tuple[dict, str]:
-    meta, body = front_matter((week_dir / 'notes-student.md').read_text(encoding='utf-8'))
+def notes(week_dir: Path, name: str = 'notes-student.md') -> tuple[dict, str]:
+    meta, body = front_matter((week_dir / name).read_text(encoding='utf-8'))
     body = re.sub(r'^# .*\n', '', body, count=1)
     body = ''.join(p for p in re.split(r'(?m)^(?=## )', body) if not p.startswith('## Перед уроком'))
     body = re.sub(r'(?m)^(## .*?)\s+—\s+после урока \d+\s*$', r'\1', body)
@@ -214,6 +214,12 @@ def build(key: str) -> Path:
         chapters.append(f'<section class="chapter"><div class="ch-head"><div class="plaque">Неделя {n}</div>'
                         f'<div class="ch-title">{escape(title)}</div></div>{body}{memo(wd, has_facts)}{traps(s["digest"], n)}'
                         f'{pic_quiz(wd, n, answers)}</section>')
+    bm = s['src'] / 'week-22' / 'before-mocks.md'
+    if bm.exists():
+        meta, body = notes(bm.parent, bm.name)
+        toc.append('<li><b>Перед пробниками</b><span>Алгоритм, модели и ловушки</span></li>')
+        chapters.append(f'<section class="chapter"><div class="ch-head"><div class="plaque">Перед пробниками</div>'
+                        f'<div class="ch-title">{escape(meta.get("title", "Памятка перед пробниками"))}</div></div>{body}</section>')
     if answers:
         toc.append('<li><b>Ответы</b><span>Рисунки: что под цифрой</span></li>')
     answers_html = f'<section class="errata"><h2>Ответы: рисунки, что под цифрой</h2>{"".join(answers)}</section>' if answers else ''
@@ -225,7 +231,7 @@ def build(key: str) -> Path:
 <section class="book-cover">
   <div><div class="brand"><span class="dot"></span>ХИМБИО ПРОСТО · ПОДГОТОВКА К ЕНТ</div>
   <h1>{s['title']}</h1><div class="bar"></div>
-  <p class="lead">23 недели курса в одной книге: конспекты, памятки, факты ЕНТ и типичные ловушки. По учебникам из перечня НЦТ: {s['books']}.</p></div>
+  <p class="lead">22 недели курса в одной книге: конспекты, памятки, факты ЕНТ и типичные ловушки. По учебникам из перечня НЦТ: {s['books']}.</p></div>
   <div class="colophon">Пособие для учеников курса «ХимБио просто». Версия от {today}; материалы проверяются преподавателем курса. Задания и рисунки — авторские; текст учебников не воспроизводится, указаны страницы для сверки.</div>
 </section>
 <section class="toc"><h2>Содержание</h2><ol>{''.join(toc)}<li><b>Конец</b><span>Ошибки школьных учебников и как правильно</span></li></ol>

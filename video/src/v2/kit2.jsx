@@ -5,7 +5,7 @@ import { AbsoluteFill, Audio, Sequence, continueRender, delayRender, interpolate
 import '@fontsource-variable/unbounded';
 import '@fontsource-variable/manrope';
 import 'katex/dist/katex.min.css';
-import { C, F, setSubject } from '../theme.js';
+import { C, F, SUBJECT, setSubject } from '../theme.js';
 import { wordFrame } from '../plan.js';
 import { Background, Sfx, TeX } from '../kit.jsx';
 
@@ -13,6 +13,9 @@ export const FPS = 30;
 export const RED = '#F13A43';
 export const GREEN = '#3FBF74';  // светлый зелёный для текста и галочек на чёрном (фирменный #1F7A4A — для заливок)
 export const W = 1080;
+// Светлый акцент для текста на чёрном: химия — светло-красный, биология — светло-зелёный.
+export const HOT = () => (C.accent === SUBJECT.chem ? '#FF6B70' : GREEN);
+const isChem = () => C.accent === SUBJECT.chem;
 export const GUT = 72;
 
 export const useFonts2 = () => {
@@ -78,7 +81,7 @@ export const Spoken = ({ scene, y, size = 84, skip = 0, color = C.fg, accentWord
         const t = w.t.trim();
         const hot = accentWords.some((a) => t.toLowerCase().startsWith(a));
         return (
-          <span key={i} style={{ fontFamily: F.body, fontWeight: 800, fontSize: size, lineHeight: 1.1, color: hot ? GREEN : color, opacity: f < s ? 0.12 : 1, transform: `translateY(${(1 - p) * 24}px)`, display: 'inline-block' }}>
+          <span key={i} style={{ fontFamily: F.body, fontWeight: 800, fontSize: size, lineHeight: 1.1, color: hot ? HOT() : color, opacity: f < s ? 0.12 : 1, transform: `translateY(${(1 - p) * 24}px)`, display: 'inline-block' }}>
             {t}
           </span>
         );
@@ -103,7 +106,7 @@ export const TimerRing = ({ start = 0, seconds = 3, y = 1180, size = 300 }) => {
         <div style={{ position: 'relative', width: size, height: size, transform: `scale(${beat})` }}>
           <svg width={size} height={size} style={{ position: 'absolute', inset: 0, transform: 'rotate(-90deg)' }}>
             <circle cx={size / 2} cy={size / 2} r={r} stroke={C.faint} strokeWidth={22} fill="none" />
-            <circle cx={size / 2} cy={size / 2} r={r} stroke={GREEN} strokeWidth={22} fill="none" strokeDasharray={c} strokeDashoffset={c * k} strokeLinecap="round" />
+            <circle cx={size / 2} cy={size / 2} r={r} stroke={HOT()} strokeWidth={22} fill="none" strokeDasharray={c} strokeDashoffset={c * k} strokeLinecap="round" />
           </svg>
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.display, fontWeight: 800, fontSize: size * 0.48, color: C.fg }}>{left}</div>
         </div>
@@ -122,7 +125,7 @@ export const CountBar = ({ start, len, y = 1180 }) => {
       <Sfx at={start} name="tick" volume={0.6} />
       <Sfx at={start + Math.round(len / 2)} name="tick" volume={0.6} />
       <div style={{ position: 'absolute', top: y, left: GUT + 60, right: GUT + 60, height: 26, background: C.faint }}>
-        <div style={{ width: `${k * 100}%`, height: '100%', background: GREEN }} />
+        <div style={{ width: `${k * 100}%`, height: '100%', background: HOT() }} />
       </div>
       <Center y={y + 46}><div style={{ fontFamily: F.body, fontWeight: 800, fontSize: 40, letterSpacing: '0.12em', color: C.muted }}>ДУМАЙ…</div></Center>
     </>
@@ -257,7 +260,7 @@ export const Membrane = ({ mode = 'carrier', t = 0, atp = 0, w = 936, h = 640, t
 // Счётчик вопросов блица в правом верхнем углу.
 export const Counter = ({ n, total = 3 }) => (
   <div style={{ position: 'absolute', top: 150, right: GUT, fontFamily: F.display, fontWeight: 800, fontSize: 72, color: C.fg }}>
-    <span style={{ color: GREEN }}>{n}</span>/{total}
+    <span style={{ color: HOT() }}>{n}</span>/{total}
   </div>
 );
 
@@ -278,7 +281,7 @@ export const CtaScene = ({ scene, score = false }) => {
       )}
       <Pop start={brandAt} y={330}><Big size={92}>ХимБио<br />просто</Big></Pop>
       <Pop start={brandAt + 8} y={560}><div style={{ fontFamily: F.body, fontWeight: 800, fontSize: 48, color: C.muted, textAlign: 'center' }}>химия и биология к ЕНТ</div></Pop>
-      <Pop start={sign} y={720}><Plaque size={96} bg={'#1F7A4A'} rotate={-3}>Запись<br />на курс</Plaque></Pop>
+      <Pop start={sign} y={720}><Plaque size={96} bg={C.accent} rotate={-3}>Запись<br />на курс</Plaque></Pop>
       <Sfx at={sign} name="boom" volume={0.35} />
       <Pop start={dm} y={1060}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 22, background: C.fg, color: C.bg, padding: '22px 40px 26px', borderRadius: 80, fontFamily: F.body, fontWeight: 800, fontSize: 56, transform: `translateY(${bob}px)` }}>
@@ -286,7 +289,7 @@ export const CtaScene = ({ scene, score = false }) => {
           пиши в директ
         </div>
       </Pop>
-      <Pop start={dm + 6} y={1200}><div style={{ fontFamily: F.body, fontWeight: 800, fontSize: 52, color: GREEN }}>@himbio.prosto</div></Pop>
+      <Pop start={dm + 6} y={1200}><div style={{ fontFamily: F.body, fontWeight: 800, fontSize: 52, color: HOT() }}>@himbio.prosto</div></Pop>
       <Sfx at={dm} name="pop" volume={0.5} />
     </AbsoluteFill>
   );
@@ -304,7 +307,7 @@ const TopBar = ({ plan }) => {
           return <div key={s.id} style={{ flex: s.dur, height: 8, background: C.faint }}><div style={{ width: `${k * 100}%`, height: '100%', background: C.fg }} /></div>;
         })}
       </div>
-      <div style={{ position: 'absolute', top: 104, left: GUT, fontFamily: F.body, fontWeight: 800, fontSize: 28, letterSpacing: '0.16em', color: C.muted }}>ХИМБИО ПРОСТО · БИОЛОГИЯ ЕНТ</div>
+      <div style={{ position: 'absolute', top: 104, left: GUT, fontFamily: F.body, fontWeight: 800, fontSize: 28, letterSpacing: '0.16em', color: C.muted }}>ХИМБИО ПРОСТО · {isChem() ? 'ХИМИЯ' : 'БИОЛОГИЯ'} ЕНТ</div>
     </>
   );
 };
@@ -331,7 +334,7 @@ const Karaoke = ({ plan, hide }) => {
           const on = f >= w.at && (i === line.length - 1 || f < line[i + 1].at);
           const p = sp(f, w.at, { damping: 12, stiffness: 300, mass: 0.4 });
           return (
-            <span key={i} style={{ fontFamily: F.body, fontWeight: 800, fontSize: 66, textTransform: 'uppercase', color: f < w.at ? 'rgba(243,240,232,0.35)' : C.fg, background: on ? '#1F7A4A' : 'transparent', padding: '4px 14px 10px', transform: on ? `scale(${1 + 0.08 * p})` : 'none', display: 'inline-block', textShadow: '0 4px 18px rgba(0,0,0,0.7)' }}>
+            <span key={i} style={{ fontFamily: F.body, fontWeight: 800, fontSize: 66, textTransform: 'uppercase', color: f < w.at ? 'rgba(243,240,232,0.35)' : C.fg, background: on ? C.accent : 'transparent', padding: '4px 14px 10px', transform: on ? `scale(${1 + 0.08 * p})` : 'none', display: 'inline-block', textShadow: '0 4px 18px rgba(0,0,0,0.7)' }}>
               {w.t.replace(/[.,!?:]$/, '')}
             </span>
           );
@@ -356,8 +359,8 @@ const ZoomCut = ({ index, dur, children }) => {
   );
 };
 
-export const makeReel = (scenesById, hide = []) => ({ plan }) => {
-  setSubject('bio');
+export const makeReel = (scenesById, hide = [], subject = 'bio') => ({ plan }) => {
+  setSubject(subject);
   useFonts2();
   return (
     <AbsoluteFill style={{ background: C.bg }}>

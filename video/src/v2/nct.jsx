@@ -1,4 +1,5 @@
-// Формат «задание НЦТ» (Мансур 19.11.2026): настоящее задание из официального образца ЕНТ (testcenter.kz) дословно,
+// Формат «задание ЕНТ» (Мансур 19.11.2026): настоящее задание из официального образца ЕНТ (testcenter.kz) дословно;
+// в ролике говорим и пишем просто «задание ЕНТ», без «образец» и «НЦТ» (решение Мансура 19.11),
 // как на бумаге теста → таймер → решение по шагам → ответ (+ ловушка) → «запись на курс». Монтаж v2 (kit2).
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
@@ -51,14 +52,14 @@ export const makeNct = (cfg) => {
   const SCENES = {
     hook: ({ scene }) => (
       <AbsoluteFill>
-        <Pop start={0} y={210}><Plaque size={42} bg={C.accent} rotate={-1}>Образец ЕНТ · НЦТ · {cfg.subjectName}</Plaque></Pop>
+        <Pop start={0} y={210}><Plaque size={42} bg={C.accent} rotate={-1}>Задание ЕНТ · {cfg.subjectName}</Plaque></Pop>
         <Paper cfg={cfg} start={4} />
         <Sfx at={4} name="whoosh" volume={0.3} />
       </AbsoluteFill>
     ),
     timer: ({ scene }) => (
       <AbsoluteFill>
-        <Pop start={-30} y={210}><Plaque size={42} bg={C.accent} rotate={-1}>Образец ЕНТ · НЦТ · {cfg.subjectName}</Plaque></Pop>
+        <Pop start={-30} y={210}><Plaque size={42} bg={C.accent} rotate={-1}>Задание ЕНТ · {cfg.subjectName}</Plaque></Pop>
         <Paper cfg={cfg} start={-30} />
         <TimerRing start={scene.lead} seconds={3} y={cfg.timerY ?? 1150} size={250} />
       </AbsoluteFill>
@@ -77,7 +78,7 @@ export const makeNct = (cfg) => {
       return (
         <AbsoluteFill>
           <Sfx at={r} name="ding" volume={0.5} />
-          <Pop start={-30} y={210}><Plaque size={42} bg={C.accent} rotate={-1}>Образец ЕНТ · НЦТ · {cfg.subjectName}</Plaque></Pop>
+          <Pop start={-30} y={210}><Plaque size={42} bg={C.accent} rotate={-1}>Задание ЕНТ · {cfg.subjectName}</Plaque></Pop>
           <Paper cfg={cfg} mode="answer" start={-30} rightAt={r} trapAt={trap} />
           {cfg.trap && <Sfx at={trap} name="buzz" volume={0.35} />}
           {cfg.trapNote && <Pop start={trap + 6} y={cfg.noteY ?? 1170}><Plaque size={44} bg={RED} rotate={-1}>{cfg.trapNote}</Plaque></Pop>}

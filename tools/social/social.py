@@ -243,6 +243,39 @@ def ad3(kind: str, w: int, h: int, y: dict, icon: int = 150) -> str:
 """)
 
 
+# Таргет ноябрь 2026 (Мансур 19.11): курс уже идёт — «ещё не поздно», цена без скидки, без размера групп, без даты старта.
+AUDIENCES_NOV = {
+    'parents': {
+        'plaques': [('Ещё не поздно', '#F3F0E8', -3), ('подготовиться к ЕНТ', '#F13A43', -4)],
+        'lead': 'Химия и биология в одном курсе. Стартовый тест покажет, с какой темы начать.',
+        'facts': [('4 урока', 'в неделю: 2 по химии и 2 по биологии'), ('90 мин', 'каждый урок, вечером, онлайн'),
+                  ('НЦТ', 'по учебникам из перечня НЦТ, в формате ЕНТ'), ('ДЗ', 'проверяем каждую неделю + проверка знаний раз в месяц')],
+        'cta': 'Напишите нам — пришлём программу курса',
+    },
+    'students': {
+        'plaques': [('11 класс?', '#F13A43', -4), ('ещё не поздно!', '#1F7A4A', -3)],
+        'lead': 'Курс уже идёт — подключайся сейчас. Стартовый тест покажет, что ты уже знаешь.',
+        'facts': [('4 урока', 'в неделю: 2 по химии и 2 по биологии'), ('90 мин', 'каждый урок, вечером, онлайн'),
+                  ('ЕНТ', 'разбираем задания в формате теста'), ('ДЗ', 'с проверкой + проверка знаний раз в месяц')],
+        'cta': 'Напиши нам — бесплатный стартовый тест',
+    },
+}
+BADGE_NOV = ('Набор', 'открыт')
+
+
+def ad5(kind: str, w: int, h: int, y: dict) -> str:
+    """Как ad3, но без скидки: вместо круга «−30%» — «Набор открыт»."""
+    html = ad3(kind, w, h, y)
+    a, n = AUDIENCES[kind], AUDIENCES_NOV[kind]
+    for k in ('plaques', 'facts'):
+        for old, new_ in zip(a[k], n[k]):
+            html = html.replace(f'>{old[0]}<', f'>{new_[0]}<', 1) if k == 'plaques' else html.replace(f'>{old[1]}<', f'>{new_[1]}<', 1).replace(f'>{old[0]}</div><div class="ft">', f'>{new_[0]}</div><div class="ft">', 1)
+    for k in ('lead', 'cta'):
+        html = html.replace(a[k], n[k], 1)
+    html = html.replace(f'<b>{DISCOUNT[0]}</b><span>{DISCOUNT[1]}</span>', f'<b style="font-size:46px">{BADGE_NOV[0]}</b><span style="font-size:30px">{BADGE_NOV[1]}</span>', 1)
+    return html.replace(".lead { font: 700 42px/1.3 'Manrope'", ".lead { font: 700 40px/1.28 'Manrope'", 1)
+
+
 # Таргет для родителей «Бесплатный созвон» (26.10): без размера групп, без цены и скидки; связь — WhatsApp из рекламы.
 CALL = {
     'plaques': [('Бесплатный созвон', '#F13A43', -4), ('для родителей', '#F3F0E8', -3)],
@@ -333,6 +366,16 @@ if __name__ == '__main__':
             # 9:16: нижние ~300 px закрывает кнопка рекламы — призыв выше.
             shot(ad3(kind, 1080, 1920, {'icons': 220, 'h1': 400, 'lead': 650, 'facts': 810, 'price': 1270, 'cta': 1420, 'pl': pl}, 160),
                  1080, 1920, out / f'target-{kind}-9x16.png')
+        sys.exit()
+    if '--ad5' in sys.argv:
+        out = ROOT / 'deliverables' / 'ads'
+        out.mkdir(parents=True, exist_ok=True)
+        for kind in AUDIENCES_NOV:
+            pl = 64 if kind == 'students' else 54
+            shot(ad5(kind, 1080, 1350, {'icons': 50, 'h1': 200, 'lead': 440, 'facts': 625, 'price': 1050, 'cta': 1180, 'pl': pl}),
+                 1080, 1350, out / f'target-nov-{kind}-4x5.png')
+            shot(ad5(kind, 1080, 1920, {'icons': 220, 'h1': 400, 'lead': 650, 'facts': 860, 'price': 1310, 'cta': 1450, 'pl': pl}),
+                 1080, 1920, out / f'target-nov-{kind}-9x16.png')
         sys.exit()
     if '--call' in sys.argv:
         out = ROOT / 'deliverables' / 'ads'

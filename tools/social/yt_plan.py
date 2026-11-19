@@ -29,6 +29,8 @@ def field(text, name):
 def desc(text):
     d = text.split('**Описание:**', 1)[1].strip()
     d = d.replace('онлайн, старт 1 ноября', 'онлайн')
+    # Мансур 19.11: зовём записаться на курс
+    d = d.replace('ЕНТ по химии и биологии. Instagram: @himbio.prosto', 'ЕНТ по химии и биологии. Запись на курс — в директ Instagram @himbio.prosto')
     return d
 
 

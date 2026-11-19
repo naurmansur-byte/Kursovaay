@@ -35,7 +35,10 @@ window.__pickPlaylists = async (names) => {
   return true;
 };
 // Диалог после «Запланировать»: «Публикация видео запланирована» или «Обработка видео … мы установим …».
-window.__doneDlg = () => [...document.querySelectorAll('ytcp-video-share-dialog, ytcp-uploads-still-processing-dialog')].find(x => /запланирована|установим/.test(x.innerText) && x.offsetParent !== null);
+// У подтверждённого канала (с 19.11) перед планированием всплывает «Проверка видео ещё продолжается… ОК» — нажимаем ОК;
+// итоговое окно тогда пишет «Видео опубликовано», хотя в списке видео стоит «Отложенная публикация» (проверено 19.11).
+window.__ackPrecheck = () => { const w = [...document.querySelectorAll('ytcp-prechecks-warning-dialog')].find(x => x.offsetParent !== null && /Проверка видео/.test(x.innerText)); if (!w) return false; const ok = [...w.querySelectorAll('ytcp-button, button')].find(b => /^\s*ОК\s*$/.test(b.innerText) && b.offsetParent !== null); if (ok) { ok.click(); return true; } return false; };
+window.__doneDlg = () => { __ackPrecheck(); return [...document.querySelectorAll('ytcp-video-share-dialog, ytcp-uploads-still-processing-dialog')].find(x => /запланирована|установим|опубликовано/.test(x.innerText) && x.offsetParent !== null); };
 window.__closeDone = async () => { for (const x of document.querySelectorAll('ytcp-video-share-dialog, ytcp-uploads-still-processing-dialog')) { const c = [...x.querySelectorAll('ytcp-button, button')].find(b => /Закрыть/.test(b.innerText) && b.offsetParent !== null); c && c.click(); } await __sleep(600); };
 // Закрыть окно загрузки без сохранения (после лимита черновик не создаётся — проверено 18.11).
 window.__closeUpload = async () => { const d = document.querySelector('ytcp-uploads-dialog'); const c = d && d.querySelector('#ytcp-uploads-dialog-close-button, #close-button, [aria-label="Закрыть"]'); c && c.click(); await __sleep(2000); return !!c; };

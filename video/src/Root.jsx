@@ -13,6 +13,12 @@ import b002Timing from './reels/b002.timing.json';
 import { TAILS as b002Tails } from './reels/b002.jsx';
 import b003Timing from './reels/b003.timing.json';
 import { TAILS as b003Tails } from './reels/b003.jsx';
+import v001Timing from './reels/v001.timing.json';
+import { Comp as V001, TAILS as v001Tails } from './v2/v001.jsx';
+import v002Timing from './reels/v002.timing.json';
+import { Comp as V002, TAILS as v002Tails } from './v2/v002.jsx';
+import v003Timing from './reels/v003.timing.json';
+import { Comp as V003, TAILS as v003Tails } from './v2/v003.jsx';
 import { Avatar, HighlightCover, HIGHLIGHTS } from './brand.jsx';
 import { CarouselSlide, CAROUSEL_HB_SIZE, CAROUSEL_SIZE } from './carousel.jsx';
 import y001Timing from './reels/y001.timing.json';
@@ -182,6 +188,11 @@ export const Root = () => (
       return (
         <Composition key={id} id={id} component={Reel} durationInFrames={plan.total} fps={FPS} width={1080} height={1920} defaultProps={{ plan, reel: id, subject }} />
       );
+    })}
+    {/* Монтаж v2 (19.11.2026, пробы для Мансура): src/v2/ */}
+    {[['V001', v001Timing, v001Tails, V001], ['V002', v002Timing, v002Tails, V002], ['V003', v003Timing, v003Tails, V003]].map(([id, timing, tails, Comp]) => {
+      const plan = buildPlan(timing, FPS, tails);
+      return <Composition key={id} id={id} component={Comp} durationInFrames={plan.total} fps={FPS} width={1080} height={1920} defaultProps={{ plan }} />;
     })}
     {Array.from({ length: CAROUSEL_SIZE }, (_, i) => (
       <Composition key={i} id={`About-${i + 1}`} component={CarouselSlide} durationInFrames={60} fps={FPS} width={1080} height={1350} defaultProps={{ n: i + 1 }} />

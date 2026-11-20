@@ -19,6 +19,8 @@ import v002Timing from './reels/v002.timing.json';
 import { Comp as V002, TAILS as v002Tails } from './v2/v002.jsx';
 import v003Timing from './reels/v003.timing.json';
 import { Comp as V003, TAILS as v003Tails } from './v2/v003.jsx';
+import z001Timing from './reels/z001.timing.json';
+import { Comp as Z001, TAILS as z001Tails } from './v3/z001.jsx';
 import n001Timing from './reels/n001.timing.json';
 import { Comp as N001, TAILS as n001Tails } from './v2/n001.jsx';
 import n002Timing from './reels/n002.timing.json';
@@ -73,6 +75,10 @@ import y011Timing from './reels/y011.timing.json';
 import { TAILS as y011Tails } from './reels/y011.jsx';
 import y012Timing from './reels/y012.timing.json';
 import { TAILS as y012Tails } from './reels/y012.jsx';
+import y013Timing from './reels/y013.timing.json';
+import { TAILS as y013Tails } from './reels/y013.jsx';
+import y014Timing from './reels/y014.timing.json';
+import { TAILS as y014Tails } from './reels/y014.jsx';
 import r008Timing from './reels/r008.timing.json';
 import { TAILS as r008Tails } from './reels/r008.jsx';
 import r009Timing from './reels/r009.timing.json';
@@ -193,6 +199,11 @@ export const Root = () => (
         <Composition key={id} id={id} component={Reel} durationInFrames={plan.total} fps={FPS} width={1080} height={1920} defaultProps={{ plan, reel: id, subject }} />
       );
     })}
+    {/* Разбор пробника ЕНТ, светлый стиль (20.11.2026): src/v3/razbor.jsx */}
+    {(() => {
+      const plan = buildPlan(z001Timing, FPS, z001Tails);
+      return <Composition id="Z001" component={Z001} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan }} />;
+    })()}
     {/* Монтаж v2 (19.11.2026, пробы для Мансура): src/v2/ */}
     {[['V001', v001Timing, v001Tails, V001], ['V002', v002Timing, v002Tails, V002], ['V003', v003Timing, v003Tails, V003], ['N001', n001Timing, n001Tails, N001], ['N002', n002Timing, n002Tails, N002]].map(([id, timing, tails, Comp]) => {
       const plan = buildPlan(timing, FPS, tails);
@@ -251,6 +262,14 @@ export const Root = () => (
     {(() => {
       const plan = buildPlan(y012Timing, FPS, y012Tails);
       return <Composition id="Y012" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y012', subject: 'bio' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y013Timing, FPS, y013Tails);
+      return <Composition id="Y013" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y013' }} />;
+    })()}
+    {(() => {
+      const plan = buildPlan(y014Timing, FPS, y014Tails);
+      return <Composition id="Y014" component={Reel} durationInFrames={plan.total} fps={FPS} width={1920} height={1080} defaultProps={{ plan, reel: 'Y014', subject: 'bio' }} />;
     })()}
     <Composition id="Avatar" component={Avatar} durationInFrames={1} fps={FPS} width={1080} height={1080} />
     {HIGHLIGHTS.map((h) => (

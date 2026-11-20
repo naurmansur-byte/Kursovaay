@@ -7,14 +7,31 @@
 window.__sleep = ms => new Promise(r => setTimeout(r, ms));
 window.__waitFor = async (fn, ms = 30000) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { const v = fn(); if (v) return v; await __sleep(300); } return null; };
 window.__setBox = (el, text) => { el.focus(); document.execCommand('selectAll', false); document.execCommand('insertText', false, text); el.dispatchEvent(new Event('input', { bubbles: true })); };
-for (const id of ['vid-in', 'p1', 'p2', 'p3', 'p4', 'meta-in']) {
+for (const id of ['vid-in', ...Array.from({ length: 14 }, (_, i) => 'p' + (i + 1)), 'meta-in', 'thumb-in']) {
   if (!document.getElementById(id)) { const i = document.createElement('input'); i.type = 'file'; i.id = id; i.setAttribute('aria-label', 'claude ' + id); i.style.cssText = 'position:fixed;left:0;top:0;width:8px;height:8px;opacity:0.01;z-index:99999'; document.body.appendChild(i); }
 }
 window.__setFiles = (input, file) => { const dt = new DataTransfer(); dt.items.add(file); input.files = dt.files; input.dispatchEvent(new Event('change', { bubbles: true })); };
 window.__pickPlaylists = async (names) => {
   const d = document.querySelector('ytcp-uploads-dialog');
   d.querySelector('ytcp-video-metadata-playlists ytcp-dropdown-trigger, ytcp-video-metadata-playlists ytcp-text-dropdown-trigger').click();
-  const pd = await __waitFor(() => { const x = document.querySelector('ytcp-playlist-dialog'); return x && x.querySelector('li') ? x : null; }, 15000);
+  let pd = await __waitFor(() => { const x = document.querySelector('ytcp-playlist-dialog'); return x && x.querySelector('li') ? x : null; }, 15000);
+  if (!pd) {
+    // 20.11: окно бывает без <li> — ищем строки по названию и жмём их чекбокс.
+    const x = document.querySelector('ytcp-playlist-dialog');
+    const labels = x ? [...x.querySelectorAll('*')].filter(e => e.children.length === 0 && names.includes(e.textContent.trim()) && e.offsetParent !== null) : [];
+    if (labels.length) {
+      for (const lab of labels) {
+        let row = lab; for (let k = 0; k < 6 && row && !row.querySelector('[role=checkbox], ytcp-checkbox-lit, tp-yt-paper-checkbox'); k++) row = row.parentElement;
+        const cb = row && row.querySelector('[role=checkbox], ytcp-checkbox-lit, tp-yt-paper-checkbox');
+        const checked = cb && (cb.getAttribute('aria-checked') === 'true' || cb.hasAttribute('checked'));
+        if (cb && !checked) cb.click();
+      }
+      await __sleep(500);
+      const ok = [...x.querySelectorAll('ytcp-button, button')].find(b => /ОК|Готово/.test(b.innerText) && b.offsetParent !== null);
+      ok && ok.click(); await __sleep(800);
+      return true;
+    }
+  }
   if (!pd) {  // при лимите загрузки список пуст: «У вас нет плейлистов»
     const x = document.querySelector('ytcp-playlist-dialog');
     const ok = x && [...x.querySelectorAll('ytcp-button, button')].find(b => /ОК|Готово/.test(b.innerText) && b.offsetParent !== null);
@@ -72,6 +89,13 @@ window.__fill = async (m) => {
   if (limited()) return { error: 'limit' };
   __setBox(boxes[0], m.title);
   __setBox(boxes[1], m.description);
+  // Своё превью (канал подтверждён 19.11): input загрузчика значка в окне загрузки.
+  if (m.thumbFile) {
+    const tin = d.querySelector('ytcp-thumbnails-compact-editor-uploader input[type=file], #file-loader');
+    if (!tin) return { error: 'no thumbnail input' };
+    __setFiles(tin, m.thumbFile);
+    await __sleep(4000);
+  }
   d.querySelector('tp-yt-paper-radio-button[name="VIDEO_MADE_FOR_KIDS_NOT_MFK"]').click();
   await __sleep(400);
   const alt = () => d.querySelector('tp-yt-paper-radio-button[name="VIDEO_HAS_ALTERED_CONTENT_YES"]');
@@ -112,11 +136,12 @@ window.__run = (id, opts = {}) => {
   window.__busy = id;
   (async () => {
     try {
-      const m = { ...__META[id], day: opts.day, time: '10:00', dry: !!opts.dry };
+      const m = { ...__META[id], day: opts.day ?? __META[id].day, time: '10:00', dry: !!opts.dry };
+      if (opts.thumb) { m.thumbFile = document.getElementById('thumb-in').files[0]; if (!m.thumbFile || !m.thumbFile.name.toLowerCase().includes(id.toLowerCase())) { __log[id] = { error: 'wrong thumb ' + (m.thumbFile && m.thumbFile.name) }; return; } }
       if (!m.title || !m.day) { __log[id] = { error: 'no meta/day' }; return; }
       let file;
       if (opts.parts) {
-        const fs = ['p1', 'p2', 'p3', 'p4'].slice(0, opts.parts).map(x => document.getElementById(x).files[0]);
+        const fs = Array.from({ length: opts.parts }, (_, i) => document.getElementById('p' + (i + 1)).files[0]);
         const bad = fs.findIndex((f, i) => !f || f.name !== `${id}.mp4.part${i + 1}`);
         if (bad >= 0) { __log[id] = { error: 'wrong parts ' + fs.map(f => f && f.name).join(',') }; return; }
         file = new File(fs, id + '.mp4', { type: 'video/mp4' });
@@ -133,4 +158,4 @@ window.__run = (id, opts = {}) => {
   })();
   return 'started ' + id;
 };
-'helpers v4 ready';
+'helpers v5 ready';

@@ -151,7 +151,7 @@ export const makeWide2 = (cfg) => {
             <Pic src={img[0]} at={W(img[1], img[2])} x={1090} y={320} width={760} />
           </>
         ) : (
-          <Appear at={2} y={310}><Card width={1500}><Rows rows={q.explain.rows} times={times} size={50} gap={26} /></Card></Appear>
+          <Appear at={2} y={310}><Card width={1500}><Rows rows={q.explain.rows} times={times} size={50} gap={26} wrap /></Card></Appear>
         )}
         {times.map((t, i) => <Sfx key={i} at={t} name="pop" volume={0.35} />)}
       </AbsoluteFill>
@@ -249,7 +249,7 @@ export const makeWide2 = (cfg) => {
             <Pic src={p.img[0]} at={W(p.img[1], p.img[2])} x={1090} y={300} width={760} />
           </>
         ) : (
-          <Appear at={2} y={300}><Card width={1600}><Rows rows={p.rows} times={times} size={p.size ?? 54} gap={p.gap ?? 24} /></Card></Appear>
+          <Appear at={2} y={300}><Card width={1600}><Rows rows={p.rows} times={times} size={p.size ?? 54} gap={p.gap ?? 24} wrap /></Card></Appear>
         )}
         <Sfx at={1} name="whoosh" />
         {times.map((t, i) => <Sfx key={i} at={t} name="pop" volume={0.3} />)}

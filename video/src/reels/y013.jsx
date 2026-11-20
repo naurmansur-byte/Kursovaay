@@ -92,7 +92,7 @@ export const { SCENES, TAILS } = makeWide2({
   },
   {
    "title": "Оксиды",
-   "size": 50,
+   "size": 44,
    "rows": [
     [
      "основные: $\\mathrm{Na_2O,\\ MgO,\\ CaO}$",
@@ -105,7 +105,7 @@ export const { SCENES, TAILS } = makeWide2({
      90
     ],
     [
-     "амфотерные: $\\mathrm{BeO,\\ ZnO,\\ Al_2O_3}$ — и с кислотами, и со щелочами",
+     "амфотерные: $\\mathrm{BeO,\\ ZnO,\\ Al_2O_3}$ — с кислотами и щелочами",
      "амфотерные",
      150
     ],
@@ -206,7 +206,7 @@ export const { SCENES, TAILS } = makeWide2({
   },
   {
    "title": "Основания",
-   "size": 50,
+   "size": 44,
    "rows": [
     [
      "щёлочи: $\\mathrm{LiOH,\\ NaOH,\\ KOH,\\ Ba(OH)_2}$",
